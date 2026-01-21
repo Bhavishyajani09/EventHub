@@ -51,7 +51,8 @@ router.post('/', auth, async (req, res) => {
       user: req.user.id,
       event: eventId,
       tickets,
-      totalAmount
+      totalAmount,
+      status: 'confirmed'
     });
 
     await booking.populate(['user', 'event']);
