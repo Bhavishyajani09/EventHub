@@ -24,7 +24,7 @@ router.post('/', auth, async (req, res) => {
     }
 
     // Find ticket type and get price
-    let ticketPrice;
+    let ticketPrice, ticketTypeName;
     if (event.ticketTypes && event.ticketTypes.length > 0) {
       const ticketType = ticketTypeId ? 
         event.ticketTypes.find(t => t._id.toString() === ticketTypeId) :
@@ -34,8 +34,10 @@ router.post('/', auth, async (req, res) => {
         return res.status(400).json({ message: 'Invalid ticket type' });
       }
       ticketPrice = parseFloat(ticketType.price);
+      ticketTypeName = ticketType.name;
     } else {
       ticketPrice = parseFloat(event.price);
+      ticketTypeName = 'General';
     }
     
     if (isNaN(ticketPrice) || ticketPrice <= 0) {
@@ -51,6 +53,8 @@ router.post('/', auth, async (req, res) => {
       user: req.user.id,
       event: eventId,
       tickets,
+      ticketType: ticketTypeName,
+      pricePerTicket: ticketPrice,
       totalAmount,
       status: 'confirmed'
     });
@@ -70,7 +74,8 @@ router.post('/', auth, async (req, res) => {
         },
         ticketDetails: {
           quantity: tickets,
-          pricePerTicket: ticketPrice
+          pricePerTicket: ticketPrice,
+          ticketType: ticketTypeName
         },
         pricingBreakdown: {
           subtotal: Math.round(subtotal * 100) / 100,
