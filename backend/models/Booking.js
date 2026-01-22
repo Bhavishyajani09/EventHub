@@ -16,6 +16,14 @@ const bookingSchema = new mongoose.Schema({
     required: true,
     min: 1
   },
+  ticketType: {
+    type: String,
+    required: true
+  },
+  pricePerTicket: {
+    type: Number,
+    required: true
+  },
   totalAmount: {
     type: Number,
     required: true
