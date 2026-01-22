@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const Organizer = require('../models/Organizer');
+const User = require('../models/User');
 
 /**
  * JWT Authentication Middleware
@@ -23,18 +23,18 @@ const authMiddleware = async (req, res, next) => {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // Find organizer by ID from token payload
-    const organizer = await Organizer.findById(decoded.id).select('-password');
+    // Find user by ID from token payload
+    const user = await User.findById(decoded.id).select('-password');
     
-    if (!organizer) {
+    if (!user) {
       return res.status(401).json({ 
         success: false, 
-        message: 'Token is valid but organizer not found.' 
+        message: 'Token is valid but user not found.' 
       });
     }
 
-    // Attach organizer info to request object for use in protected routes
-    req.organizer = organizer;
+    // Attach user info to request object for use in protected routes
+    req.user = user;
     next();
     
   } catch (error) {
