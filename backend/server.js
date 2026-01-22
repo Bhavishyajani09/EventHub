@@ -15,7 +15,7 @@ app.use(express.json());
 // Routes
 app.use('/auth/user', require('./routes/auth'));
 app.use('/api/events', require('./routes/events'));
-app.use('/booking', require('./routes/doBookings'));
+app.use('/booking', require('./routes/bookings'));
 app.use('/payments', require('./routes/payments'));
 app.use('/api/reviews', require('./routes/reviews'));
 
