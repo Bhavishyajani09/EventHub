@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import AdminLayout from './AdminLayout';
 import Dashboard from './Dashboard';
+import Organizers from './Organizers';
+import Settings from './Settings';
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -9,10 +11,12 @@ const AdminPanel = () => {
     switch (activeTab) {
       case 'dashboard':
         return <Dashboard />;
-      case 'users':
       case 'organizers':
-      case 'events':
+        return <Organizers />;
       case 'settings':
+        return <Settings />;
+      case 'users':
+      case 'events':
         return (
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Management</h2>
