@@ -3,6 +3,21 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AdminPanel from './components/admin/AdminPanel';
 
 function App() {
+  const [activeSection, setActiveSection] = useState('users');
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'events':
+        return <AdminEvents />;
+      case 'users':
+        return <AdminUserManagement />;
+      case 'bookings':
+        return <AdminBooking />;
+      default:
+        return <AdminUserManagement />;
+    }
+  };
+
   return (
     <Router>
       <div className="App">
