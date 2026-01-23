@@ -20,6 +20,7 @@ const AdminLayout = ({ children, activeTab, setActiveTab }) => {
     { id: 'users', label: 'Users', icon: Users },
     { id: 'organizers', label: 'Organizers', icon: UserCheck },
     { id: 'events', label: 'Events', icon: Calendar },
+    { id: 'bookings', label: 'Bookings', icon: BookOpen },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
