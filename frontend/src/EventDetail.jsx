@@ -1,0 +1,473 @@
+import React, { useState } from 'react';
+import SharedNavbar from './SharedNavbar';
+import SharedFooter from './SharedFooter';
+
+const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBack, onBookTickets }) => {
+  const [isTermsOpen, setIsTermsOpen] = useState(false);
+  if (!event) {
+    return (
+      <div style={{
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+        backgroundColor: isDark ? '#111827' : '#f8fafc',
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div style={{
+          textAlign: 'center',
+          color: isDark ? '#f9fafb' : '#111827'
+        }}>
+          <h2>Event not found</h2>
+          <button 
+            onClick={() => onNavigate('events')}
+            style={{
+              padding: '12px 24px',
+              backgroundColor: '#3b82f6',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              marginTop: '16px'
+            }}
+          >
+            Back to Events
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+      background: isDark ? 'linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)',
+      minHeight: '100vh',
+      width: '100%',
+      margin: 0,
+      padding: 0,
+      overflowX: 'hidden',
+      position: 'relative'
+    }}>
+      {/* Navbar */}
+      <SharedNavbar 
+        isDark={isDark}
+        setIsDark={setIsDark}
+        user={user}
+        onAuthOpen={onAuthOpen}
+        onProfileClick={onProfileClick}
+        onNavigate={onNavigate}
+        activePage="events"
+        searchOnly={true}
+      />
+
+      {/* Main Content */}
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '20px',
+        width: 'calc(100% - 40px)',
+        boxSizing: 'border-box',
+        overflowX: 'hidden'
+      }}>
+        {/* Back Button */}
+        <button 
+          onClick={onBack}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: 'transparent',
+            color: isDark ? '#f9fafb' : '#374151',
+            border: isDark ? '1px solid #4b5563' : '1px solid #d1d5db',
+            borderRadius: '6px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            marginBottom: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          ← Back
+        </button>
+
+        {/* Event Details Section */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: window.innerWidth > 768 ? '1fr 400px' : '1fr',
+          gap: '40px',
+          marginBottom: '40px'
+        }}>
+          {/* Left Section - Event Info */}
+          <div>
+            <div style={{
+              backgroundImage: `url(${event.image})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              borderRadius: '12px',
+              height: '400px',
+              marginBottom: '20px'
+            }}></div>
+
+            <h1 style={{
+              fontSize: '32px',
+              fontWeight: 'bold',
+              color: isDark ? '#f9fafb' : '#111827',
+              marginBottom: '12px'
+            }}>{event.title}</h1>
+
+            <div style={{
+              display: 'flex',
+              gap: '20px',
+              marginBottom: '20px',
+              fontSize: '14px',
+              color: isDark ? '#9ca3af' : '#6b7280'
+            }}>
+              <span>🎵 {event.category}</span>
+              <span>📍 {event.venue}</span>
+              <span>📅 {event.fullDate}</span>
+              <span>⏰ {event.time}</span>
+            </div>
+
+            {/* About the Event */}
+            <div style={{
+              backgroundColor: isDark ? '#1f2937' : 'white',
+              borderRadius: '12px',
+              padding: '24px',
+              marginBottom: '20px',
+              boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                color: isDark ? '#f9fafb' : '#111827',
+                marginBottom: '12px'
+              }}>About the Event</h3>
+              <p style={{
+                color: isDark ? '#d1d5db' : '#4b5563',
+                lineHeight: '1.6'
+              }}>
+                {event.type === 'event' ? (
+                  `Experience an unforgettable ${(event.category || 'entertainment').toLowerCase()} event with ${event.title}. 
+                  Join us for an amazing live performance that will create lasting memories. 
+                  Don't miss this incredible opportunity to witness world-class entertainment.`
+                ) : (
+                  `Watch ${event.title} in the best cinemas. This ${(event.category || 'movie').toLowerCase()} 
+                  promises to deliver an exceptional viewing experience with stunning visuals 
+                  and captivating storytelling that will keep you engaged throughout.`
+                )}
+              </p>
+            </div>
+          </div>
+
+          {/* Right Section - Booking Info */}
+          <div>
+            <div style={{
+              backgroundColor: isDark ? '#1f2937' : 'white',
+              borderRadius: '12px',
+              padding: '24px',
+              boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
+              position: 'sticky',
+              top: '100px'
+            }}>
+              <h2 style={{
+                fontSize: '24px',
+                fontWeight: 'bold',
+                color: isDark ? '#f9fafb' : '#111827',
+                marginBottom: '20px'
+              }}>{event.title}</h2>
+
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  marginBottom: '8px'
+                }}>
+                  <span style={{ fontSize: '16px' }}>🎵</span>
+                  <span style={{
+                    color: isDark ? '#d1d5db' : '#4b5563',
+                    fontSize: '14px'
+                  }}>{event.type === 'event' ? 'Live Event' : 'Movie'}, {event.category}</span>
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  marginBottom: '8px'
+                }}>
+                  <span style={{ fontSize: '16px' }}>📅</span>
+                  <span style={{
+                    color: isDark ? '#d1d5db' : '#4b5563',
+                    fontSize: '14px'
+                  }}>{event.fullDate}, {event.time}</span>
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  marginBottom: '20px'
+                }}>
+                  <span style={{ fontSize: '16px' }}>📍</span>
+                  <span style={{
+                    color: isDark ? '#d1d5db' : '#4b5563',
+                    fontSize: '14px'
+                  }}>{event.venue}</span>
+                </div>
+              </div>
+
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: '20px'
+              }}>
+                <span style={{
+                  color: isDark ? '#d1d5db' : '#4b5563',
+                  fontSize: '14px'
+                }}>Starts from</span>
+                <span style={{
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  color: event.price === 'FREE' ? '#10b981' : (isDark ? '#f9fafb' : '#111827')
+                }}>{event.price}</span>
+              </div>
+
+              <button 
+                onClick={() => onBookTickets && onBookTickets(event)}
+                style={{
+                width: '100%',
+                padding: '12px',
+                backgroundColor: '#dc2626',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#b91c1c'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#dc2626'}
+              >
+                BOOK TICKETS
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Event Guide Section */}
+        <div style={{
+          backgroundColor: isDark ? '#1f2937' : 'white',
+          borderRadius: '12px',
+          padding: '24px',
+          marginBottom: '20px',
+          boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h3 style={{
+            fontSize: '18px',
+            fontWeight: '600',
+            color: isDark ? '#f9fafb' : '#111827',
+            marginBottom: '20px'
+          }}>Event Information</h3>
+          
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '20px'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
+            }}>
+              <span style={{ fontSize: '20px' }}>🎵</span>
+              <div>
+                <h4 style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: isDark ? '#f9fafb' : '#111827',
+                  marginBottom: '4px'
+                }}>Category</h4>
+                <p style={{
+                  fontSize: '14px',
+                  color: isDark ? '#9ca3af' : '#6b7280'
+                }}>{event.category}</p>
+              </div>
+            </div>
+            
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
+            }}>
+              <span style={{ fontSize: '20px' }}>⏱️</span>
+              <div>
+                <h4 style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: isDark ? '#f9fafb' : '#111827',
+                  marginBottom: '4px'
+                }}>Duration</h4>
+                <p style={{
+                  fontSize: '14px',
+                  color: isDark ? '#9ca3af' : '#6b7280'
+                }}>{event.type === 'event' ? '2-3 hours' : '2h 30m'}</p>
+              </div>
+            </div>
+
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
+            }}>
+              <span style={{ fontSize: '20px' }}>🎫</span>
+              <div>
+                <h4 style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: isDark ? '#f9fafb' : '#111827',
+                  marginBottom: '4px'
+                }}>Booking</h4>
+                <p style={{
+                  fontSize: '14px',
+                  color: isDark ? '#9ca3af' : '#6b7280'
+                }}>Online & Offline</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Venue Section */}
+        <div style={{
+          backgroundColor: isDark ? '#1f2937' : 'white',
+          borderRadius: '12px',
+          padding: '24px',
+          marginBottom: '20px',
+          boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h3 style={{
+            fontSize: '18px',
+            fontWeight: '600',
+            color: isDark ? '#f9fafb' : '#111827',
+            marginBottom: '16px'
+          }}>Venue</h3>
+          
+          <div style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '16px'
+          }}>
+            <span style={{ fontSize: '20px', marginTop: '2px' }}>📍</span>
+            <div>
+              <h4 style={{
+                fontSize: '16px',
+                fontWeight: '600',
+                color: isDark ? '#f9fafb' : '#111827',
+                marginBottom: '8px'
+              }}>{event.venue}</h4>
+              <p style={{
+                fontSize: '14px',
+                color: isDark ? '#9ca3af' : '#6b7280',
+                lineHeight: '1.5',
+                marginBottom: '12px'
+              }}>
+                {event.venue}, Indore, Madhya Pradesh 452001<br/>
+                A premier venue for live events and entertainment with state-of-the-art facilities and excellent acoustics.
+              </p>
+              <div style={{
+                display: 'flex',
+                gap: '16px',
+                fontSize: '14px',
+                color: isDark ? '#9ca3af' : '#6b7280'
+              }}>
+                <span>🚗 Parking Available</span>
+                <span>🍽️ Food & Beverages</span>
+                <span>♿ Wheelchair Accessible</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Terms & Conditions Section */}
+        <div style={{
+          backgroundColor: isDark ? '#1f2937' : 'white',
+          borderRadius: '12px',
+          padding: '24px',
+          marginBottom: '20px',
+          boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
+        }}>
+          <div 
+            onClick={() => setIsTermsOpen(!isTermsOpen)}
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              cursor: 'pointer',
+              marginBottom: isTermsOpen ? '16px' : '0'
+            }}
+          >
+            <h3 style={{
+              fontSize: '18px',
+              fontWeight: '600',
+              color: isDark ? '#f9fafb' : '#111827',
+              margin: 0
+            }}>Terms & Conditions</h3>
+            <span style={{
+              fontSize: '20px',
+              color: isDark ? '#9ca3af' : '#6b7280',
+              transform: isTermsOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s'
+            }}>▼</span>
+          </div>
+          
+          {isTermsOpen && (
+            <ul style={{
+              listStyle: 'none',
+              padding: 0,
+              margin: 0,
+              fontSize: '14px',
+              color: isDark ? '#d1d5db' : '#4b5563',
+              lineHeight: '1.6'
+            }}>
+              <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                <span style={{ color: '#dc2626', marginTop: '2px' }}>•</span>
+                <span>Entry is subject to the terms and conditions of the venue</span>
+              </li>
+              <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                <span style={{ color: '#dc2626', marginTop: '2px' }}>•</span>
+                <span>No outside food, beverages, or professional cameras allowed</span>
+              </li>
+              <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                <span style={{ color: '#dc2626', marginTop: '2px' }}>•</span>
+                <span>Tickets once booked cannot be exchanged or refunded</span>
+              </li>
+              <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                <span style={{ color: '#dc2626', marginTop: '2px' }}>•</span>
+                <span>Entry is restricted for children below 5 years of age</span>
+              </li>
+              <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                <span style={{ color: '#dc2626', marginTop: '2px' }}>•</span>
+                <span>The organizer reserves the right to deny entry or eject any person</span>
+              </li>
+              <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                <span style={{ color: '#dc2626', marginTop: '2px' }}>•</span>
+                <span>Please carry a valid photo ID for verification at the venue</span>
+              </li>
+              <li style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                <span style={{ color: '#dc2626', marginTop: '2px' }}>•</span>
+                <span>Event timings are subject to change. Please check for updates</span>
+              </li>
+            </ul>
+          )}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <SharedFooter isDark={isDark} onNavigate={onNavigate} />
+    </div>
+  );
+};
+
+export default EventDetail;
