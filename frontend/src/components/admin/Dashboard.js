@@ -38,10 +38,10 @@ const Dashboard = () => {
   ];
 
   const topEvents = [
-    { name: 'Tech Conference 2024', bookings: 1250, revenue: '$375,000', platformFee: '$18,750' },
-    { name: 'Music Festival', bookings: 980, revenue: '$147,000', platformFee: '$7,350' },
-    { name: 'Business Summit', bookings: 750, revenue: '$337,500', platformFee: '$16,875' },
-    { name: 'Art Exhibition', bookings: 420, revenue: '$31,500', platformFee: '$1,650' }
+    { name: 'Tech Conference 2024', bookings: 1250, revenue: '₹375,000', platformFee: '₹18,750' },
+    { name: 'Music Festival', bookings: 980, revenue: '₹147,000', platformFee: '₹7,350' },
+    { name: 'Business Summit', bookings: 750, revenue: '₹337,500', platformFee: '₹16,875' },
+    { name: 'Art Exhibition', bookings: 420, revenue: '₹31,500', platformFee: '₹1,650' }
   ];
 
   return (
@@ -116,7 +116,7 @@ const Dashboard = () => {
               <div className="border-t pt-4 mt-4">
                 <div className="flex justify-between items-center">
                   <span className="font-semibold text-gray-900">Total Platform Revenue</span>
-                  <span className="font-bold text-green-600 text-lg">$44,625</span>
+                  <span className="font-bold text-green-600 text-lg">₹44,625</span>
                 </div>
               </div>
             </div>
