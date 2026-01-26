@@ -375,16 +375,20 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
             <button style={{
               width: '100%',
               padding: '16px',
-              backgroundColor: '#111827',
+              background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+              backgroundSize: '200% 200%',
+              animation: 'gradientMove 3s ease infinite',
               color: 'white',
-              border: 'none',
+              boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
               borderRadius: '8px',
               fontSize: '16px',
               fontWeight: '600',
               cursor: 'pointer',
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center'
+              alignItems: 'center',
+              transition: 'all 0.3s ease'
             }}
             onClick={() => {
               if (!user) {
@@ -403,6 +407,21 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
 
       {/* Footer */}
       <SharedFooter isDark={isDark} onNavigate={onNavigate} />
+      
+      {/* Gradient Animation Styles */}
+      <style>{`
+        @keyframes gradientMove {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+      `}</style>
     </div>
   );
 };

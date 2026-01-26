@@ -198,7 +198,7 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
                   width: '40px',
                   height: '40px',
                   borderRadius: '50%',
-                  backgroundColor: '#8b5cf6',
+                  backgroundColor: '#713bf0',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -236,7 +236,7 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
                 onClick={onAuthOpen}
                 style={{
                 padding: '10px 20px',
-                backgroundColor: '#8b5cf6',
+                background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
                 color: 'white',
                 border: 'none',
                 borderRadius: '8px',
@@ -247,11 +247,9 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
                 whiteSpace: 'nowrap'
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#7c3aed';
                 e.target.style.transform = 'scale(1.02)';
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#8b5cf6';
                 e.target.style.transform = 'scale(1)';
               }}
               >

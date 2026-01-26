@@ -234,19 +234,28 @@ const PaymentModal = ({ isOpen, onClose, totalAmount, onPayment }) => {
             style={{
               width: '100%',
               padding: '16px',
-              backgroundColor: '#1e293b',
+              background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+              backgroundSize: '200% 200%',
+              animation: 'gradientMove 3s ease infinite',
               color: 'white',
-              border: 'none',
+              boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
               borderRadius: '8px',
               fontSize: '16px',
               fontWeight: '600',
               cursor: 'pointer',
               textTransform: 'uppercase',
               letterSpacing: '0.5px',
-              transition: 'background-color 0.2s'
+              transition: 'all 0.3s ease'
             }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = '#0f172a'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = '#1e293b'}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+            }}
           >
             PAY ₹{totalAmount.toLocaleString()}
           </button>

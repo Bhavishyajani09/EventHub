@@ -7,11 +7,7 @@ import SunidhiChauhan from './assets/SunidhiChauhan.jpg';
 import KaranAujla from './assets/KaranAujla.jpg';
 import AadityaKullu from './assets/AadityaKulluKulshreshth.jpg';
 import KanhaKamboj from './assets/KanhaKamboj.jpg';
-import Border2 from './assets/Border2.jpg';
-import Dhurandhar from './assets/Dhurandhar.jpg';
-import RahuKetu from './assets/Rahu Ketu.jpg';
-import HappyPatel from './assets/Happy Patel Khatarnak Jasoos.jpg';
-import Sarfira from './assets/Sarfira.jpg';
+
 
 const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBookTickets, onMovieClick, onArtistClick }) => {
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
@@ -129,66 +125,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
       type: 'event',
       venue: 'Sayaji Hotel, Indore'
     },
-    { 
-      title: 'Border 2', 
-      location: 'INOX Nexus Mall', 
-      date: 'Now Showing', 
-      time: 'Multiple Shows',
-      fullDate: 'Daily',
-      price: '₹250', 
-      image: Border2, 
-      category: 'MOVIES', 
-      type: 'movie',
-      venue: 'INOX Nexus Mall, Indore'
-    },
-    { 
-      title: 'Dhurandhar', 
-      location: 'PVR Phoenix Mall', 
-      date: 'Now Showing', 
-      time: 'Multiple Shows',
-      fullDate: 'Daily',
-      price: '₹300', 
-      image: Dhurandhar, 
-      category: 'MOVIES', 
-      type: 'movie',
-      venue: 'PVR Phoenix Mall, Indore'
-    },
-    { 
-      title: 'Rahu Ketu', 
-      location: 'Cinepolis DB Mall', 
-      date: 'Now Showing', 
-      time: 'Multiple Shows',
-      fullDate: 'Daily',
-      price: '₹280', 
-      image: RahuKetu, 
-      category: 'MOVIES', 
-      type: 'movie',
-      venue: 'Cinepolis DB Mall, Indore'
-    },
-    { 
-      title: 'Happy Patel: Khatarnak Jasoos', 
-      location: 'Malhar Mega Mall', 
-      date: 'Now Showing', 
-      time: 'Multiple Shows',
-      fullDate: 'Daily',
-      price: '₹220', 
-      image: HappyPatel, 
-      category: 'MOVIES', 
-      type: 'movie',
-      venue: 'Malhar Mega Mall, Indore'
-    },
-    { 
-      title: 'Sarfira', 
-      location: 'Treasure Island Mall', 
-      date: 'Now Showing', 
-      time: 'Multiple Shows',
-      fullDate: 'Daily',
-      price: '₹350', 
-      image: Sarfira, 
-      category: 'MOVIES', 
-      type: 'movie',
-      venue: 'Treasure Island Mall, Indore'
-    }
+
   ];
 
   const [selectedCategory, setSelectedCategory] = useState('All Events');
@@ -500,20 +437,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           >
             All Events
           </button>
-          <button
-            onClick={() => filterEvents('MOVIES')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: selectedCategory === 'MOVIES' ? '#8b5cf6' : (isDark ? '#374151' : '#f3f4f6'),
-              color: selectedCategory === 'MOVIES' ? 'white' : (isDark ? '#f9fafb' : '#111827'),
-              border: 'none',
-              borderRadius: '20px',
-              fontSize: '14px',
-              cursor: 'pointer'
-            }}
-          >
-            MOVIES
-          </button>
+
           {exploreEvents.map((event, index) => (
             <button
               key={index}
@@ -616,12 +540,24 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                     }}
                     style={{
                     padding: '6px 12px',
-                    backgroundColor: '#8b5cf6',
+                    background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+                    backgroundSize: '200% 200%',
+                    animation: 'gradientMove 3s ease infinite',
                     color: 'white',
-                    border: 'none',
+                    boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
                     borderRadius: '6px',
                     fontSize: '12px',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
                   }}>
                     Book Now
                   </button>
@@ -649,6 +585,18 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
         html, body {
           width: 100%;
           height: 100%;
+        }
+        
+        @keyframes gradientMove {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
         }
       `}</style>
     </div>
