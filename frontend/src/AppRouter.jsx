@@ -199,7 +199,6 @@ function AppRouter() {
             onProfileClick={handleProfileClick}
             onNavigate={handleNavigate}
             onMovieClick={handleMovieClick}
-            onBookTickets={handleBookTickets}
           />
         );
       case 'events':

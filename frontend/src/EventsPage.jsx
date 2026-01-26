@@ -244,11 +244,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
-          height: '500px',
-          width: '100%',
-          maxWidth: '1200px',
-          margin: '0 auto'
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)'
         }}>
           {/* Left side - Text content */}
           <div style={{
