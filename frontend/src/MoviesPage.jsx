@@ -98,7 +98,9 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
 
   const handleMovieClick = (movie) => {
     if (onMovieClick) {
-      onMovieClick(movie);
+      // Add type property to ensure proper routing
+      const movieWithType = { ...movie, type: 'movie' };
+      onMovieClick(movieWithType);
     } else {
       setSelectedMovie(movie);
     }

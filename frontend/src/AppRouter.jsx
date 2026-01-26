@@ -122,12 +122,12 @@ function AppRouter() {
   const handleMovieClick = (item) => {
     // Check if it's a movie based on multiple criteria
     if (item.type === 'movie' || item.genre || (!item.type && !item.category)) {
-      setPreviousPage(currentPage); // Store current page before navigating
+      setPreviousPage(currentPage); // Use current page instead of hardcoding 'movies'
       setSelectedMovie(item);
       setCurrentPage('movieDetail');
       updateURL('movieDetail');
     } else {
-      setPreviousPage(currentPage); // Store current page before navigating
+      setPreviousPage(currentPage); // Use current page instead of hardcoding 'events'
       setSelectedEvent(item);
       setCurrentPage('eventDetail');
       updateURL('eventDetail');
@@ -142,10 +142,12 @@ function AppRouter() {
   };
 
   const handleBookTickets = (item) => {
-    // Both movies and events go to booking page first
-    if (item.type === 'movie') {
+    // Set previous page to the appropriate listing page
+    if (item.type === 'movie' || item.genre) {
+      setPreviousPage('movies');
       setSelectedMovie(item);
     } else {
+      setPreviousPage('events');
       setSelectedEvent(item);
     }
     setCurrentPage('booking');

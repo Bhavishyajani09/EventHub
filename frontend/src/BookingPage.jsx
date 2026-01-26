@@ -78,20 +78,18 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
           <button 
             onClick={onBack}
             style={{
-              padding: '8px 16px',
-              backgroundColor: 'transparent',
-              color: isDark ? '#f9fafb' : '#374151',
-              border: isDark ? '1px solid #4b5563' : '1px solid #d1d5db',
-              borderRadius: '6px',
+              background: '#f3f4f6',
+              border: '1px solid #e5e7eb',
+              borderRadius: '8px',
               fontSize: '14px',
+              color: '#374151',
               cursor: 'pointer',
-              marginBottom: '20px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
+              padding: '8px 16px',
+              fontWeight: '500',
+              marginBottom: '20px'
             }}
           >
-            ← Back to Movies
+            Back
           </button>
         </div>
         {/* Left Section */}

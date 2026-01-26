@@ -61,6 +61,21 @@ const PaymentModal = ({ isOpen, onClose, totalAmount, onPayment }) => {
           padding: '20px',
           borderBottom: '1px solid #e5e7eb'
         }}>
+          <button
+            onClick={onClose}
+            style={{
+              background: '#f3f4f6',
+              border: '1px solid #e5e7eb',
+              borderRadius: '8px',
+              fontSize: '14px',
+              color: '#374151',
+              cursor: 'pointer',
+              padding: '8px 16px',
+              fontWeight: '500'
+            }}
+          >
+            Back
+          </button>
           <h2 style={{
             fontSize: '20px',
             fontWeight: '600',
