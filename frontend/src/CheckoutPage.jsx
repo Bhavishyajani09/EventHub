@@ -45,7 +45,7 @@ const CheckoutPage = ({ event, selectedSection, quantity, isDark, setIsDark, use
               marginTop: '16px'
             }}
           >
-            Back
+            Back to Events
           </button>
         </div>
       </div>
@@ -114,7 +114,7 @@ const CheckoutPage = ({ event, selectedSection, quantity, isDark, setIsDark, use
             gap: '8px'
           }}
         >
-          Back
+          ← Back
         </button>
 
         {/* Step 1: Order Summary */}

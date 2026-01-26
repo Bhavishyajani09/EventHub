@@ -32,7 +32,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
               marginTop: '16px'
             }}
           >
-            Back
+            Back to Events
           </button>
         </div>
       </div>
@@ -88,7 +88,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
             gap: '8px'
           }}
         >
-          Back
+          ← Back
         </button>
 
         {/* Event Details Section */}

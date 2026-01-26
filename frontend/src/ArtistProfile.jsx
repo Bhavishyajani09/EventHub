@@ -107,7 +107,7 @@ const ArtistProfile = ({ artist, isDark, setIsDark, user, onAuthOpen, onProfileC
             gap: '8px'
           }}
         >
-          Back
+          ← Back
         </button>
 
         {/* Artist Header */}
