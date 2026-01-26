@@ -31,7 +31,7 @@ const TicketSelection = ({ event, selectedSection, isDark, setIsDark, user, onAu
               marginTop: '16px'
             }}
           >
-            Back to Events
+            Back
           </button>
         </div>
       </div>
@@ -98,7 +98,7 @@ const TicketSelection = ({ event, selectedSection, isDark, setIsDark, user, onAu
             alignSelf: 'flex-start'
           }}
         >
-          ← Back
+          Back
         </button>
 
         {/* Event Title */}

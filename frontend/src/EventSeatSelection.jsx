@@ -32,7 +32,7 @@ const EventSeatSelection = ({ event, isDark, setIsDark, user, onAuthOpen, onProf
               marginTop: '16px'
             }}
           >
-            Back to Events
+            Back
           </button>
         </div>
       </div>
@@ -99,7 +99,7 @@ const EventSeatSelection = ({ event, isDark, setIsDark, user, onAuthOpen, onProf
             gap: '8px'
           }}
         >
-          ← Back
+          Back
         </button>
 
         {/* Event Info */}

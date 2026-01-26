@@ -33,7 +33,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
               marginTop: '16px'
             }}
           >
-            Back to Movies
+            Back
           </button>
         </div>
       </div>
@@ -89,7 +89,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
             gap: '8px'
           }}
         >
-          ← Back
+          Back
         </button>
 
         {/* Movie Details Section */}

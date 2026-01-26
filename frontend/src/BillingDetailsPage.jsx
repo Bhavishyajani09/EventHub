@@ -77,7 +77,7 @@ const BillingDetailsPage = ({ event, selectedSection, quantity, isDark, setIsDar
               marginTop: '16px'
             }}
           >
-            Back to Events
+            Back
           </button>
         </div>
       </div>
@@ -146,7 +146,7 @@ const BillingDetailsPage = ({ event, selectedSection, quantity, isDark, setIsDar
             gap: '8px'
           }}
         >
-          ← Back
+          Back
         </button>
 
         {/* Step 1: Order Summary (Completed) */}

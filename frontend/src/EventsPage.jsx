@@ -480,7 +480,10 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
               overflow: 'hidden',
               boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
               cursor: 'pointer',
-              transition: 'transform 0.2s'
+              transition: 'transform 0.2s',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%'
             }}
             onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
             onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
@@ -491,7 +494,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
               }} />
-              <div style={{ padding: '16px' }}>
+              <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <div style={{
                   fontSize: '12px',
                   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -525,7 +528,8 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                 <div style={{
                   display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  marginTop: 'auto'
                 }}>
                   <span style={{
                     fontSize: '16px',

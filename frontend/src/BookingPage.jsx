@@ -38,7 +38,7 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
               marginTop: '16px'
             }}
           >
-            Back to Home
+            Back
           </button>
         </div>
       </div>
@@ -91,7 +91,7 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
               gap: '8px'
             }}
           >
-            ← Back to Movies
+            Back
           </button>
         </div>
         {/* Left Section */}
