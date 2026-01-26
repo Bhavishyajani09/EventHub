@@ -147,9 +147,9 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
 
       {/* Main Content */}
       <div style={{
-        maxWidth: '1200px',
+        maxWidth: '1400px',
         margin: '0 auto',
-        padding: '20px',
+        padding: '20px clamp(24px, 4vw, 32px) 32px',
         width: '100%',
         boxSizing: 'border-box'
       }}>

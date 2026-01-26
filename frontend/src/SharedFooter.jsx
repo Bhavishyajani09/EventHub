@@ -144,7 +144,7 @@ const SharedFooter = ({ isDark, onNavigate }) => {
             color: '#9ca3af',
             fontSize: '14px',
             margin: 0
-          }}>© 2024 EventHub. All rights reserved.</p>
+          }}>© 2026 EventHub. All rights reserved.</p>
           <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
             {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map((link, index) => (
               <a key={index} href="#" style={{

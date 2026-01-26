@@ -107,6 +107,7 @@ function AppRouter() {
     setCurrentPage(page);
     updateURL(page);
     setIsProfilePanelOpen(false);
+    setTimeout(() => window.scrollTo(0, 0), 0);
   };
 
   const handleProfileClick = () => {
@@ -126,6 +127,7 @@ function AppRouter() {
       setCurrentPage('eventDetail');
       updateURL('eventDetail');
     }
+    setTimeout(() => window.scrollTo(0, 0), 0);
   };
 
   const handleArtistClick = (artist) => {
@@ -133,6 +135,7 @@ function AppRouter() {
     setSelectedArtist(artist);
     setCurrentPage('artistProfile');
     updateURL('artistProfile');
+    window.scrollTo(0, 0);
   };
 
   const handleBookTickets = (item) => {
@@ -144,6 +147,7 @@ function AppRouter() {
     }
     setCurrentPage('booking');
     updateURL('booking');
+    setTimeout(() => window.scrollTo(0, 0), 0);
   };
 
   const handleProceedToBooking = (item, section) => {
@@ -155,6 +159,7 @@ function AppRouter() {
     setSelectedSection(section);
     setCurrentPage('ticketSelection');
     updateURL('ticketSelection');
+    window.scrollTo(0, 0);
   };
 
   const handleAddToCart = (item, section, quantity) => {
@@ -168,23 +173,27 @@ function AppRouter() {
     setSelectedQuantity(quantity);
     setCurrentPage('checkout');
     updateURL('checkout');
+    window.scrollTo(0, 0);
   };
 
   const handleGoToSeatSelection = () => {
     setCurrentPage('eventSeats');
     updateURL('eventSeats');
+    window.scrollTo(0, 0);
   };
 
   const handleBackToMovies = () => {
     setCurrentPage(previousPage); // Go back to previous page instead of always movies
     updateURL(previousPage);
     setSelectedMovie(null);
+    window.scrollTo(0, 0);
   };
 
   const handleBackToEvents = () => {
     setCurrentPage(previousPage); // Go back to previous page instead of always events
     updateURL(previousPage);
     setSelectedEvent(null);
+    window.scrollTo(0, 0);
   };
 
   const renderPage = () => {
@@ -257,6 +266,7 @@ function AppRouter() {
             onBack={() => {
               setCurrentPage('booking');
               updateURL('booking');
+              window.scrollTo(0, 0);
             }}
             onProceedToBooking={handleProceedToBooking}
           />
@@ -275,6 +285,7 @@ function AppRouter() {
             onBack={() => {
               setCurrentPage('eventSeats');
               updateURL('eventSeats');
+              window.scrollTo(0, 0);
             }}
             onAddToCart={handleAddToCart}
           />
@@ -296,10 +307,12 @@ function AppRouter() {
             onBack={() => {
               setCurrentPage('ticketSelection');
               updateURL('ticketSelection');
+              window.scrollTo(0, 0);
             }}
             onContinue={() => {
               setCurrentPage('billing');
               updateURL('billing');
+              window.scrollTo(0, 0);
             }}
           />
         );
@@ -318,6 +331,7 @@ function AppRouter() {
             onBack={() => {
               setCurrentPage('checkout');
               updateURL('checkout');
+              window.scrollTo(0, 0);
             }}
             onContinue={(billingData) => {
               // Handle continue to payment
@@ -339,6 +353,7 @@ function AppRouter() {
               setCurrentPage(previousPage);
               updateURL(previousPage);
               setSelectedArtist(null);
+              window.scrollTo(0, 0);
             }}
             onEventClick={handleMovieClick}
           />
@@ -364,6 +379,7 @@ function AppRouter() {
             onBack={() => {
               setCurrentPage('home');
               updateURL('home');
+              window.scrollTo(0, 0);
             }}
           />
         );
@@ -373,6 +389,7 @@ function AppRouter() {
             onBack={() => {
               setCurrentPage('home');
               updateURL('home');
+              window.scrollTo(0, 0);
             }}
           />
         );
@@ -382,6 +399,7 @@ function AppRouter() {
             onBack={() => {
               setCurrentPage('home');
               updateURL('home');
+              window.scrollTo(0, 0);
             }}
           />
         );
@@ -391,6 +409,7 @@ function AppRouter() {
             onBack={() => {
               setCurrentPage('home');
               updateURL('home');
+              window.scrollTo(0, 0);
             }}
             user={user}
             isDark={isDark}
@@ -450,21 +469,25 @@ function AppRouter() {
           setCurrentPage('bookings');
           updateURL('bookings');
           setIsProfileOpen(false);
+          window.scrollTo(0, 0);
         }}
         onNavigateToTerms={() => {
           setCurrentPage('terms');
           updateURL('terms');
           setIsProfileOpen(false);
+          window.scrollTo(0, 0);
         }}
         onNavigateToPrivacy={() => {
           setCurrentPage('privacy');
           updateURL('privacy');
           setIsProfileOpen(false);
+          window.scrollTo(0, 0);
         }}
         onNavigateToContact={() => {
           setCurrentPage('contact');
           updateURL('contact');
           setIsProfileOpen(false);
+          window.scrollTo(0, 0);
         }}
       />
     </div>
