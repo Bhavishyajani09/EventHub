@@ -169,7 +169,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
       }}>
         {/* Hero Section */}
         <div style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(${heroEvents[currentHeroIndex].image})`,
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${heroEvents[currentHeroIndex].image})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           borderRadius: '24px',
@@ -181,7 +181,10 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)'
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+          height: '500px',
+          overflow: 'hidden',
+          backdropFilter: 'blur(10px)'
         }}>
           {/* Left side - Text content */}
           <div style={{
@@ -230,14 +233,14 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           
           {/* Right side - Artist poster */}
           <div style={{
-            width: '250px',
-            height: '320px',
+            width: '200px',
+            height: '280px',
             borderRadius: '12px',
             backgroundImage: `url(${heroEvents[currentHeroIndex].image})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
-            border: '3px solid rgba(255, 255, 255, 0.2)'
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+            transition: 'all 0.5s ease'
           }} />
           
           {/* Navigation arrows */}

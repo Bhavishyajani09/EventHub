@@ -32,6 +32,12 @@ function AppRouter() {
   const [selectedSection, setSelectedSection] = useState(null);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
 
+  // Scroll to top whenever page changes
+  useEffect(() => {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [currentPage]);
+
   // Handle URL changes
   useEffect(() => {
     const path = window.location.pathname;
@@ -354,7 +360,10 @@ function AppRouter() {
             onAuthOpen={() => setIsAuthModalOpen(true)}
             onProfileClick={handleProfileClick}
             onNavigate={handleNavigate}
-            onBack={handleBackToMovies}
+            onBack={() => {
+              setCurrentPage(previousPage);
+              updateURL(previousPage);
+            }}
             onGoToSeatSelection={handleGoToSeatSelection}
           />
         );
