@@ -27,7 +27,7 @@ try {
   var RahuKetu = null;
 }
 
-const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick }) => {
+const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick, onBookTickets }) => {
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   const [selectedMovie, setSelectedMovie] = useState(null);
@@ -147,9 +147,9 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
 
       {/* Main Content */}
       <div style={{
-        maxWidth: '1400px',
+        maxWidth: '1200px',
         margin: '0 auto',
-        padding: '20px clamp(24px, 4vw, 32px) 32px',
+        padding: '20px',
         width: '100%',
         boxSizing: 'border-box'
       }}>
@@ -168,7 +168,7 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           justifyContent: 'space-between',
           transition: 'all 0.3s ease',
           backdropFilter: 'blur(10px)',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)'
+          height: '500px'
         }}>
           {/* Left Arrow */}
           <button onClick={() => setCurrentHeroIndex((prev) => (prev - 1 + heroMovies.length) % heroMovies.length)} style={{
@@ -228,17 +228,26 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
               lineHeight: '1.6',
               textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
             }}>{heroMovies[currentHeroIndex].rating} | {heroMovies[currentHeroIndex].genre}</p>
-            <button style={{
-              padding: '12px 32px',
+            <button 
+              onClick={() => {
+                if (onBookTickets) {
+                  onBookTickets(heroMovies[currentHeroIndex]);
+                }
+              }}
+              style={{
+              padding: '12px 24px',
               backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              color: '#1f2937',
+              color: '#000',
               border: 'none',
-              borderRadius: '25px',
+              borderRadius: '8px',
               fontSize: '16px',
               fontWeight: '600',
               cursor: 'pointer',
-              backdropFilter: 'blur(10px)'
-            }}>
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => e.target.style.backgroundColor = 'white'}
+            onMouseLeave={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'}
+            >
               Book now
             </button>
           </div>
