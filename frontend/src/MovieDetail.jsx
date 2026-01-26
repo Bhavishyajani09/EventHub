@@ -330,11 +330,11 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
                   fontWeight: '600',
                   color: isDark ? '#f9fafb' : '#111827',
                   marginBottom: '4px'
-                }}>Tickets Needed For</h4>
+                }}>Age Restriction</h4>
                 <p style={{
                   fontSize: '14px',
                   color: isDark ? '#9ca3af' : '#6b7280'
-                }}>18 yrs & above</p>
+                }}>18+ Only</p>
               </div>
             </div>
           </div>
@@ -355,36 +355,17 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
             marginBottom: '16px'
           }}>Venue</h3>
           
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start'
-          }}>
-            <div>
-              <h4 style={{
-                fontSize: '16px',
-                fontWeight: '600',
-                color: isDark ? '#f9fafb' : '#111827',
-                marginBottom: '4px'
-              }}>Phoenix Citadel Mall</h4>
-              <p style={{
-                color: isDark ? '#9ca3af' : '#6b7280',
-                fontSize: '14px'
-              }}>MR 10 Rd. Junction, Indore, Madhya Pradesh 452016, India</p>
-            </div>
-            
-            <button style={{
-              padding: '8px 16px',
-              backgroundColor: 'transparent',
-              color: '#3b82f6',
-              border: '1px solid #3b82f6',
-              borderRadius: '6px',
-              fontSize: '14px',
-              cursor: 'pointer',
-              fontWeight: '500'
-            }}>
-              GET DIRECTIONS
-            </button>
+          <div>
+            <h4 style={{
+              fontSize: '16px',
+              fontWeight: '600',
+              color: isDark ? '#f9fafb' : '#111827',
+              marginBottom: '4px'
+            }}>Phoenix Citadel Mall</h4>
+            <p style={{
+              color: isDark ? '#9ca3af' : '#6b7280',
+              fontSize: '14px'
+            }}>MR 10 Rd. Junction, Indore, Madhya Pradesh 452016, India</p>
           </div>
         </div>
 

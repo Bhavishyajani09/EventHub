@@ -232,8 +232,12 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                   />
                 </div>
                 <button style={{
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+                  backgroundSize: '200% 200%',
+                  animation: 'gradientMove 3s ease infinite',
                   color: 'white',
+                  boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
                   border: 'none',
                   borderRadius: '12px',
                   padding: '14px 24px',
@@ -328,17 +332,26 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                     style={{
                       width: '100%',
                       padding: '8px 16px',
-                      backgroundColor: '#dc2626',
+                      background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+                      backgroundSize: '200% 200%',
+                      animation: 'gradientMove 3s ease infinite',
                       color: 'white',
-                      border: 'none',
+                      boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
                       borderRadius: '6px',
                       fontSize: '12px',
                       fontWeight: '600',
                       cursor: 'pointer',
-                      transition: 'background-color 0.2s'
+                      transition: 'all 0.3s ease'
                     }}
-                    onMouseEnter={(e) => e.target.style.backgroundColor = '#b91c1c'}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = '#dc2626'}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                    }}
                   >
                     Book Tickets
                   </button>
@@ -404,7 +417,9 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
 
           {/* Newsletter Section */}
           <div style={{
-            background: 'linear-gradient(90deg, #a855f7 0%, #7c3aed 100%)',
+            background: 'linear-gradient(135deg, #a855f7 0%, #7c3aed 25%, #8b5cf6 50%, #6366f1 75%, #a855f7 100%)',
+            backgroundSize: '200% 200%',
+            animation: 'gradientMove 4s ease infinite',
             borderRadius: '20px',
             padding: 'clamp(40px, 8vw, 60px)',
             marginBottom: 'clamp(32px, 6vw, 48px)',
@@ -454,24 +469,26 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
               />
               <button style={{
                 padding: '16px 32px',
-                backgroundColor: '#000000',
+                background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+                backgroundSize: '200% 200%',
+                animation: 'gradientMove 3s ease infinite',
                 color: 'white',
-                border: 'none',
+                boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
                 borderRadius: '12px',
                 fontSize: '16px',
                 fontWeight: '600',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
-                whiteSpace: 'nowrap',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
+                whiteSpace: 'nowrap'
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#1f2937';
                 e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#000000';
                 e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
               }}
               >
                 Subscribe
@@ -518,6 +535,19 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
           width: 100%;
           height: 100%;
         }
+        
+        @keyframes gradientMove {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+        
         @media (max-width: 768px) {
           nav > div > div {
             flex-direction: column;

@@ -207,7 +207,11 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
     <div style={{
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       background: isDark ? 'linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)',
-      minHeight: '100vh'
+      minHeight: '100vh',
+      width: '100vw',
+      margin: 0,
+      padding: 0,
+      overflowX: 'hidden'
     }}>
       <SharedNavbar 
         isDark={isDark}
@@ -220,9 +224,11 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
       />
 
       <div style={{
-        maxWidth: '1200px',
+        maxWidth: '1400px',
         margin: '0 auto',
-        padding: '20px'
+        padding: '20px clamp(24px, 4vw, 32px) 32px',
+        width: '100%',
+        boxSizing: 'border-box'
       }}>
         {/* Hero Section */}
         <div style={{
@@ -627,6 +633,24 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
       </div>
 
       <SharedFooter isDark={isDark} onNavigate={onNavigate} />
+
+      {/* Global CSS Reset */}
+      <style>{`
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+        body {
+          margin: 0;
+          padding: 0;
+          overflow-x: hidden;
+        }
+        html, body {
+          width: 100%;
+          height: 100%;
+        }
+      `}</style>
     </div>
   );
 };
