@@ -1,4 +1,5 @@
 import React from 'react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 
 const SharedFooter = ({ isDark, onNavigate }) => {
   return (
@@ -116,9 +117,15 @@ const SharedFooter = ({ isDark, onNavigate }) => {
               color: 'white'
             }}>Contact</h4>
             <div style={{ color: '#d1d5db', fontSize: '14px', lineHeight: '1.6' }}>
-              <p style={{ marginBottom: '8px' }}>📧 support@eventhub.com</p>
-              <p style={{ marginBottom: '8px' }}>📞 +91 98765 43210</p>
-              <p style={{ marginBottom: '8px' }}>📍 Indore, Madhya Pradesh</p>
+              <p style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Mail size={16} /> support@eventhub.com
+              </p>
+              <p style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Phone size={16} /> +91 98765 43210
+              </p>
+              <p style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <MapPin size={16} /> Indore, Madhya Pradesh
+              </p>
             </div>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Sun, Moon, User } from 'lucide-react';
 
 const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, activePage = 'home', hideNavigation = false, searchOnly = false, pageTitle }) => {
   return (
@@ -174,10 +175,13 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
                 borderRadius: '8px',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
-                color: isDark ? '#f9fafb' : '#374151'
+                color: isDark ? '#f9fafb' : '#374151',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
             >
-              {isDark ? '☀️' : '🌙'}
+              {isDark ? <Sun size={18} /> : <Moon size={18} />}
             </button>
 
             {/* Login/Profile Section */}
@@ -194,22 +198,22 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
                   width: '40px',
                   height: '40px',
                   borderRadius: '50%',
-                  backgroundColor: '#3b82f6',
+                  backgroundColor: '#8b5cf6',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
-                  boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
+                  boxShadow: '0 2px 8px rgba(139, 92, 246, 0.3)',
                   border: '2px solid transparent'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = '#2563eb';
+                  e.target.style.backgroundColor = '#7c3aed';
                   e.target.style.transform = 'scale(1.05)';
-                  e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+                  e.target.style.borderColor = 'rgba(139, 92, 246, 0.5)';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = '#3b82f6';
+                  e.target.style.backgroundColor = '#8b5cf6';
                   e.target.style.transform = 'scale(1)';
                   e.target.style.borderColor = 'transparent';
                 }}
@@ -218,9 +222,12 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
                   <span style={{
                     color: 'white',
                     fontSize: '16px',
-                    fontWeight: '600'
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}>
-                    {user.name ? user.name.charAt(0).toUpperCase() : '👤'}
+                    {user.name ? user.name.charAt(0).toUpperCase() : <User size={18} />}
                   </span>
                 </div>
               </div>
@@ -229,7 +236,7 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
                 onClick={onAuthOpen}
                 style={{
                 padding: '10px 20px',
-                backgroundColor: '#3b82f6',
+                backgroundColor: '#8b5cf6',
                 color: 'white',
                 border: 'none',
                 borderRadius: '8px',
@@ -240,11 +247,11 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
                 whiteSpace: 'nowrap'
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#2563eb';
+                e.target.style.backgroundColor = '#7c3aed';
                 e.target.style.transform = 'scale(1.02)';
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#3b82f6';
+                e.target.style.backgroundColor = '#8b5cf6';
                 e.target.style.transform = 'scale(1)';
               }}
               >

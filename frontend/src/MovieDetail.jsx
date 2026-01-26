@@ -1,4 +1,5 @@
 import React from 'react';
+import { Palette, Globe, Clock, Film, Calendar, MapPin, Ticket, ChevronDown } from 'lucide-react';
 import SharedNavbar from './SharedNavbar';
 import SharedFooter from './SharedFooter';
 
@@ -123,9 +124,15 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
               fontSize: '14px',
               color: isDark ? '#9ca3af' : '#6b7280'
             }}>
-              <span>🎭 {movie.genre}</span>
-              <span>🌐 {movie.language}</span>
-              <span>⏱️ 2h 30m</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Palette size={16} /> {movie.genre}
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Globe size={16} /> {movie.language}
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Clock size={16} /> 2h 30m
+              </span>
             </div>
 
             {/* About the Event */}
@@ -177,7 +184,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
                   gap: '8px',
                   marginBottom: '8px'
                 }}>
-                  <span style={{ fontSize: '16px' }}>🎬</span>
+                  <Film size={16} />
                   <span style={{
                     color: isDark ? '#d1d5db' : '#4b5563',
                     fontSize: '14px'
@@ -190,7 +197,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
                   gap: '8px',
                   marginBottom: '8px'
                 }}>
-                  <span style={{ fontSize: '16px' }}>📅</span>
+                  <Calendar size={16} />
                   <span style={{
                     color: isDark ? '#d1d5db' : '#4b5563',
                     fontSize: '14px'
@@ -203,7 +210,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
                   gap: '8px',
                   marginBottom: '20px'
                 }}>
-                  <span style={{ fontSize: '16px' }}>📍</span>
+                  <MapPin size={16} />
                   <span style={{
                     color: isDark ? '#d1d5db' : '#4b5563',
                     fontSize: '14px'
@@ -276,7 +283,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
               alignItems: 'center',
               gap: '12px'
             }}>
-              <span style={{ fontSize: '20px' }}>🌐</span>
+              <Globe size={20} />
               <div>
                 <h4 style={{
                   fontSize: '14px',
@@ -296,7 +303,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
               alignItems: 'center',
               gap: '12px'
             }}>
-              <span style={{ fontSize: '20px' }}>⏱️</span>
+              <Clock size={20} />
               <div>
                 <h4 style={{
                   fontSize: '14px',
@@ -316,7 +323,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
               alignItems: 'center',
               gap: '12px'
             }}>
-              <span style={{ fontSize: '20px' }}>🎫</span>
+              <Ticket size={20} />
               <div>
                 <h4 style={{
                   fontSize: '14px',
@@ -403,12 +410,14 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
               fontWeight: '600',
               color: isDark ? '#f9fafb' : '#111827'
             }}>Terms & Conditions</h3>
-            <span style={{
-              color: isDark ? '#9ca3af' : '#6b7280',
-              fontSize: '18px',
-              transform: isTermsOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-              transition: 'transform 0.2s ease'
-            }}>⌄</span>
+            <ChevronDown 
+              size={18}
+              style={{
+                color: isDark ? '#9ca3af' : '#6b7280',
+                transform: isTermsOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s ease'
+              }}
+            />
           </div>
           
           <div style={{

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Music, MapPin, Calendar, Clock, Ticket, Car, UtensilsCrossed, Accessibility, ChevronDown } from 'lucide-react';
 import SharedNavbar from './SharedNavbar';
 import SharedFooter from './SharedFooter';
 
@@ -23,7 +24,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
             onClick={() => onNavigate('events')}
             style={{
               padding: '12px 24px',
-              backgroundColor: '#3b82f6',
+              backgroundColor: '#8b5cf6',
               color: 'white',
               border: 'none',
               borderRadius: '8px',
@@ -122,10 +123,18 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
               fontSize: '14px',
               color: isDark ? '#9ca3af' : '#6b7280'
             }}>
-              <span>🎵 {event.category}</span>
-              <span>📍 {event.venue}</span>
-              <span>📅 {event.fullDate}</span>
-              <span>⏰ {event.time}</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Music size={16} /> {event.category}
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <MapPin size={16} /> {event.venue}
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Calendar size={16} /> {event.fullDate}
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Clock size={16} /> {event.time}
+              </span>
             </div>
 
             {/* About the Event */}
@@ -183,7 +192,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
                   gap: '8px',
                   marginBottom: '8px'
                 }}>
-                  <span style={{ fontSize: '16px' }}>🎵</span>
+                  <Music size={16} />
                   <span style={{
                     color: isDark ? '#d1d5db' : '#4b5563',
                     fontSize: '14px'
@@ -196,7 +205,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
                   gap: '8px',
                   marginBottom: '8px'
                 }}>
-                  <span style={{ fontSize: '16px' }}>📅</span>
+                  <Calendar size={16} />
                   <span style={{
                     color: isDark ? '#d1d5db' : '#4b5563',
                     fontSize: '14px'
@@ -209,7 +218,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
                   gap: '8px',
                   marginBottom: '20px'
                 }}>
-                  <span style={{ fontSize: '16px' }}>📍</span>
+                  <MapPin size={16} />
                   <span style={{
                     color: isDark ? '#d1d5db' : '#4b5563',
                     fontSize: '14px'
@@ -282,7 +291,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
               alignItems: 'center',
               gap: '12px'
             }}>
-              <span style={{ fontSize: '20px' }}>🎵</span>
+              <Music size={20} />
               <div>
                 <h4 style={{
                   fontSize: '14px',
@@ -302,7 +311,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
               alignItems: 'center',
               gap: '12px'
             }}>
-              <span style={{ fontSize: '20px' }}>⏱️</span>
+              <Clock size={20} />
               <div>
                 <h4 style={{
                   fontSize: '14px',
@@ -322,7 +331,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
               alignItems: 'center',
               gap: '12px'
             }}>
-              <span style={{ fontSize: '20px' }}>🎫</span>
+              <Ticket size={20} />
               <div>
                 <h4 style={{
                   fontSize: '14px',
@@ -359,7 +368,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
             alignItems: 'flex-start',
             gap: '16px'
           }}>
-            <span style={{ fontSize: '20px', marginTop: '2px' }}>📍</span>
+            <MapPin size={20} style={{ marginTop: '2px' }} />
             <div>
               <h4 style={{
                 fontSize: '16px',
@@ -382,9 +391,15 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
                 fontSize: '14px',
                 color: isDark ? '#9ca3af' : '#6b7280'
               }}>
-                <span>🚗 Parking Available</span>
-                <span>🍽️ Food & Beverages</span>
-                <span>♿ Wheelchair Accessible</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Car size={14} /> Parking Available
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <UtensilsCrossed size={14} /> Food & Beverages
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Accessibility size={14} /> Wheelchair Accessible
+                </span>
               </div>
             </div>
           </div>
@@ -414,12 +429,14 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
               color: isDark ? '#f9fafb' : '#111827',
               margin: 0
             }}>Terms & Conditions</h3>
-            <span style={{
-              fontSize: '20px',
-              color: isDark ? '#9ca3af' : '#6b7280',
-              transform: isTermsOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-              transition: 'transform 0.2s'
-            }}>▼</span>
+            <ChevronDown 
+              size={20}
+              style={{
+                color: isDark ? '#9ca3af' : '#6b7280',
+                transform: isTermsOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s'
+              }}
+            />
           </div>
           
           {isTermsOpen && (

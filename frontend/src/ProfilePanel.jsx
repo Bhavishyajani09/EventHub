@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { User, BarChart3, Ticket, Heart, Settings, HelpCircle, Star, LogOut } from 'lucide-react';
 
 const ProfilePanel = ({ user, isOpen, onClose, onLogout, onNavigate, isDark }) => {
   const [activeItem, setActiveItem] = useState('dashboard');
   const panelRef = useRef(null);
 
   const menuItems = [
-    { id: 'profile', label: 'Profile', icon: '👤' },
-    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-    { id: 'bookings', label: 'My Bookings', icon: '🎫' },
-    { id: 'wishlist', label: 'Wishlist', icon: '❤️' },
-    { id: 'settings', label: 'Settings', icon: '⚙️' },
-    { id: 'help', label: 'Help Center', icon: '❓' },
+    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
+    { id: 'bookings', label: 'My Bookings', icon: Ticket },
+    { id: 'wishlist', label: 'Wishlist', icon: Heart },
+    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'help', label: 'Help Center', icon: HelpCircle },
   ];
 
   // Close panel when clicking outside
@@ -106,7 +107,7 @@ const ProfilePanel = ({ user, isOpen, onClose, onLogout, onNavigate, isDark }) =
               fontWeight: '600',
               border: '3px solid rgba(255, 255, 255, 0.3)'
             }}>
-              {user?.name ? user.name.charAt(0).toUpperCase() : '👤'}
+              {user?.name ? user.name.charAt(0).toUpperCase() : <User size={24} />}
             </div>
             
             {/* User Info */}
@@ -126,9 +127,13 @@ const ProfilePanel = ({ user, isOpen, onClose, onLogout, onNavigate, isDark }) =
                 borderRadius: '12px',
                 fontSize: '12px',
                 fontWeight: '500',
-                backdropFilter: 'blur(10px)'
+                backdropFilter: 'blur(10px)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
               }}>
-                ⭐ Premium Member
+                <Star size={12} fill="currentColor" />
+                Premium Member
               </div>
             </div>
 
@@ -185,11 +190,13 @@ const ProfilePanel = ({ user, isOpen, onClose, onLogout, onNavigate, isDark }) =
               }}
             >
               <span style={{
-                fontSize: '20px',
                 width: '24px',
-                textAlign: 'center'
+                textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}>
-                {item.icon}
+                <item.icon size={20} />
               </span>
               <span style={{
                 fontSize: '16px',
@@ -239,11 +246,13 @@ const ProfilePanel = ({ user, isOpen, onClose, onLogout, onNavigate, isDark }) =
             }}
           >
             <span style={{
-              fontSize: '20px',
               width: '24px',
-              textAlign: 'center'
+              textAlign: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
             }}>
-              🚪
+              <LogOut size={20} />
             </span>
             <span style={{
               fontSize: '16px',

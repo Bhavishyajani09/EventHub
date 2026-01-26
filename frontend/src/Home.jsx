@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Sparkles, Search } from 'lucide-react';
 import Border2 from './assets/Border2.jpg';
 import Dhurandhar from './assets/Dhurandhar.jpg';
 import RahuKetu from './assets/Rahu Ketu.jpg';
@@ -138,8 +139,14 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                 <span style={{
                   fontSize: '14px',
                   color: 'white',
-                  fontWeight: '500'
-                }}>🎉 Discover Amazing Events</span>
+                  fontWeight: '500',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}>
+                  <Sparkles size={16} />
+                  Discover Amazing Events
+                </span>
               </div>
               <h1 style={{
                 fontSize: 'clamp(32px, 7vw, 56px)',
@@ -241,7 +248,14 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                   e.target.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
                 }}
                 >
-                  🔍 Explore Events
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    <Search size={18} />
+                    Explore Events
+                  </div>
                 </button>
               </div>
             </div>
@@ -385,7 +399,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
 
           {/* Newsletter Section */}
           <div style={{
-            background: 'linear-gradient(90deg, #60a5fa 0%, #1d4ed8 100%)',
+            background: 'linear-gradient(90deg, #a855f7 0%, #7c3aed 100%)',
             borderRadius: '20px',
             padding: 'clamp(40px, 8vw, 60px)',
             marginBottom: 'clamp(32px, 6vw, 48px)',
@@ -394,7 +408,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
             justifyContent: 'space-between',
             flexWrap: 'wrap',
             gap: '32px',
-            boxShadow: '0 10px 30px rgba(29, 78, 216, 0.2)'
+            boxShadow: '0 10px 30px rgba(124, 58, 237, 0.2)'
           }}>
             <div style={{ flex: 1, minWidth: '320px' }}>
               <h3 style={{

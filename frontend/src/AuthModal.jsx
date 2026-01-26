@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 
 const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
   const [currentScreen, setCurrentScreen] = useState('register');
@@ -253,7 +254,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                 }}
                 onFocus={(e) => {
                   if (!errors.fullName) {
-                    e.target.style.borderColor = '#3b82f6';
+                    e.target.style.borderColor = '#8b5cf6';
                   }
                   e.target.style.backgroundColor = 'white';
                 }}
@@ -293,7 +294,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
               }}
               onFocus={(e) => {
                 if (!errors.email) {
-                  e.target.style.borderColor = '#3b82f6';
+                  e.target.style.borderColor = '#8b5cf6';
                 }
                 e.target.style.backgroundColor = 'white';
               }}
@@ -333,7 +334,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                 }}
                 onFocus={(e) => {
                   if (!errors.password) {
-                    e.target.style.borderColor = '#3b82f6';
+                    e.target.style.borderColor = '#8b5cf6';
                   }
                   e.target.style.backgroundColor = 'white';
                 }}
@@ -355,12 +356,14 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  fontSize: '18px',
                   color: '#6b7280',
-                  padding: '4px'
+                  padding: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
               >
-                {showPassword ? '🙈' : '👁️'}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
               {errors.password && (
                 <p style={{ color: '#ef4444', fontSize: '14px', margin: '4px 0 0 0' }}>
@@ -377,7 +380,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
             style={{
               width: '100%',
               padding: '16px',
-              backgroundColor: isLoading ? '#9ca3af' : '#3b82f6',
+              backgroundColor: isLoading ? '#9ca3af' : '#8b5cf6',
               color: 'white',
               border: 'none',
               borderRadius: '12px',
@@ -385,20 +388,20 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
               fontWeight: '600',
               cursor: isLoading ? 'not-allowed' : 'pointer',
               transition: 'all 0.2s',
-              boxShadow: isLoading ? 'none' : '0 4px 12px rgba(59, 130, 246, 0.4)'
+              boxShadow: isLoading ? 'none' : '0 4px 12px rgba(139, 92, 246, 0.4)'
             }}
             onMouseEnter={(e) => {
               if (!isLoading) {
-                e.target.style.backgroundColor = '#2563eb';
+                e.target.style.backgroundColor = '#7c3aed';
                 e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.6)';
+                e.target.style.boxShadow = '0 6px 20px rgba(139, 92, 246, 0.6)';
               }
             }}
             onMouseLeave={(e) => {
               if (!isLoading) {
-                e.target.style.backgroundColor = '#3b82f6';
+                e.target.style.backgroundColor = '#8b5cf6';
                 e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+                e.target.style.boxShadow = '0 4px 12px rgba(139, 92, 246, 0.4)';
               }
             }}
           >
@@ -419,7 +422,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#3b82f6',
+                  color: '#8b5cf6',
                   fontSize: '14px',
                   cursor: 'pointer',
                   textDecoration: 'underline',
@@ -435,7 +438,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: '#3b82f6',
+                    color: '#8b5cf6',
                     fontSize: '14px',
                     cursor: 'pointer',
                     textDecoration: 'underline',
@@ -456,7 +459,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#3b82f6',
+                  color: '#8b5cf6',
                   fontSize: '14px',
                   cursor: 'pointer',
                   textDecoration: 'underline',
@@ -474,7 +477,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#3b82f6',
+                color: '#8b5cf6',
                 fontSize: '14px',
                 cursor: 'pointer',
                 textDecoration: 'underline'

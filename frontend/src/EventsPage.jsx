@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Music, Laugh, Zap, Palette, Calendar, Clock } from 'lucide-react';
 import SharedNavbar from './SharedNavbar';
 import SharedFooter from './SharedFooter';
 import SonuNigam from './assets/SonuNigam.jpg';
@@ -64,14 +65,11 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
   }, [heroEvents.length]);
 
   const exploreEvents = [
-    { name: 'MUSIC', icon: '🎵', color: '#f59e0b' },
-    { name: 'NIGHTLIFE', icon: '🌙', color: '#8b5cf6' },
-    { name: 'COMEDY', icon: '😂', color: '#ef4444' },
-    { name: 'SPORTS', icon: '⚽', color: '#10b981' },
-    { name: 'PERFORMING ARTS', icon: '🎭', color: '#f97316' },
-    { name: 'FOOD & DRINKS', icon: '🍽️', color: '#06b6d4' },
-    { name: 'TRAVEL', icon: '✈️', color: '#84cc16' },
-    { name: 'CONFERENCES', icon: '💼', color: '#6366f1' }
+    { name: 'MUSIC', icon: Music, color: '#f59e0b' },
+    { name: 'COMEDY', icon: Laugh, color: '#ef4444' },
+    { name: 'SPORTS', icon: Zap, color: '#10b981' },
+    { name: 'ART EXHIBITIONS', icon: Palette, color: '#8b5cf6' },
+    { name: 'SEASONAL EVENTS', icon: Calendar, color: '#f97316' }
   ];
 
   const artists = [
@@ -401,8 +399,13 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
             >
               <div style={{
                 fontSize: '32px',
-                marginBottom: '8px'
-              }}>{event.icon}</div>
+                marginBottom: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <event.icon size={32} color={event.color} />
+              </div>
               <h4 style={{
                 fontSize: '12px',
                 fontWeight: '600',
@@ -481,7 +484,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
             onClick={() => filterEvents('All Events')}
             style={{
               padding: '8px 16px',
-              backgroundColor: selectedCategory === 'All Events' ? '#3b82f6' : (isDark ? '#374151' : '#f3f4f6'),
+              backgroundColor: selectedCategory === 'All Events' ? '#8b5cf6' : (isDark ? '#374151' : '#f3f4f6'),
               color: selectedCategory === 'All Events' ? 'white' : (isDark ? '#f9fafb' : '#111827'),
               border: 'none',
               borderRadius: '20px',
@@ -495,7 +498,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
             onClick={() => filterEvents('MOVIES')}
             style={{
               padding: '8px 16px',
-              backgroundColor: selectedCategory === 'MOVIES' ? '#3b82f6' : (isDark ? '#374151' : '#f3f4f6'),
+              backgroundColor: selectedCategory === 'MOVIES' ? '#8b5cf6' : (isDark ? '#374151' : '#f3f4f6'),
               color: selectedCategory === 'MOVIES' ? 'white' : (isDark ? '#f9fafb' : '#111827'),
               border: 'none',
               borderRadius: '20px',
@@ -505,13 +508,13 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           >
             MOVIES
           </button>
-          {exploreEvents.slice(0, 5).map((event, index) => (
+          {exploreEvents.map((event, index) => (
             <button
               key={index}
               onClick={() => filterEvents(event.name)}
               style={{
                 padding: '8px 16px',
-                backgroundColor: selectedCategory === event.name ? '#3b82f6' : (isDark ? '#374151' : '#f3f4f6'),
+                backgroundColor: selectedCategory === event.name ? '#8b5cf6' : (isDark ? '#374151' : '#f3f4f6'),
                 color: selectedCategory === event.name ? 'white' : (isDark ? '#f9fafb' : '#111827'),
                 border: 'none',
                 borderRadius: '20px',
@@ -558,10 +561,19 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
               <div style={{ padding: '16px' }}>
                 <div style={{
                   fontSize: '12px',
-                  color: '#ef4444',
-                  fontWeight: '600',
-                  marginBottom: '4px'
-                }}>{event.fullDate}, {event.time}</div>
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  fontWeight: '700',
+                  marginBottom: '6px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}>
+                  <Clock size={12} style={{ color: '#667eea' }} />
+                  {event.fullDate}, {event.time}
+                </div>
                 
                 <h3 style={{
                   fontSize: '16px',
@@ -598,7 +610,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                     }}
                     style={{
                     padding: '6px 12px',
-                    backgroundColor: '#3b82f6',
+                    backgroundColor: '#8b5cf6',
                     color: 'white',
                     border: 'none',
                     borderRadius: '6px',

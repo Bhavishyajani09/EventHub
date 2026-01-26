@@ -30,7 +30,7 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
             onClick={() => onNavigate('home')}
             style={{
               padding: '12px 24px',
-              backgroundColor: '#3b82f6',
+              backgroundColor: '#8b5cf6',
               color: 'white',
               border: 'none',
               borderRadius: '8px',
@@ -217,7 +217,7 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
                 color: isDark ? '#f9fafb' : '#111827'
               }}>Food and beverages</h4>
               <button style={{
-                color: '#3b82f6',
+                color: '#8b5cf6',
                 background: 'none',
                 border: 'none',
                 fontSize: '14px',
@@ -261,7 +261,7 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
                     }}>{item.price}</span>
                     <button style={{
                       padding: '4px 12px',
-                      backgroundColor: '#3b82f6',
+                      backgroundColor: '#8b5cf6',
                       color: 'white',
                       border: 'none',
                       borderRadius: '4px',
@@ -366,7 +366,7 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
                     width: '40px',
                     height: '40px',
                     borderRadius: '50%',
-                    backgroundColor: '#3b82f6',
+                    backgroundColor: '#8b5cf6',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -415,7 +415,7 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
                   onClick={onAuthOpen}
                   style={{
                     padding: '8px 16px',
-                    backgroundColor: '#3b82f6',
+                    backgroundColor: '#8b5cf6',
                     color: 'white',
                     border: 'none',
                     borderRadius: '6px',

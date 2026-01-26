@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Film } from 'lucide-react';
 import Dhurandhar from './assets/Dhurandhar.jpg';
 import Border2 from './assets/Border2.jpg';
 import HappyPatel from './assets/Happy Patel Khatarnak Jasoos.jpg';
@@ -314,10 +315,9 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#9ca3af',
-                  fontSize: '48px'
+                  color: '#9ca3af'
                 }}>
-                  {!movie.image && '🎬'}
+                  {!movie.image && <Film size={48} />}
                 </div>
                 <div style={{ padding: '12px' }}>
                   <h3 style={{
@@ -375,10 +375,9 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#9ca3af',
-                  fontSize: '48px'
+                  color: '#9ca3af'
                 }}>
-                  {!movie.image && '🎬'}
+                  {!movie.image && <Film size={48} />}
                 </div>
                 <div style={{ padding: '12px' }}>
                   <h3 style={{
