@@ -173,18 +173,7 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
                 color: isDark ? '#9ca3af' : '#6b7280',
                 fontSize: '14px'
               }}>{isEvent ? (item.venue || item.location) : (item.location || 'Cinema Hall')}</p>
-              
-              <div style={{
-                backgroundColor: '#fef3c7',
-                color: '#92400e',
-                padding: '8px 12px',
-                borderRadius: '6px',
-                fontSize: '12px',
-                marginTop: '12px',
-                display: 'inline-block'
-              }}>
-                ⚠️ Adults only - no entry for children
-              </div>
+
             </div>
           </div>
 
