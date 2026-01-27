@@ -32,7 +32,7 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
             style={{ 
             display: 'flex', 
             alignItems: 'center', 
-            gap: '16px',
+            gap: '18px',
             minWidth: 'fit-content',
             flex: '0 0 auto',
             cursor: 'pointer',
@@ -41,6 +41,14 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
           onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
           onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
+            <img 
+              src="/Website_logo_EH.png" 
+              alt="EventHub Logo" 
+              style={{
+                width: '50px',
+                height: '50px'
+              }}
+            />
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span style={{
                 fontSize: 'clamp(20px, 4vw, 24px)',
