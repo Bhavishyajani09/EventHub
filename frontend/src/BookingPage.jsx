@@ -552,13 +552,18 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
                   onClick={onAuthOpen}
                   style={{
                     padding: '8px 16px',
-                    backgroundColor: '#8b5cf6',
+                    background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+                    backgroundSize: '200% 200%',
+                    marginTop: '8px',
+                    animation: 'gradientMove 3s ease infinite',
                     color: 'white',
-                    border: 'none',
+                    boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
                     borderRadius: '6px',
                     fontSize: '14px',
                     fontWeight: '600',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
                   }}
                 >
                   Login / Sign Up

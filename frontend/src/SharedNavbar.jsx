@@ -42,11 +42,11 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
           onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
             <img 
-              src="/Website_logo_EH.png" 
+              src="/new_icon_favicon.png" 
               alt="EventHub Logo" 
               style={{
-                width: '50px',
-                height: '50px'
+                width: '90px',
+                height: '80px'
               }}
             />
             <div style={{ display: 'flex', flexDirection: 'column' }}>

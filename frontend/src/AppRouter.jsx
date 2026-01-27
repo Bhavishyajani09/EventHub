@@ -45,9 +45,21 @@ function AppRouter() {
     } else if (path === '/booking') {
       setCurrentPage('booking');
     } else if (path === '/movie-detail') {
-      setCurrentPage('movieDetail');
+      // Only set movieDetail if we have a selected movie, otherwise redirect to movies
+      if (selectedMovie) {
+        setCurrentPage('movieDetail');
+      } else {
+        setCurrentPage('movies');
+        updateURL('movies');
+      }
     } else if (path === '/event-detail') {
-      setCurrentPage('eventDetail');
+      // Only set eventDetail if we have a selected event, otherwise redirect to events
+      if (selectedEvent) {
+        setCurrentPage('eventDetail');
+      } else {
+        setCurrentPage('events');
+        updateURL('events');
+      }
     } else if (path === '/event-seats') {
       setCurrentPage('eventSeats');
     } else if (path === '/artist-profile') {
@@ -63,7 +75,7 @@ function AppRouter() {
     } else if (path === '/contact') {
       setCurrentPage('contact');
     }
-  }, []);
+  }, [selectedMovie, selectedEvent]);
 
   // Update URL when page changes
   const updateURL = (page) => {
@@ -132,12 +144,12 @@ function AppRouter() {
     setSelectedMovie(null);
     setSelectedEvent(null);
     
-    // Set previous page to the appropriate listing page
+    // Set previous page to current page (preserve navigation history)
+    setPreviousPage(currentPage);
+    
     if (item.type === 'movie' || item.genre) {
-      setPreviousPage('movies');
       setSelectedMovie(item);
     } else {
-      setPreviousPage('events');
       setSelectedEvent(item);
     }
     setCurrentPage('booking');
