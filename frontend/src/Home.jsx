@@ -184,7 +184,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                   display: 'flex',
                   alignItems: 'center',
                   flex: 1,
-                  minWidth: '200px',
+                  minWidth: '300px',
                   gap: '8px',
                   padding: '14px 12px',
                   backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -195,34 +195,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                   </svg>
                   <input
                     type="text"
-                    placeholder="Events, artists, or keywords"
-                    style={{
-                      border: 'none',
-                      outline: 'none',
-                      fontSize: '16px',
-                      flex: 1,
-                      color: '#374151',
-                      backgroundColor: 'transparent'
-                    }}
-                  />
-                </div>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  flex: 1,
-                  minWidth: '150px',
-                  gap: '8px',
-                  padding: '14px 12px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                  borderRadius: '12px'
-                }}>
-                  <svg style={{ width: '20px', height: '20px', color: '#9ca3af' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <input
-                    type="text"
-                    placeholder="City or online"
+                    placeholder="Search here"
                     style={{
                       border: 'none',
                       outline: 'none',

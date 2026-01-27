@@ -132,12 +132,12 @@ function AppRouter() {
     setSelectedMovie(null);
     setSelectedEvent(null);
     
-    // Set previous page to the appropriate listing page
+    // Set previous page to current page for proper back navigation
+    setPreviousPage(currentPage);
+    
     if (item.type === 'movie' || item.genre) {
-      setPreviousPage('movies');
       setSelectedMovie(item);
     } else {
-      setPreviousPage('events');
       setSelectedEvent(item);
     }
     setCurrentPage('booking');
