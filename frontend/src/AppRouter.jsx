@@ -7,9 +7,6 @@ import EventDetail from './EventDetail';
 import ArtistProfile from './ArtistProfile';
 import BookingPage from './BookingPage';
 import EventSeatSelection from './EventSeatSelection';
-import TicketSelection from './TicketSelection';
-import CheckoutPage from './CheckoutPage';
-import BillingDetailsPage from './BillingDetailsPage';
 import AuthModal from './AuthModal';
 import ProfilePanel from './ProfilePanel';
 import Profile from './Profile';
@@ -29,8 +26,6 @@ function AppRouter() {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedArtist, setSelectedArtist] = useState(null);
-  const [selectedSection, setSelectedSection] = useState(null);
-  const [selectedQuantity, setSelectedQuantity] = useState(1);
 
   // Scroll to top whenever page changes
   useEffect(() => {
@@ -55,12 +50,6 @@ function AppRouter() {
       setCurrentPage('eventDetail');
     } else if (path === '/event-seats') {
       setCurrentPage('eventSeats');
-    } else if (path === '/ticket-selection') {
-      setCurrentPage('ticketSelection');
-    } else if (path === '/checkout') {
-      setCurrentPage('checkout');
-    } else if (path === '/billing') {
-      setCurrentPage('billing');
     } else if (path === '/artist-profile') {
       setCurrentPage('artistProfile');
     } else if (path === '/profile') {
@@ -86,9 +75,6 @@ function AppRouter() {
       'movieDetail': '/movie-detail',
       'eventDetail': '/event-detail',
       'eventSeats': '/event-seats',
-      'ticketSelection': '/ticket-selection',
-      'checkout': '/checkout',
-      'billing': '/billing',
       'artistProfile': '/artist-profile',
       'profile': '/profile',
       'bookings': '/bookings',
@@ -142,6 +128,10 @@ function AppRouter() {
   };
 
   const handleBookTickets = (item) => {
+    // Clear both selections first, then set the correct one
+    setSelectedMovie(null);
+    setSelectedEvent(null);
+    
     // Set previous page to the appropriate listing page
     if (item.type === 'movie' || item.genre) {
       setPreviousPage('movies');
@@ -152,30 +142,6 @@ function AppRouter() {
     }
     setCurrentPage('booking');
     updateURL('booking');
-  };
-
-  const handleProceedToBooking = (item, section) => {
-    if (item.type === 'movie') {
-      setSelectedMovie(item);
-    } else {
-      setSelectedEvent(item);
-    }
-    setSelectedSection(section);
-    setCurrentPage('ticketSelection');
-    updateURL('ticketSelection');
-  };
-
-  const handleAddToCart = (item, section, quantity) => {
-    // Handle add to cart logic here
-    if (item.type === 'movie') {
-      setSelectedMovie(item);
-    } else {
-      setSelectedEvent(item);
-    }
-    setSelectedSection(section);
-    setSelectedQuantity(quantity);
-    setCurrentPage('checkout');
-    updateURL('checkout');
   };
 
   const handleGoToSeatSelection = () => {
@@ -266,71 +232,6 @@ function AppRouter() {
               setCurrentPage('booking');
               updateURL('booking');
             }}
-            onProceedToBooking={handleProceedToBooking}
-          />
-        );
-      case 'ticketSelection':
-        return (
-          <TicketSelection 
-            event={selectedEvent || selectedMovie}
-            selectedSection={selectedSection}
-            isDark={isDark}
-            setIsDark={setIsDark}
-            user={user}
-            onAuthOpen={() => setIsAuthModalOpen(true)}
-            onProfileClick={handleProfileClick}
-            onNavigate={handleNavigate}
-            onBack={() => {
-              setCurrentPage('eventSeats');
-              updateURL('eventSeats');
-            }}
-            onAddToCart={handleAddToCart}
-          />
-        );
-      case 'checkout':
-        return (
-          <CheckoutPage 
-            event={selectedEvent || selectedMovie}
-            selectedSection={selectedSection}
-            quantity={selectedQuantity}
-            isDark={isDark}
-            setIsDark={setIsDark}
-            user={user}
-            onAuthOpen={() => setIsAuthModalOpen(true)}
-            onProfileClick={handleProfileClick}
-            onNavigate={handleNavigate}
-            setCurrentPage={setCurrentPage}
-            updateURL={updateURL}
-            onBack={() => {
-              setCurrentPage('ticketSelection');
-              updateURL('ticketSelection');
-            }}
-            onContinue={() => {
-              setCurrentPage('billing');
-              updateURL('billing');
-            }}
-          />
-        );
-      case 'billing':
-        return (
-          <BillingDetailsPage 
-            event={selectedEvent || selectedMovie}
-            selectedSection={selectedSection}
-            quantity={selectedQuantity}
-            isDark={isDark}
-            setIsDark={setIsDark}
-            user={user}
-            onAuthOpen={() => setIsAuthModalOpen(true)}
-            onProfileClick={handleProfileClick}
-            onNavigate={handleNavigate}
-            onBack={() => {
-              setCurrentPage('checkout');
-              updateURL('checkout');
-            }}
-            onContinue={(billingData) => {
-              // Handle continue to payment
-              console.log('Billing data:', billingData);
-            }}
           />
         );
       case 'artistProfile':
@@ -366,7 +267,6 @@ function AppRouter() {
               setCurrentPage(previousPage);
               updateURL(previousPage);
             }}
-            onGoToSeatSelection={handleGoToSeatSelection}
           />
         );
       case 'contact':

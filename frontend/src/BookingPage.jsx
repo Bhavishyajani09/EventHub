@@ -2,10 +2,56 @@ import React, { useState, useEffect } from 'react';
 import SharedNavbar from './SharedNavbar';
 import SharedFooter from './SharedFooter';
 
-const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBack, onGoToSeatSelection }) => {
-  const [selectedSeats, setSelectedSeats] = useState(3);
+const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBack }) => {
+  const [selectedSeatType, setSelectedSeatType] = useState(null);
+  const [quantity, setQuantity] = useState(1);
   const [showLoginWarning, setShowLoginWarning] = useState(false);
-  const item = movie || event;
+  const [showBookingSuccess, setShowBookingSuccess] = useState(false);
+  // Determine which item to show based on what was actually passed
+  const item = event ? event : movie;
+  const isEvent = !!event;
+  const isMovie = !!movie && !event;
+
+  const seatTypes = {
+    general: { price: 180, color: '#1f2937', bgColor: '#f8fafc', border: '#e5e7eb' },
+    vip: { price: 350, color: '#92400e', bgColor: '#fef3c7', border: '#d97706' },
+    premium: { price: 500, color: '#581c87', bgColor: '#faf5ff', border: '#7c3aed' }
+  };
+
+  const updateQuantity = (change) => {
+    setQuantity(Math.max(1, quantity + change));
+  };
+
+  const getTotalAmount = () => {
+    return selectedSeatType ? seatTypes[selectedSeatType].price * quantity : 0;
+  };
+
+  const getBookingCharges = () => {
+    const total = getTotalAmount();
+    return Math.round(total * 0.19);
+  };
+
+  const getFinalAmount = () => {
+    return getTotalAmount() + getBookingCharges();
+  };
+
+  const handleBooking = () => {
+    if (!user) {
+      setShowLoginWarning(true);
+      return;
+    }
+    
+    if (!selectedSeatType) {
+      alert('Please select a seat type');
+      return;
+    }
+    
+    setShowBookingSuccess(true);
+    setTimeout(() => {
+      setShowBookingSuccess(false);
+      onNavigate('bookings');
+    }, 2000);
+  };
   
   useEffect(() => {
     document.title = 'Review your booking - Complete your booking';
@@ -122,11 +168,11 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
                 color: isDark ? '#9ca3af' : '#6b7280',
                 fontSize: '14px',
                 marginBottom: '4px'
-              }}>{item.type === 'movie' ? 'A | Hindi | 2D' : `${item.category} | Live Event`}</p>
+              }}>{isEvent ? `${item.category || 'Event'} | Live Event` : 'A | Hindi | 2D'}</p>
               <p style={{
                 color: isDark ? '#9ca3af' : '#6b7280',
                 fontSize: '14px'
-              }}>{item.venue || item.location}</p>
+              }}>{isEvent ? (item.venue || item.location) : (item.location || 'Cinema Hall')}</p>
               
               <div style={{
                 backgroundColor: '#fef3c7',
@@ -142,6 +188,182 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
             </div>
           </div>
 
+          {/* Ticket Selection */}
+          <div style={{
+            backgroundColor: isDark ? '#1f2937' : 'white',
+            borderRadius: '8px',
+            padding: '32px',
+            marginBottom: '20px',
+            border: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h4 style={{
+              fontSize: '20px',
+              fontWeight: '600',
+              color: isDark ? '#f9fafb' : '#111827',
+              marginBottom: '24px',
+              textAlign: 'center',
+              letterSpacing: '0.025em'
+            }}>Select Ticket Category</h4>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {Object.entries(seatTypes).map(([type, details]) => (
+                <div
+                  key={type}
+                  onClick={() => setSelectedSeatType(type)}
+                  style={{
+                    backgroundColor: selectedSeatType === type ? details.bgColor : (isDark ? '#374151' : '#ffffff'),
+                    border: selectedSeatType === type ? `2px solid ${details.border}` : `1px solid ${isDark ? '#4b5563' : '#e5e7eb'}`,
+                    borderRadius: '6px',
+                    padding: '20px 24px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}
+                >
+                  <div>
+                    <h5 style={{
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      color: selectedSeatType === type ? details.color : (isDark ? '#f9fafb' : '#111827'),
+                      textTransform: 'capitalize',
+                      marginBottom: '4px',
+                      letterSpacing: '0.025em'
+                    }}>{type}</h5>
+                    <p style={{
+                      fontSize: '14px',
+                      color: isDark ? '#9ca3af' : '#6b7280',
+                      margin: 0
+                    }}>₹{details.price} per ticket</p>
+                  </div>
+                  
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    border: selectedSeatType === type ? `2px solid ${details.color}` : `2px solid ${isDark ? '#6b7280' : '#d1d5db'}`,
+                    backgroundColor: selectedSeatType === type ? details.color : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s ease'
+                  }}>
+                    {selectedSeatType === type && (
+                      <div style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        backgroundColor: 'white'
+                      }} />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {selectedSeatType && (
+              <div style={{
+                marginTop: '24px',
+                padding: '20px',
+                backgroundColor: isDark ? '#111827' : '#f9fafb',
+                borderRadius: '6px',
+                border: isDark ? '1px solid #374151' : '1px solid #e5e7eb'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '16px'
+                }}>
+                  <span style={{
+                    fontSize: '16px',
+                    fontWeight: '500',
+                    color: isDark ? '#f9fafb' : '#111827',
+                    textTransform: 'capitalize'
+                  }}>Quantity</span>
+                  
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    backgroundColor: isDark ? '#374151' : 'white',
+                    borderRadius: '4px',
+                    padding: '4px',
+                    border: isDark ? '1px solid #4b5563' : '1px solid #d1d5db'
+                  }}>
+                    <button
+                      onClick={() => updateQuantity(-1)}
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: isDark ? '#f9fafb' : '#374151',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '16px',
+                        fontWeight: '500'
+                      }}
+                    >−</button>
+                    
+                    <span style={{
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      color: isDark ? '#f9fafb' : '#111827',
+                      minWidth: '24px',
+                      textAlign: 'center'
+                    }}>{quantity}</span>
+                    
+                    <button
+                      onClick={() => updateQuantity(1)}
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: isDark ? '#f9fafb' : '#374151',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '16px',
+                        fontWeight: '500'
+                      }}
+                    >+</button>
+                  </div>
+                </div>
+                
+                <div style={{
+                  padding: '12px 16px',
+                  backgroundColor: isDark ? '#1f2937' : 'white',
+                  borderRadius: '4px',
+                  border: isDark ? '1px solid #374151' : '1px solid #e5e7eb'
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}>
+                    <span style={{
+                      color: isDark ? '#d1d5db' : '#4b5563',
+                      fontSize: '14px',
+                      textTransform: 'capitalize'
+                    }}>{selectedSeatType} × {quantity}</span>
+                    <span style={{
+                      color: isDark ? '#f9fafb' : '#111827',
+                      fontSize: '16px',
+                      fontWeight: '600'
+                    }}>₹{getTotalAmount()}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Show Details */}
           <div style={{
             backgroundColor: isDark ? '#1f2937' : 'white',
@@ -149,37 +371,22 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
             padding: '24px',
             marginBottom: '20px'
           }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '16px'
-            }}>
-              <div>
-                <h4 style={{
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: isDark ? '#f9fafb' : '#111827'
-                }}>Tomorrow, 22 Jan | 06:20 PM</h4>
-                <p style={{
-                  color: isDark ? '#9ca3af' : '#6b7280',
-                  fontSize: '14px'
-                }}>3 tickets</p>
-                <p style={{
-                  color: isDark ? '#9ca3af' : '#6b7280',
-                  fontSize: '14px'
-                }}>C1 - H3, H4, H5</p>
-                <p style={{
-                  color: isDark ? '#9ca3af' : '#6b7280',
-                  fontSize: '14px'
-                }}>Screen 4</p>
-              </div>
-              <div style={{
-                fontSize: '18px',
-                fontWeight: 'bold',
-                color: isDark ? '#f9fafb' : '#111827'
-              }}>₹640</div>
-            </div>
+            <h4 style={{
+              fontSize: '16px',
+              fontWeight: '600',
+              color: isDark ? '#f9fafb' : '#111827',
+              marginBottom: '12px'
+            }}>Show Details</h4>
+            <p style={{
+              color: isDark ? '#9ca3af' : '#6b7280',
+              fontSize: '14px',
+              marginBottom: '8px'
+            }}>Tomorrow, 22 Jan | 06:20 PM</p>
+            <p style={{
+              color: isDark ? '#9ca3af' : '#6b7280',
+              fontSize: '14px',
+              marginBottom: '8px'
+            }}>Screen 4</p>
             
             <div style={{
               padding: '12px',
@@ -187,7 +394,8 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
               borderRadius: '8px',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              gap: '8px',
+              marginTop: '12px'
             }}>
               <span style={{ color: '#10b981' }}>✓</span>
               <span style={{
@@ -215,55 +423,61 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
             }}>Payment summary</h3>
 
             <div style={{ marginBottom: '20px' }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: '8px'
-              }}>
-                <span style={{
-                  color: isDark ? '#d1d5db' : '#4b5563',
-                  fontSize: '14px'
-                }}>Order amount</span>
-                <span style={{
-                  color: isDark ? '#f9fafb' : '#111827',
-                  fontSize: '14px'
-                }}>₹540.00</span>
-              </div>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: '16px'
-              }}>
-                <span style={{
-                  color: isDark ? '#d1d5db' : '#4b5563',
-                  fontSize: '14px'
-                }}>Booking charges (incl. of GST)</span>
-                <span style={{
-                  color: isDark ? '#f9fafb' : '#111827',
-                  fontSize: '14px'
-                }}>₹102.66</span>
-              </div>
-              <hr style={{
-                border: 'none',
-                borderTop: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
-                margin: '16px 0'
-              }} />
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: '20px'
-              }}>
-                <span style={{
-                  color: isDark ? '#f9fafb' : '#111827',
-                  fontSize: '16px',
-                  fontWeight: '600'
-                }}>To be paid</span>
-                <span style={{
-                  color: isDark ? '#f9fafb' : '#111827',
-                  fontSize: '16px',
-                  fontWeight: 'bold'
-                }}>₹642.66</span>
-              </div>
+              {selectedSeatType && (
+                <>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginBottom: '8px'
+                  }}>
+                    <span style={{
+                      color: isDark ? '#d1d5db' : '#4b5563',
+                      fontSize: '14px',
+                      textTransform: 'capitalize'
+                    }}>{selectedSeatType} ({quantity}x)</span>
+                    <span style={{
+                      color: isDark ? '#f9fafb' : '#111827',
+                      fontSize: '14px'
+                    }}>₹{getTotalAmount()}</span>
+                  </div>
+                  
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginBottom: '8px'
+                  }}>
+                    <span style={{
+                      color: isDark ? '#d1d5db' : '#4b5563',
+                      fontSize: '14px'
+                    }}>Booking charges (incl. of GST)</span>
+                    <span style={{
+                      color: isDark ? '#f9fafb' : '#111827',
+                      fontSize: '14px'
+                    }}>₹{getBookingCharges()}</span>
+                  </div>
+                  <hr style={{
+                    border: 'none',
+                    borderTop: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
+                    margin: '16px 0'
+                  }} />
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginBottom: '20px'
+                  }}>
+                    <span style={{
+                      color: isDark ? '#f9fafb' : '#111827',
+                      fontSize: '16px',
+                      fontWeight: '600'
+                    }}>To be paid</span>
+                    <span style={{
+                      color: isDark ? '#f9fafb' : '#111827',
+                      fontSize: '16px',
+                      fontWeight: 'bold'
+                    }}>₹{getFinalAmount()}</span>
+                  </div>
+                </>
+              )}
             </div>
 
             <h4 style={{
@@ -370,38 +584,82 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
               </div>
             )}
 
-            <button style={{
-              width: '100%',
-              padding: '16px',
-              background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
-              backgroundSize: '200% 200%',
-              animation: 'gradientMove 3s ease infinite',
-              color: 'white',
-              boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              transition: 'all 0.3s ease'
-            }}
-            onClick={() => {
-              if (!user) {
-                setShowLoginWarning(true);
-              } else {
-                onGoToSeatSelection();
-              }
-            }}
+            <button 
+              style={{
+                width: '100%',
+                padding: '16px',
+                background: selectedSeatType ? 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)' : '#9ca3af',
+                backgroundSize: '200% 200%',
+                animation: selectedSeatType ? 'gradientMove 3s ease infinite' : 'none',
+                color: 'white',
+                boxShadow: selectedSeatType ? '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)' : 'none',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: selectedSeatType ? 'pointer' : 'not-allowed',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                transition: 'all 0.3s ease',
+                opacity: selectedSeatType ? 1 : 0.6
+              }}
+              onClick={handleBooking}
+              disabled={!selectedSeatType}
             >
-              <span>₹642.66</span>
-              <span>Proceed To Pay</span>
+              <span>₹{getFinalAmount()}</span>
+              <span>Book Now</span>
             </button>
           </div>
         </div>
       </div>
+
+      {/* Booking Success Modal */}
+      {showBookingSuccess && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: isDark ? '#1f2937' : 'white',
+            borderRadius: '12px',
+            padding: '32px',
+            textAlign: 'center',
+            maxWidth: '400px',
+            margin: '20px'
+          }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              backgroundColor: '#10b981',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px',
+              fontSize: '32px'
+            }}>✓</div>
+            <h3 style={{
+              fontSize: '20px',
+              fontWeight: 'bold',
+              color: isDark ? '#f9fafb' : '#111827',
+              marginBottom: '12px'
+            }}>Booking Successful!</h3>
+            <p style={{
+              color: isDark ? '#9ca3af' : '#6b7280',
+              fontSize: '14px'
+            }}>Your tickets have been booked successfully. Redirecting to your bookings...</p>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <SharedFooter isDark={isDark} onNavigate={onNavigate} />
