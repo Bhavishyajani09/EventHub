@@ -6,75 +6,81 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
     <nav style={{
       width: '100%',
       backgroundColor: isDark ? '#1f2937' : 'white',
-      boxShadow: isDark ? '0 1px 3px rgba(0, 0, 0, 0.3)' : '0 1px 3px rgba(0, 0, 0, 0.1)',
+      boxShadow: isDark ? '0 2px 10px rgba(0, 0, 0, 0.3)' : '0 2px 10px rgba(0, 0, 0, 0.1)',
       borderBottom: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
       position: 'sticky',
       top: 0,
-      zIndex: 100
+      zIndex: 1000,
+      backdropFilter: 'blur(10px)'
     }}>
-      {/* Centered Container */}
       <div style={{
-        maxWidth: '2000px',
+        maxWidth: '1400px',
         margin: '0 auto',
-        padding: '0 clamp(20px, 4vw, 80px)',
-        overflowX: 'hidden'
+        padding: '0 clamp(16px, 4vw, 32px)'
       }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          height: '60px',
-          gap: searchOnly ? '20px' : 'clamp(80px, 15vw, 150px)'
+          height: '70px',
+          gap: '20px'
         }}>
           {/* Left Section - Logo & Brand */}
           <div 
             onClick={() => onNavigate('home')}
             style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '18px',
-            minWidth: 'fit-content',
-            flex: '0 0 auto',
-            cursor: 'pointer',
-            transition: 'transform 0.2s'
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '12px',
+              minWidth: 'fit-content',
+              cursor: 'pointer',
+              transition: 'transform 0.2s ease',
+              padding: '8px'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
             <img 
               src="/new_icon_favicon.png" 
               alt="EventHub Logo" 
               style={{
-                width: '90px',
-                height: '80px'
+                width: '50px',
+                height: '50px',
+                borderRadius: '8px'
               }}
             />
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span style={{
-                fontSize: 'clamp(20px, 4vw, 24px)',
-                fontWeight: 'bold',
+                fontSize: '22px',
+                fontWeight: '700',
                 color: isDark ? '#f9fafb' : '#111827',
+                lineHeight: '1.2'
               }}>EventHub</span>
               <span style={{
-                fontSize: 'clamp(8px, 2vw, 10px)',
+                fontSize: '10px',
                 color: isDark ? '#9ca3af' : '#6b7280',
                 textTransform: 'uppercase',
-                letterSpacing: '0.1em'
+                letterSpacing: '0.1em',
+                fontWeight: '500'
               }}>EVENT PLATFORM</span>
             </div>
           </div>
 
-          {/* Page Title for Booking */}
+          {/* Page Title for Special Pages */}
           {pageTitle && (
             <div style={{
               flex: 1,
-              textAlign: 'center'
+              textAlign: 'center',
+              maxWidth: '400px'
             }}>
               <h1 style={{
-                fontSize: '20px',
+                fontSize: '18px',
                 fontWeight: '600',
                 color: isDark ? '#f9fafb' : '#111827',
-                margin: 0
+                margin: 0,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
               }}>{pageTitle}</h1>
             </div>
           )}
@@ -83,10 +89,11 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
           {!hideNavigation && !searchOnly && (
             <div style={{
               display: 'flex',
-              gap: '32px',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              flex: '1 1 auto'
+              gap: '8px',
+              alignItems: 'center',
+              backgroundColor: isDark ? '#374151' : '#f8fafc',
+              borderRadius: '12px',
+              padding: '4px'
             }}>
               {[
                 { name: 'For you', key: 'home' },
@@ -98,24 +105,27 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
                   onClick={() => onNavigate(tab.key)}
                   style={{
                     padding: '10px 20px',
-                    borderRadius: '24px',
+                    borderRadius: '8px',
                     fontSize: '14px',
-                    fontWeight: '500',
+                    fontWeight: '600',
                     border: 'none',
                     cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    backgroundColor: activePage === tab.key ? (isDark ? '#581c87' : '#f3e8ff') : 'transparent',
-                    color: activePage === tab.key ? (isDark ? '#f3e8ff' : '#7c3aed') : (isDark ? '#d1d5db' : '#374151'),
-                    whiteSpace: 'nowrap'
+                    transition: 'all 0.2s ease',
+                    backgroundColor: activePage === tab.key ? '#8b5cf6' : 'transparent',
+                    color: activePage === tab.key ? 'white' : (isDark ? '#d1d5db' : '#6b7280'),
+                    whiteSpace: 'nowrap',
+                    boxShadow: activePage === tab.key ? '0 2px 8px rgba(139, 92, 246, 0.3)' : 'none'
                   }}
                   onMouseEnter={(e) => {
                     if (activePage !== tab.key) {
-                      e.target.style.backgroundColor = isDark ? '#374151' : '#f3f4f6';
+                      e.target.style.backgroundColor = isDark ? '#4b5563' : '#e2e8f0';
+                      e.target.style.color = isDark ? '#f9fafb' : '#374151';
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (activePage !== tab.key) {
                       e.target.style.backgroundColor = 'transparent';
+                      e.target.style.color = isDark ? '#d1d5db' : '#6b7280';
                     }
                   }}
                 >
@@ -129,34 +139,41 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
           <div style={{ 
             display: 'flex', 
             alignItems: 'center', 
-            gap: '20px',
-            minWidth: 'fit-content',
-            flex: '0 0 auto'
+            gap: '12px',
+            minWidth: 'fit-content'
           }}>
             {/* Search Input */}
             {(!hideNavigation || searchOnly) && (
               <div style={{ 
                 position: 'relative', 
                 display: 'flex',
-                minWidth: searchOnly ? '200px' : '300px',
-                maxWidth: searchOnly ? '300px' : '350px',
-                width: '100%'
+                minWidth: searchOnly ? '250px' : '280px',
+                maxWidth: '350px'
               }}>
                 <input
                   type="text"
-                  placeholder="Search events..."
+                  placeholder="Search events, movies..."
                   style={{
                     width: '100%',
                     paddingLeft: '40px',
                     paddingRight: '16px',
-                    paddingTop: '8px',
-                    paddingBottom: '8px',
+                    paddingTop: '10px',
+                    paddingBottom: '10px',
                     border: isDark ? '1px solid #4b5563' : '1px solid #d1d5db',
-                    borderRadius: '20px',
+                    borderRadius: '12px',
                     fontSize: '14px',
                     outline: 'none',
-                    backgroundColor: isDark ? '#374151' : 'white',
-                    color: isDark ? '#f9fafb' : '#111827'
+                    backgroundColor: isDark ? '#374151' : '#f8fafc',
+                    color: isDark ? '#f9fafb' : '#111827',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#8b5cf6';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(139, 92, 246, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = isDark ? '#4b5563' : '#d1d5db';
+                    e.target.style.boxShadow = 'none';
                   }}
                 />
                 <svg style={{
@@ -177,16 +194,24 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
             <button 
               onClick={() => setIsDark(!isDark)}
               style={{
-                padding: '8px',
-                backgroundColor: 'transparent',
-                border: isDark ? '1px solid #4b5563' : '1px solid #d1d5db',
-                borderRadius: '8px',
+                padding: '10px',
+                backgroundColor: isDark ? '#374151' : '#f8fafc',
+                border: isDark ? '1px solid #4b5563' : '1px solid #e5e7eb',
+                borderRadius: '10px',
                 cursor: 'pointer',
-                transition: 'all 0.2s',
+                transition: 'all 0.2s ease',
                 color: isDark ? '#f9fafb' : '#374151',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = isDark ? '#4b5563' : '#e2e8f0';
+                e.target.style.transform = 'scale(1.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = isDark ? '#374151' : '#f8fafc';
+                e.target.style.transform = 'scale(1)';
               }}
             >
               {isDark ? <Sun size={18} /> : <Moon size={18} />}
@@ -194,72 +219,68 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
 
             {/* Login/Profile Section */}
             {user ? (
-              <div style={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px'
-              }}>
-                <div 
-                  onClick={onProfileClick}
-                  style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  backgroundColor: '#713bf0',
+              <div 
+                onClick={onProfileClick}
+                style={{
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  boxShadow: '0 2px 8px rgba(139, 92, 246, 0.3)',
+                  transition: 'all 0.2s ease',
+                  boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
                   border: '2px solid transparent'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = '#7c3aed';
                   e.target.style.transform = 'scale(1.05)';
-                  e.target.style.borderColor = 'rgba(139, 92, 246, 0.5)';
+                  e.target.style.boxShadow = '0 6px 20px rgba(139, 92, 246, 0.4)';
+                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = '#8b5cf6';
                   e.target.style.transform = 'scale(1)';
+                  e.target.style.boxShadow = '0 4px 12px rgba(139, 92, 246, 0.3)';
                   e.target.style.borderColor = 'transparent';
                 }}
-                title={`${user.name} - Click to open profile menu`}
-                >
-                  <span style={{
-                    color: 'white',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    {user.name ? user.name.charAt(0).toUpperCase() : <User size={18} />}
-                  </span>
-                </div>
+                title={`${user.name || 'User'} - Click to open profile menu`}
+              >
+                <span style={{
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {user.name ? user.name.charAt(0).toUpperCase() : <User size={18} />}
+                </span>
               </div>
             ) : (
               <button 
                 onClick={onAuthOpen}
                 style={{
-                padding: '10px 20px',
-                background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                whiteSpace: 'nowrap'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = 'scale(1.02)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = 'scale(1)';
-              }}
+                  padding: '10px 20px',
+                  background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  whiteSpace: 'nowrap',
+                  boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = 'translateY(-1px)';
+                  e.target.style.boxShadow = '0 6px 20px rgba(139, 92, 246, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 4px 12px rgba(139, 92, 246, 0.3)';
+                }}
               >
                 Login
               </button>
@@ -267,6 +288,65 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
           </div>
         </div>
       </div>
+
+      {/* Mobile Responsive Styles */}
+      <style>{`
+        @media (max-width: 768px) {
+          nav > div > div {
+            height: auto !important;
+            flex-direction: column !important;
+            padding: 12px 0 !important;
+            gap: 12px !important;
+          }
+          
+          nav > div > div > div:first-child {
+            order: 1;
+          }
+          
+          nav > div > div > div:nth-child(2) {
+            order: 3;
+            max-width: 100% !important;
+          }
+          
+          nav > div > div > div:nth-child(3) {
+            order: 2;
+            width: 100% !important;
+            justify-content: center !important;
+          }
+          
+          nav > div > div > div:last-child {
+            order: 4;
+            width: 100% !important;
+            justify-content: center !important;
+          }
+          
+          nav > div > div > div:last-child > div:first-child {
+            min-width: 200px !important;
+            max-width: 280px !important;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          nav > div > div > div:first-child > div:last-child {
+            display: none !important;
+          }
+          
+          nav > div > div > div:first-child > img {
+            width: 40px !important;
+            height: 40px !important;
+          }
+          
+          nav > div > div > div:nth-child(3) > div {
+            gap: 4px !important;
+            padding: 2px !important;
+          }
+          
+          nav > div > div > div:nth-child(3) > div > button {
+            padding: 8px 12px !important;
+            font-size: 12px !important;
+          }
+        }
+      `}</style>
     </nav>
   );
 };

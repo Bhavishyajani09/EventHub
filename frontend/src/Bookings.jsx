@@ -60,30 +60,34 @@ const Bookings = ({ onBack, user, isDark, onProfileClick }) => {
             style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
-            cursor: 'pointer'
-          }}>
-            <div style={{
-              width: '32px',
-              height: '32px',
-              backgroundColor: '#8b5cf6',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontWeight: 'bold',
-              fontSize: '16px'
-            }}>
-              E
+            gap: '18px',
+            cursor: 'pointer',
+            transition: 'transform 0.2s'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <img 
+              src="/new_icon_favicon.png" 
+              alt="EventHub Logo" 
+              style={{
+                width: '60px',
+                height: '54px'
+              }}
+            />
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{
+                fontSize: '18px',
+                fontWeight: 'bold',
+                color: '#111827'
+              }}>EventHub</span>
+              <span style={{
+                fontSize: '8px',
+                color: '#6b7280',
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em'
+              }}>EVENT PLATFORM</span>
             </div>
-            <span style={{
-              fontSize: '18px',
-              fontWeight: '600',
-              color: '#111827'
-            }}>
-              EventHub
-            </span>
           </div>
         </div>
 

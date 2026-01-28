@@ -8,7 +8,6 @@ import ArtistProfile from './ArtistProfile';
 import BookingPage from './BookingPage';
 import EventSeatSelection from './EventSeatSelection';
 import AuthModal from './AuthModal';
-import ProfilePanel from './ProfilePanel';
 import Profile from './Profile';
 import Bookings from './Bookings';
 import TermsAndConditions from './TermsAndConditions';
@@ -20,7 +19,6 @@ function AppRouter() {
   const [previousPage, setPreviousPage] = useState('home');
   const [isDark, setIsDark] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isProfilePanelOpen, setIsProfilePanelOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [selectedMovie, setSelectedMovie] = useState(null);
@@ -104,13 +102,12 @@ function AppRouter() {
 
   const handleLogout = () => {
     setUser(null);
-    setIsProfilePanelOpen(false);
   };
 
   const handleNavigate = (page) => {
     setCurrentPage(page);
     updateURL(page);
-    setIsProfilePanelOpen(false);
+    setIsProfileOpen(false);
   };
 
   const handleProfileClick = () => {

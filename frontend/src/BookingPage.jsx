@@ -5,7 +5,6 @@ import SharedFooter from './SharedFooter';
 const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBack }) => {
   const [selectedSeatType, setSelectedSeatType] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const [showLoginWarning, setShowLoginWarning] = useState(false);
   const [showBookingSuccess, setShowBookingSuccess] = useState(false);
   // Determine which item to show based on what was actually passed
   const item = event ? event : movie;
@@ -36,13 +35,13 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
   };
 
   const handleBooking = () => {
-    if (!user) {
-      setShowLoginWarning(true);
+    if (!selectedSeatType) {
+      alert('Please select a seat type');
       return;
     }
     
-    if (!selectedSeatType) {
-      alert('Please select a seat type');
+    if (!user) {
+      onAuthOpen();
       return;
     }
     
@@ -557,24 +556,6 @@ const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProf
                 >
                   Login / Sign Up
                 </button>
-              </div>
-            )}
-
-            {showLoginWarning && (
-              <div style={{
-                backgroundColor: '#fef2f2',
-                border: '1px solid #fecaca',
-                borderRadius: '8px',
-                padding: '12px 16px',
-                marginBottom: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
-                <span style={{ color: '#dc2626', fontSize: '16px' }}>⚠️</span>
-                <span style={{ color: '#dc2626', fontSize: '14px', fontWeight: '500' }}>
-                  Please login first to proceed with booking!
-                </span>
               </div>
             )}
 

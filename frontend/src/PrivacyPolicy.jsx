@@ -41,39 +41,33 @@ const PrivacyPolicy = ({ onBack }) => {
           style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
-          cursor: 'pointer'
-        }}>
-          <div style={{
-            width: '32px',
-            height: '32px',
-            backgroundColor: '#8b5cf6',
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontWeight: 'bold',
-            fontSize: '16px'
-          }}>
-            E
-          </div>
-          <div>
-            <div style={{
+          gap: '18px',
+          cursor: 'pointer',
+          transition: 'transform 0.2s'
+        }}
+        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+        >
+          <img 
+            src="/new_icon_favicon.png" 
+            alt="EventHub Logo" 
+            style={{
+              width: '60px',
+              height: '54px'
+            }}
+          />
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{
               fontSize: '18px',
-              fontWeight: '600',
+              fontWeight: 'bold',
               color: '#111827'
-            }}>
-              EventHub
-            </div>
-            <div style={{
-              fontSize: '10px',
+            }}>EventHub</span>
+            <span style={{
+              fontSize: '8px',
               color: '#6b7280',
               textTransform: 'uppercase',
               letterSpacing: '0.1em'
-            }}>
-              BY EVENTHUB
-            </div>
+            }}>EVENT PLATFORM</span>
           </div>
         </div>
       </div>

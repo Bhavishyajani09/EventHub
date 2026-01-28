@@ -338,7 +338,12 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
               textAlign: 'center',
               cursor: 'pointer',
               transition: 'transform 0.2s',
-              boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)'
+              boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
+              height: '100px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center'
             }}
             onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
             onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
@@ -463,9 +468,10 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
         {/* Events Grid */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fill, 300px)',
           gap: '20px',
-          marginBottom: '40px'
+          marginBottom: '40px',
+          justifyContent: 'center'
         }}>
           {filteredEvents.map((event, index) => (
             <div key={index} 
@@ -480,7 +486,11 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
               overflow: 'hidden',
               boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
               cursor: 'pointer',
-              transition: 'transform 0.2s'
+              transition: 'transform 0.2s',
+              width: '300px',
+              height: '350px',
+              display: 'flex',
+              flexDirection: 'column'
             }}
             onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
             onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
@@ -489,38 +499,47 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                 height: '200px',
                 backgroundImage: `url(${event.image})`,
                 backgroundSize: 'cover',
-                backgroundPosition: 'center'
+                backgroundPosition: 'center',
+                flexShrink: 0
               }} />
-              <div style={{ padding: '16px' }}>
-                <div style={{
-                  fontSize: '12px',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  fontWeight: '700',
-                  marginBottom: '6px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}>
-                  <Clock size={12} style={{ color: '#667eea' }} />
-                  {event.fullDate}, {event.time}
+              <div style={{ 
+                padding: '16px',
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between'
+              }}>
+                <div>
+                  <div style={{
+                    fontSize: '12px',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    fontWeight: '700',
+                    marginBottom: '6px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}>
+                    <Clock size={12} style={{ color: '#667eea' }} />
+                    {event.fullDate}, {event.time}
+                  </div>
+                  
+                  <h3 style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: isDark ? '#f9fafb' : '#111827',
+                    marginBottom: '8px',
+                    lineHeight: '1.3'
+                  }}>{event.title}</h3>
+                  
+                  <p style={{
+                    fontSize: '14px',
+                    color: isDark ? '#9ca3af' : '#6b7280',
+                    marginBottom: '12px'
+                  }}>{event.venue}</p>
                 </div>
-                
-                <h3 style={{
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: isDark ? '#f9fafb' : '#111827',
-                  marginBottom: '8px',
-                  lineHeight: '1.3'
-                }}>{event.title}</h3>
-                
-                <p style={{
-                  fontSize: '14px',
-                  color: isDark ? '#9ca3af' : '#6b7280',
-                  marginBottom: '12px'
-                }}>{event.venue}</p>
                 
                 <div style={{
                   display: 'flex',
