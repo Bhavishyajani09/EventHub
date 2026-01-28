@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
 const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
-  const [currentScreen, setCurrentScreen] = useState('register');
+  const [currentScreen, setCurrentScreen] = useState('login');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' }); // 'success' or 'error'
@@ -111,7 +111,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
     setErrors({});
     setMessage({ text: '', type: '' });
     setShowPassword(false);
-    setCurrentScreen('register');
+    setCurrentScreen('login');
   };
 
   const handleClose = () => {
