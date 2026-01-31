@@ -1,40 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Film } from 'lucide-react';
-import Dhurandhar from './assets/Dhurandhar.jpg';
-import Border2 from './assets/Border2.jpg';
-import HappyPatel from './assets/Happy Patel Khatarnak Jasoos.jpg';
-import AnagangaOkaRaju from './assets/Anaganaga Oka Raju.jpg';
-import BandBaajaBaaraat from './assets/Band Baaja Baaraat.jpg';
-import BihuAttack from './assets/Bihu Attack.jpg';
-import OneTwoChaChaCha from './assets/One Two Cha Cha Chaa.jpg';
-import TereIshkMein from './assets/Tere Ishk Mein.jpg';
-import TheRajaSaab from './assets/The Raja Saab.jpg';
-import TuMeriMainTera from './assets/Tu_Meri_Main_Tera_Main_Tera_Tu_Meri.jpg';
-import Movie83 from './assets/83.jpg';
-import AkshayeKhannaChhaava from './assets/Akshaye-Khanna-Chhaava-.jpg';
-import Gabbar from './assets/gabbar.jpg';
-import GreenlandMigration from './assets/Greenland 2 Migration.jpg';
-import LaaloKrishna from './assets/Laalo - Krishna Sada Sahaayate.jpg';
-import Sarfira from './assets/Sarfira.jpg';
 import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
-import MovieDetail from './MovieDetail';
+import USER_MovieDetail from './USER_MovieDetail';
 
-// Import Rahu Ketu with different approach
-try {
-  var RahuKetu = require('./assets/Rahu Ketu.jpg').default || require('./assets/Rahu Ketu.jpg');
-} catch (e) {
-  var RahuKetu = null;
-}
+
 
 const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick, onBookTickets }) => {
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
-  const [selectedMovie, setSelectedMovie] = useState(null);
 
   const heroMovies = [
-    { title: 'Dhurandhar', genre: 'Action, Thriller', rating: 'A', image: Dhurandhar },
-    { title: 'Border 2', genre: 'Action, War', rating: 'UA13+', image: Border2 },
+    { title: 'Dhurandhar', genre: 'Action, Thriller', rating: 'A', image: '/placeholder-movie.jpg' },
+    { title: 'Border 2', genre: 'Action, War', rating: 'UA13+', image: '/placeholder-movie.jpg' },
     { title: 'Rahu Ketu', genre: 'Horror, Thriller', rating: 'UA16+', image: '/rahu-ketu.jpg' },
     { title: 'Happy Patel: Khatarnak Jasoos', genre: 'Comedy, Action', rating: 'A', image: '/happy-patel.jpg' }
   ];
@@ -64,8 +42,8 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
   const movies = [
     { title: 'Rahu Ketu', genre: 'Horror', language: 'Hindi', image: '/rahu-ketu.jpg' },
     { title: 'Happy Patel: Khatarnak Jasoos', genre: 'Comedy', language: 'Hindi', image: '/happy-patel.jpg' },
-    { title: 'Dhurandhar', genre: 'Action, Thriller', language: 'Hindi', image: Dhurandhar },
-    { title: 'Border 2', genre: 'Action', language: 'Hindi', image: Border2 }
+    { title: 'Dhurandhar', genre: 'Action, Thriller', language: 'Hindi', image: '/placeholder-movie.jpg' },
+    { title: 'Border 2', genre: 'Action', language: 'Hindi', image: '/placeholder-movie.jpg' }
   ];
 
   const theatreMovies = [
@@ -73,19 +51,19 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
     { title: 'Band Baaja Baaraat', genre: 'Romance', language: 'Hindi', image: '/band-baaja-baaraat.jpg' },
     { title: 'Bihu Attack', genre: 'Action', language: 'Assamese', image: '/bihu-attack.jpg' },
     { title: 'One Two Cha Cha Chaa', genre: 'Comedy', language: 'Hindi', image: '/one-two-cha-cha-chaa.jpg' },
-    { title: 'Tere Ishk Mein', genre: 'Romance', language: 'Hindi', image: TereIshkMein },
-    { title: 'The Raja Saab', genre: 'Horror', language: 'Telugu', image: TheRajaSaab },
-    { title: 'Tu Meri Main Tera', genre: 'Romance', language: 'Hindi', image: TuMeriMainTera },
+    { title: 'Tere Ishk Mein', genre: 'Romance', language: 'Hindi', image: '/placeholder-movie.jpg' },
+    { title: 'The Raja Saab', genre: 'Horror', language: 'Telugu', image: '/placeholder-movie.jpg' },
+    { title: 'Tu Meri Main Tera', genre: 'Romance', language: 'Hindi', image: '/placeholder-movie.jpg' },
     { title: 'Rahu Ketu', genre: 'Horror', language: 'Hindi', image: '/rahu-ketu.jpg' },
     { title: 'Happy Patel: Khatarnak Jasoos', genre: 'Comedy', language: 'Hindi', image: '/happy-patel.jpg' },
-    { title: 'Dhurandhar', genre: 'Action', language: 'Hindi', image: Dhurandhar },
-    { title: 'Border 2', genre: 'War', language: 'Hindi', image: Border2 },
-    { title: '83', genre: 'Sports', language: 'Hindi', image: Movie83 },
-    { title: 'Chhaava', genre: 'Historical', language: 'Hindi', image: AkshayeKhannaChhaava },
-    { title: 'Gabbar', genre: 'Action', language: 'Hindi', image: Gabbar },
-    { title: 'Greenland 2: Migration', genre: 'Thriller', language: 'English', image: GreenlandMigration },
+    { title: 'Dhurandhar', genre: 'Action', language: 'Hindi', image: '/placeholder-movie.jpg' },
+    { title: 'Border 2', genre: 'War', language: 'Hindi', image: '/placeholder-movie.jpg' },
+    { title: '83', genre: 'Sports', language: 'Hindi', image: '/placeholder-movie.jpg' },
+    { title: 'Chhaava', genre: 'Historical', language: 'Hindi', image: '/placeholder-movie.jpg' },
+    { title: 'Gabbar', genre: 'Action', language: 'Hindi', image: '/placeholder-movie.jpg' },
+    { title: 'Greenland 2: Migration', genre: 'Thriller', language: 'English', image: '/placeholder-movie.jpg' },
     { title: 'Laalo - Krishna Sada Sahaayate', genre: 'Drama', language: 'Hindi', image: '/laalo-krishna.jpg' },
-    { title: 'Sarfira', genre: 'Drama', language: 'Hindi', image: Sarfira }
+    { title: 'Sarfira', genre: 'Drama', language: 'Hindi', image: '/placeholder-movie.jpg' }
   ];
 
   const toggleFilter = (filterId) => {
@@ -98,33 +76,9 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
 
   const handleMovieClick = (movie) => {
     if (onMovieClick) {
-      // Add type property to ensure proper routing
-      const movieWithType = { ...movie, type: 'movie' };
-      onMovieClick(movieWithType);
-    } else {
-      setSelectedMovie(movie);
+      onMovieClick(movie);
     }
   };
-
-  const handleBackToMovies = () => {
-    setSelectedMovie(null);
-  };
-
-  // Show movie detail if a movie is selected
-  if (selectedMovie) {
-    return (
-      <MovieDetail 
-        movie={selectedMovie}
-        isDark={isDark}
-        setIsDark={setIsDark}
-        user={user}
-        onAuthOpen={onAuthOpen}
-        onProfileClick={onProfileClick}
-        onNavigate={onNavigate}
-        onBack={handleBackToMovies}
-      />
-    );
-  }
 
   return (
     <div style={{

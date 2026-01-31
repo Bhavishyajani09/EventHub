@@ -96,9 +96,9 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
               padding: '4px'
             }}>
               {[
-                { name: 'For you', key: 'home' },
-                { name: 'Movies', key: 'movies' },
-                { name: 'Events', key: 'events' }
+                { name: 'For you', key: 'home', path: '/' },
+                { name: 'Movies', key: 'movies', path: '/movies' },
+                { name: 'Events', key: 'events', path: '/events' }
               ].map((tab) => (
                 <button
                   key={tab.key}

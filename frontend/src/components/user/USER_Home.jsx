@@ -1,25 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Search } from 'lucide-react';
-import Border2 from './assets/Border2.jpg';
-import Dhurandhar from './assets/Dhurandhar.jpg';
-import RahuKetu from './assets/Rahu Ketu.jpg';
-import HappyPatel from './assets/Happy Patel Khatarnak Jasoos.jpg';
-import EventBg from './assets/event.avif';
-import SunidhiChauhan from './assets/SunidhiChauhan.jpg';
-import KaranAujla from './assets/KaranAujla.jpg';
-import SonuNigam from './assets/SonuNigam.jpg';
-import AadityaKullu from './assets/AadityaKulluKulshreshth.jpg';
-import KanhaKamboj from './assets/KanhaKamboj.jpg';
 import AuthModal from '../../AuthModal';
-import ProfilePanel from './ProfilePanel';
+import USER_ProfilePanel from './USER_ProfilePanel';
 import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
-import MovieDetail from './MovieDetail';
+import USER_MovieDetail from './USER_MovieDetail';
 
 const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick, onBookTickets, onArtistClick }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfilePanelOpen, setIsProfilePanelOpen] = useState(false);
-  const [selectedMovie, setSelectedMovie] = useState(null);
 
   useEffect(() => {
     document.title = 'EventHub - Discover Amazing Events';
@@ -39,11 +28,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
 
   const handleMovieClick = (movie) => {
     if (onMovieClick) {
-      // Add type property to ensure proper routing
-      const movieWithType = { ...movie, type: 'movie' };
-      onMovieClick(movieWithType);
-    } else {
-      setSelectedMovie(movie);
+      onMovieClick(movie);
     }
   };
 
@@ -54,25 +39,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
     }
   };
 
-  const handleBackToHome = () => {
-    setSelectedMovie(null);
-  };
 
-  // Show movie detail if a movie is selected
-  if (selectedMovie) {
-    return (
-      <MovieDetail 
-        movie={selectedMovie}
-        isDark={isDark}
-        setIsDark={setIsDark}
-        user={user}
-        onAuthOpen={onAuthOpen}
-        onProfileClick={onProfileClick}
-        onNavigate={onNavigate}
-        onBack={handleBackToHome}
-      />
-    );
-  }
   return (
     <div style={{ 
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
@@ -108,7 +75,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
         }}>
           {/* Hero Section */}
           <div style={{
-            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${EventBg})`,
+            background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             borderRadius: '24px',
@@ -259,8 +226,8 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
             marginBottom: 'clamp(32px, 6vw, 48px)'
           }}>
             {[
-              { title: 'Border 2', rating: 'UA13+', language: 'Hindi', genre: 'Action, War', image: Border2 },
-              { title: 'Dhurandhar', rating: 'A', language: 'Hindi', genre: 'Action, Thriller', image: Dhurandhar },
+              { title: 'Border 2', rating: 'UA13+', language: 'Hindi', genre: 'Action, War', image: '/placeholder-movie.jpg' },
+              { title: 'Dhurandhar', rating: 'A', language: 'Hindi', genre: 'Action, Thriller', image: '/placeholder-movie.jpg' },
               { title: 'Rahu Ketu', rating: 'UA16+', language: 'Hindi', genre: 'Horror, Thriller', image: '/rahu-ketu.jpg' },
               { title: 'Happy Patel: Khatarnak Jasoos', rating: 'A', language: 'Hindi', genre: 'Comedy, Action', image: '/happy-patel.jpg' }
             ].map((movie, index) => {
@@ -350,11 +317,11 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
             marginBottom: 'clamp(32px, 6vw, 48px)'
           }}>
             {[
-              { name: 'Sunidhi Chauhan', image: SunidhiChauhan },
-              { name: 'Karan Aujla', image: KaranAujla },
-              { name: 'Sonu Nigam', image: SonuNigam },
-              { name: 'Aaditya "Kullu" Kulshreshth', image: AadityaKullu },
-              { name: 'Kanha Kamboj', image: KanhaKamboj }
+              { name: 'Sunidhi Chauhan', image: '/placeholder-artist.jpg' },
+              { name: 'Karan Aujla', image: '/placeholder-artist.jpg' },
+              { name: 'Sonu Nigam', image: '/placeholder-artist.jpg' },
+              { name: 'Aaditya "Kullu" Kulshreshth', image: '/placeholder-artist.jpg' },
+              { name: 'Kanha Kamboj', image: '/placeholder-artist.jpg' }
             ].map((artist, index) => (
               <div key={index} 
                 onClick={() => {
@@ -485,7 +452,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
       />
 
       {/* Profile Panel */}
-      <ProfilePanel
+      <USER_ProfilePanel
         user={user}
         isOpen={isProfilePanelOpen}
         onClose={() => setIsProfilePanelOpen(false)}

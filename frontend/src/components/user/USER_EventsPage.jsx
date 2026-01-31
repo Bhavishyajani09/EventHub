@@ -2,11 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Music, Laugh, Zap, Palette, Calendar, Clock } from 'lucide-react';
 import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
-import SonuNigam from './assets/SonuNigam.jpg';
-import SunidhiChauhan from './assets/SunidhiChauhan.jpg';
-import KaranAujla from './assets/KaranAujla.jpg';
-import AadityaKullu from './assets/AadityaKulluKulshreshth.jpg';
-import KanhaKamboj from './assets/KanhaKamboj.jpg';
 
 
 const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBookTickets, onMovieClick, onArtistClick }) => {
@@ -21,31 +16,31 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
       title: 'Deewana Tera by Sonu Nigam | Indore',
       location: 'Phoenix Citadel Mall, Indore',
       price: 'FREE CONCERT',
-      image: SonuNigam
+      image: '/placeholder-artist.jpg'
     },
     {
       title: 'Sunidhi Chauhan - I Am Home India Tour 2025-26',
       location: 'Venue to be announced, Indore',
       price: '₹1500 ONWARDS',
-      image: SunidhiChauhan
+      image: '/placeholder-artist.jpg'
     },
     {
       title: 'Karan Aujla Live Concert',
       location: 'Nehru Stadium, Indore',
       price: '₹2500 ONWARDS',
-      image: KaranAujla
+      image: '/placeholder-artist.jpg'
     },
     {
       title: 'Comedy Night with Aaditya Kullu',
       location: 'Sayaji Hotel, Indore',
       price: '₹800 ONWARDS',
-      image: AadityaKullu
+      image: '/placeholder-artist.jpg'
     },
     {
       title: 'Kanha Kamboj Live Performance',
       location: 'Brilliant Convention Centre, Indore',
       price: '₹1200 ONWARDS',
-      image: KanhaKamboj
+      image: '/placeholder-artist.jpg'
     }
   ];
 
@@ -69,11 +64,11 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
   ];
 
   const artists = [
-    { name: 'Sunidhi Chauhan', image: SunidhiChauhan },
-    { name: 'Karan Aujla', image: KaranAujla },
-    { name: 'Sonu Nigam', image: SonuNigam },
-    { name: 'Aaditya Kullu', image: AadityaKullu },
-    { name: 'Kanha Kamboj', image: KanhaKamboj }
+    { name: 'Sunidhi Chauhan', image: '/placeholder-artist.jpg' },
+    { name: 'Karan Aujla', image: '/placeholder-artist.jpg' },
+    { name: 'Sonu Nigam', image: '/placeholder-artist.jpg' },
+    { name: 'Aaditya Kullu', image: '/placeholder-artist.jpg' },
+    { name: 'Kanha Kamboj', image: '/placeholder-artist.jpg' }
   ];
 
   const allEvents = [
@@ -84,7 +79,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
       time: '7:00 PM',
       fullDate: 'Sat, 28 Feb',
       price: 'FREE', 
-      image: SonuNigam, 
+      image: '/placeholder-artist.jpg', 
       category: 'MUSIC', 
       type: 'event',
       venue: 'Phoenix Citadel Mall, Indore'
@@ -96,7 +91,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
       time: '8:00 PM',
       fullDate: 'Sun, 1 Mar',
       price: '₹1500', 
-      image: SunidhiChauhan, 
+      image: '/placeholder-artist.jpg', 
       category: 'MUSIC', 
       type: 'event',
       venue: 'Venue to be announced'
@@ -108,7 +103,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
       time: '9:00 PM',
       fullDate: 'Sat, 7 Mar',
       price: '₹2500', 
-      image: KaranAujla, 
+      image: '/placeholder-artist.jpg', 
       category: 'MUSIC', 
       type: 'event',
       venue: 'Nehru Stadium, Indore'
@@ -120,7 +115,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
       time: '7:30 PM',
       fullDate: 'Fri, 13 Mar',
       price: '₹800', 
-      image: AadityaKullu, 
+      image: '/placeholder-artist.jpg', 
       category: 'COMEDY', 
       type: 'event',
       venue: 'Sayaji Hotel, Indore'

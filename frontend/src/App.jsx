@@ -1,31 +1,142 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import Sidebar from "./components/organizer/ORG_Sidebar";
-import Dashboard from "./components/organizer/ORG_Dashboard";
-import MyEvents from "./components/organizer/ORG_MyEvents";
-import "./index.css";
-import CreateEvent from "./components/organizer/ORG_CreateEvent";
-import BookingsManagement from "./components/organizer/ORG_BookingsManagement";
-import ReviewsRatings from "./components/organizer/ORG_ReviewsRatings";
-import Settings from "./components/organizer/ORG_Settings";
-import ReportsAnalytics from "./components/organizer/ORG_ReportsAnalytics";
+import React, { useState } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import Home from './components/user/USER_Home';
+import MoviesPage from './components/user/USER_MoviesPage';
+import EventsPage from './components/user/USER_EventsPage';
+import USER_MovieDetail from './components/user/USER_MovieDetail';
+import USER_ArtistProfile from './components/user/USER_ArtistProfile';
+import USER_BookingPage from './components/user/USER_BookingPage';
+import AuthModal from './AuthModal';
+import './index.css';
 
 function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [isDark, setIsDark] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  const handleAuthOpen = () => setIsAuthModalOpen(true);
+  const handleAuthClose = () => setIsAuthModalOpen(false);
+  const handleAuthSuccess = (userData) => {
+    setUser(userData);
+    setIsAuthModalOpen(false);
+  };
+
+  const handleProfileClick = () => console.log('Profile clicked');
+  
+  const handleMovieClick = (movie) => {
+    navigate('/movie', { state: { movie } });
+  };
+  
+  const handleArtistClick = (artist) => {
+    navigate('/artist', { state: { artist } });
+  };
+  
+  const handleBookTickets = (item) => {
+    navigate('/booking', { state: { item } });
+  };
+
+  const handleNavigate = (page) => {
+    if (page === 'home') navigate('/');
+    else if (page === 'movies') navigate('/movies');
+    else if (page === 'events') navigate('/events');
+    else navigate(`/${page}`);
+  };
+
   return (
-      <div className="flex">
-        <Sidebar />
-        <main className="w-full min-h-screen bg-gray-100 p-2 sm:p-4 md:p-6 lg:p-8 transition-all duration-300">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/events" element={<MyEvents />} />
-            <Route path="/create-event" element={<CreateEvent />} />
-            <Route path="/bookings" element={<BookingsManagement />} />
-            <Route path="/reviews" element={<ReviewsRatings />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/reports" element={<ReportsAnalytics />} />
-          </Routes>
-        </main>
-      </div>
+    <div>
+      <Routes>
+        <Route path="/" element={
+          <Home 
+            isDark={isDark}
+            setIsDark={setIsDark}
+            user={user}
+            onAuthOpen={handleAuthOpen}
+            onProfileClick={handleProfileClick}
+            onNavigate={handleNavigate}
+            onMovieClick={handleMovieClick}
+            onBookTickets={handleBookTickets}
+            onArtistClick={handleArtistClick}
+          />
+        } />
+        
+        <Route path="/movies" element={
+          <MoviesPage 
+            isDark={isDark}
+            setIsDark={setIsDark}
+            user={user}
+            onAuthOpen={handleAuthOpen}
+            onProfileClick={handleProfileClick}
+            onNavigate={handleNavigate}
+            onMovieClick={handleMovieClick}
+            onBookTickets={handleBookTickets}
+          />
+        } />
+        
+        <Route path="/events" element={
+          <EventsPage 
+            isDark={isDark}
+            setIsDark={setIsDark}
+            user={user}
+            onAuthOpen={handleAuthOpen}
+            onProfileClick={handleProfileClick}
+            onNavigate={handleNavigate}
+            onBookTickets={handleBookTickets}
+            onMovieClick={handleMovieClick}
+            onArtistClick={handleArtistClick}
+          />
+        } />
+        
+        <Route path="/movie" element={
+          <USER_MovieDetail 
+            movie={location.state?.movie}
+            isDark={isDark}
+            setIsDark={setIsDark}
+            user={user}
+            onAuthOpen={handleAuthOpen}
+            onProfileClick={handleProfileClick}
+            onNavigate={handleNavigate}
+            onBack={() => navigate(-1)}
+            onBookTickets={handleBookTickets}
+          />
+        } />
+        
+        <Route path="/artist" element={
+          <USER_ArtistProfile 
+            artist={location.state?.artist}
+            isDark={isDark}
+            setIsDark={setIsDark}
+            user={user}
+            onAuthOpen={handleAuthOpen}
+            onProfileClick={handleProfileClick}
+            onNavigate={handleNavigate}
+            onBack={() => navigate(-1)}
+            onEventClick={handleMovieClick}
+          />
+        } />
+        
+        <Route path="/booking" element={
+          <USER_BookingPage 
+            item={location.state?.item}
+            isDark={isDark}
+            setIsDark={setIsDark}
+            user={user}
+            onAuthOpen={handleAuthOpen}
+            onProfileClick={handleProfileClick}
+            onNavigate={handleNavigate}
+            onBack={() => navigate(-1)}
+          />
+        } />
+      </Routes>
+
+      <AuthModal 
+        isOpen={isAuthModalOpen}
+        onClose={handleAuthClose}
+        onAuthSuccess={handleAuthSuccess}
+        isDark={isDark}
+      />
+    </div>
   );
 }
 
