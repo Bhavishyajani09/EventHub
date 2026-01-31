@@ -127,10 +127,10 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '20px',
+        padding: 'clamp(16px, 4vw, 20px)',
         display: 'grid',
-        gridTemplateColumns: '1fr 350px',
-        gap: '40px'
+        gridTemplateColumns: window.innerWidth > 768 ? '1fr 350px' : '1fr',
+        gap: 'clamp(20px, 5vw, 40px)'
       }}>
         {/* Back Button */}
         <div style={{ gridColumn: '1 / -1' }}>
@@ -159,20 +159,24 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
           <div style={{
             backgroundColor: isDark ? '#1f2937' : 'white',
             borderRadius: '12px',
-            padding: '24px',
+            padding: 'clamp(16px, 4vw, 24px)',
             marginBottom: '20px',
             display: 'flex',
-            gap: '20px'
+            flexDirection: window.innerWidth > 480 ? 'row' : 'column',
+            gap: '20px',
+            alignItems: window.innerWidth > 480 ? 'flex-start' : 'center',
+            textAlign: window.innerWidth > 480 ? 'left' : 'center'
           }}>
             <img src={item.image} alt={item.title} style={{
-              width: '80px',
-              height: '100px',
+              width: 'clamp(60px, 15vw, 80px)',
+              height: 'clamp(80px, 20vw, 100px)',
               borderRadius: '8px',
-              objectFit: 'cover'
+              objectFit: 'cover',
+              flexShrink: 0
             }} />
             <div>
               <h3 style={{
-                fontSize: '20px',
+                fontSize: 'clamp(16px, 4vw, 20px)',
                 fontWeight: 'bold',
                 color: isDark ? '#f9fafb' : '#111827',
                 marginBottom: '8px'
@@ -194,13 +198,13 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
           <div style={{
             backgroundColor: isDark ? '#1f2937' : 'white',
             borderRadius: '8px',
-            padding: '32px',
+            padding: 'clamp(20px, 5vw, 32px)',
             marginBottom: '20px',
             border: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
             boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
           }}>
             <h4 style={{
-              fontSize: '20px',
+              fontSize: 'clamp(16px, 4vw, 20px)',
               fontWeight: '600',
               color: isDark ? '#f9fafb' : '#111827',
               marginBottom: '24px',
@@ -217,7 +221,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
                     backgroundColor: selectedSeatType === type ? details.bgColor : (isDark ? '#374151' : '#ffffff'),
                     border: selectedSeatType === type ? `2px solid ${details.border}` : `1px solid ${isDark ? '#4b5563' : '#e5e7eb'}`,
                     borderRadius: '6px',
-                    padding: '20px 24px',
+                    padding: 'clamp(16px, 4vw, 20px) clamp(20px, 5vw, 24px)',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     display: 'flex',
@@ -227,7 +231,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
                 >
                   <div>
                     <h5 style={{
-                      fontSize: '16px',
+                      fontSize: 'clamp(14px, 3.5vw, 16px)',
                       fontWeight: '600',
                       color: selectedSeatType === type ? details.color : (isDark ? '#f9fafb' : '#111827'),
                       textTransform: 'capitalize',

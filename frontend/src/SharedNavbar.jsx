@@ -291,6 +291,20 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
 
       {/* Mobile Responsive Styles */}
       <style>{`
+        @media (max-width: 1024px) {
+          nav > div > div {
+            gap: 16px !important;
+          }
+          nav > div > div > div:nth-child(3) > div {
+            gap: 4px !important;
+            padding: 2px !important;
+          }
+          nav > div > div > div:nth-child(3) > div > button {
+            padding: 8px 12px !important;
+            font-size: 12px !important;
+          }
+        }
+        
         @media (max-width: 768px) {
           nav > div > div {
             height: auto !important;
@@ -301,6 +315,8 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
           
           nav > div > div > div:first-child {
             order: 1;
+            width: 100% !important;
+            justify-content: center !important;
           }
           
           nav > div > div > div:nth-child(2) {
@@ -318,15 +334,21 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
             order: 4;
             width: 100% !important;
             justify-content: center !important;
+            flex-wrap: wrap !important;
           }
           
           nav > div > div > div:last-child > div:first-child {
             min-width: 200px !important;
             max-width: 280px !important;
+            flex: 1 !important;
           }
         }
         
         @media (max-width: 480px) {
+          nav > div {
+            padding: 0 16px !important;
+          }
+          
           nav > div > div > div:first-child > div:last-child {
             display: none !important;
           }
@@ -337,13 +359,22 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
           }
           
           nav > div > div > div:nth-child(3) > div {
-            gap: 4px !important;
+            gap: 2px !important;
             padding: 2px !important;
           }
           
           nav > div > div > div:nth-child(3) > div > button {
-            padding: 8px 12px !important;
-            font-size: 12px !important;
+            padding: 6px 8px !important;
+            font-size: 11px !important;
+          }
+          
+          nav > div > div > div:last-child {
+            gap: 8px !important;
+          }
+          
+          nav > div > div > div:last-child > div:first-child {
+            min-width: 150px !important;
+            max-width: 200px !important;
           }
         }
       `}</style>

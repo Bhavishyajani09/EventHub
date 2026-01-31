@@ -67,7 +67,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '20px',
+        padding: 'clamp(16px, 4vw, 20px)',
         width: 'calc(100% - 40px)',
         boxSizing: 'border-box',
         overflowX: 'hidden'
@@ -94,7 +94,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
         <div style={{
           display: 'grid',
           gridTemplateColumns: window.innerWidth > 768 ? '1fr 400px' : '1fr',
-          gap: '40px',
+          gap: 'clamp(20px, 5vw, 40px)',
           marginBottom: '40px'
         }}>
           {/* Left Section - Movie Info */}
@@ -104,12 +104,12 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               borderRadius: '12px',
-              height: '400px',
+              height: 'clamp(300px, 50vw, 400px)',
               marginBottom: '20px'
             }}></div>
 
             <h1 style={{
-              fontSize: '32px',
+              fontSize: 'clamp(24px, 6vw, 32px)',
               fontWeight: 'bold',
               color: isDark ? '#f9fafb' : '#111827',
               marginBottom: '12px'

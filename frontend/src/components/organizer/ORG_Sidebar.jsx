@@ -61,44 +61,87 @@ import {
   BarChart3,
   Settings,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Menu,
+  X
 } from "lucide-react";
 
 export default function Sidebar() {
   const location = useLocation();
-  const [collapsed, setCollapsed] = useState(false); // collapse state
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex">
-      {/* ===== Sidebar ===== */}
+    <>
+      {/* Mobile Menu Button */}
+      <button
+        className="lg:hidden fixed top-20 left-4 z-50 p-2 bg-indigo-600 text-white rounded-md shadow-lg"
+        onClick={() => setMobileOpen(!mobileOpen)}
+      >
+        {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
+
+      {/* Mobile Overlay */}
+      {mobileOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
       <aside
         className={`
-          bg-white mt-4 border-r h-screen transition-all duration-300
-          ${collapsed ? "w-16" : "w-64"} flex flex-col
-          relative
+          bg-white border-r h-screen transition-all duration-300 z-40 group
+          ${collapsed ? "w-16" : "w-64"} 
+          ${mobileOpen ? "fixed" : "lg:relative lg:block hidden"}
+          flex flex-col relative
         `}
       >
-        {/* ===== Collapse Button ===== */}
-        <button
-          className="absolute -right-3 top-4 w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-md hover:bg-indigo-700 z-10"
-          onClick={() => setCollapsed(!collapsed)}
-        >
-          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-        </button>
+        {/* Collapse Toggle - Desktop Only */}
+        <div className="hidden lg:flex absolute -right-4 top-6 z-10">
+          <button
+            className="w-8 h-8 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-200 opacity-0 group-hover:opacity-100 hover:bg-gray-50"
+            onClick={() => setCollapsed(!collapsed)}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? <ChevronRight size={14} className="text-gray-600" /> : <ChevronLeft size={14} className="text-gray-600" />}
+          </button>
+        </div>
 
-        {/* ===== Logo ===== */}
-        {!collapsed && (
-          <h2 className="text-2xl font-bold mb-8 px-2">EventPro</h2>
-        )}
+        {/* Logo */}
+        <div className="p-4">
+          {!collapsed && (
+            <div className="flex items-center gap-3">
+              <img 
+                src="/new_icon_favicon.png" 
+                alt="EventHub Logo" 
+                className="w-9 h-9 rounded-lg"
+              />
+              <div>
+                <h2 className="text-lg font-bold text-gray-800">EventHub</h2>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">Organizer</p>
+              </div>
+            </div>
+          )}
+          {collapsed && (
+            <img 
+              src="/new_icon_favicon.png" 
+              alt="EventHub Logo" 
+              className="w-8 h-8 rounded-lg mx-auto"
+            />
+          )}
+        </div>
 
-        {/* ===== Navigation ===== */}
-        <nav className="flex-1 space-y-1 px-2">
+        {/* Navigation */}
+        <nav className="flex-1 space-y-1 px-2 pb-4">
           <SidebarItem
             to="/"
             icon={<LayoutDashboard size={18} />}
             label="Dashboard"
             active={location.pathname === "/"}
             collapsed={collapsed}
+            onClick={() => setMobileOpen(false)}
           />
           <SidebarItem
             to="/events"
@@ -106,6 +149,7 @@ export default function Sidebar() {
             label="My Events"
             active={location.pathname === "/events"}
             collapsed={collapsed}
+            onClick={() => setMobileOpen(false)}
           />
           <SidebarItem
             to="/create-event"
@@ -113,6 +157,7 @@ export default function Sidebar() {
             label="Create Event"
             active={location.pathname === "/create-event"}
             collapsed={collapsed}
+            onClick={() => setMobileOpen(false)}
           />
           <SidebarItem
             to="/bookings"
@@ -120,6 +165,7 @@ export default function Sidebar() {
             label="Bookings"
             active={location.pathname === "/bookings"}
             collapsed={collapsed}
+            onClick={() => setMobileOpen(false)}
           />
           <SidebarItem
             to="/reviews"
@@ -127,6 +173,7 @@ export default function Sidebar() {
             label="Reviews & Ratings"
             active={location.pathname === "/reviews"}
             collapsed={collapsed}
+            onClick={() => setMobileOpen(false)}
           />
           <SidebarItem
             to="/reports"
@@ -134,6 +181,7 @@ export default function Sidebar() {
             label="Reports & Analytics"
             active={location.pathname === "/reports"}
             collapsed={collapsed}
+            onClick={() => setMobileOpen(false)}
           />
           <SidebarItem
             to="/settings"
@@ -141,24 +189,29 @@ export default function Sidebar() {
             label="Settings"
             active={location.pathname === "/settings"}
             collapsed={collapsed}
+            onClick={() => setMobileOpen(false)}
           />
         </nav>
       </aside>
-    </div>
+    </>
   );
 }
 
-/* ===== Sidebar Item ===== */
-function SidebarItem({ to, icon, label, active, collapsed }) {
+/* Sidebar Item */
+function SidebarItem({ to, icon, label, active, collapsed, onClick }) {
   return (
     <Link
       to={to}
-      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-gray-100
-        ${active ? "bg-indigo-100 text-indigo-600 font-medium" : "text-gray-700"}
-      `}
+      onClick={onClick}
+      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-gray-100 transition-colors
+        ${
+          active
+            ? "bg-indigo-100 text-indigo-600 font-medium"
+            : "text-gray-700"
+        }`}
     >
       {icon}
-      {!collapsed && <span>{label}</span>}
+      {!collapsed && <span className="truncate">{label}</span>}
     </Link>
   );
 }

@@ -5,7 +5,7 @@ const Settings = () => {
   const [adminProfile, setAdminProfile] = useState({
     fullName: 'Admin User',
     email: 'admin@eventhub.com',
-    phone: '+1 234-567-8900'
+    phone: '1234567800'
   });
 
   const [passwordData, setPasswordData] = useState({

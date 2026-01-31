@@ -88,7 +88,7 @@ const ArtistProfile = ({ artist, isDark, setIsDark, user, onAuthOpen, onProfileC
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '40px 20px'
+        padding: 'clamp(20px, 5vw, 40px) clamp(16px, 4vw, 20px)'
       }}>
         {/* Back Button */}
         <button 
@@ -112,8 +112,8 @@ const ArtistProfile = ({ artist, isDark, setIsDark, user, onAuthOpen, onProfileC
         <div style={{
           display: 'grid',
           gridTemplateColumns: window.innerWidth > 768 ? '400px 1fr' : '1fr',
-          gap: '40px',
-          marginBottom: '60px'
+          gap: 'clamp(20px, 5vw, 40px)',
+          marginBottom: 'clamp(40px, 8vw, 60px)'
         }}>
           {/* Artist Image */}
           <div style={{
@@ -121,7 +121,7 @@ const ArtistProfile = ({ artist, isDark, setIsDark, user, onAuthOpen, onProfileC
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             borderRadius: '16px',
-            height: '400px',
+            height: 'clamp(300px, 50vw, 400px)',
             boxShadow: isDark ? '0 8px 32px rgba(0, 0, 0, 0.4)' : '0 8px 32px rgba(0, 0, 0, 0.15)'
           }} />
 
@@ -132,18 +132,20 @@ const ArtistProfile = ({ artist, isDark, setIsDark, user, onAuthOpen, onProfileC
             justifyContent: 'center'
           }}>
             <h1 style={{
-              fontSize: '48px',
+              fontSize: 'clamp(32px, 8vw, 48px)',
               fontWeight: 'bold',
               color: isDark ? '#f9fafb' : '#111827',
               marginBottom: '20px',
-              lineHeight: '1.1'
+              lineHeight: '1.1',
+              textAlign: window.innerWidth > 768 ? 'left' : 'center'
             }}>{artist.name}</h1>
 
             <p style={{
-              fontSize: '18px',
+              fontSize: 'clamp(16px, 4vw, 18px)',
               color: isDark ? '#d1d5db' : '#4b5563',
               lineHeight: '1.6',
-              marginBottom: '0'
+              marginBottom: '0',
+              textAlign: window.innerWidth > 768 ? 'left' : 'center'
             }}>
               {artist.name} is one of the most versatile and popular singers in Bollywood, with 
               over 3000 songs in her repertoire and numerous national and international awards. She has 

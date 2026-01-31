@@ -1,7 +1,8 @@
+import React, { memo } from "react";
 import { BarChart3, Ticket, Calendar, DollarSign } from "lucide-react";
 import { eventsData, bookings } from "../../lib/data";
 
-export default function Dashboard() {
+const Dashboard = memo(() => {
     const totalEvents = eventsData.length;
 
   const totalTicketsSold = eventsData.reduce(
@@ -130,7 +131,7 @@ export default function Dashboard() {
       </div>
     </div>
   );
-}
+});
 
 /* ---------------- Components ---------------- */
 
@@ -228,14 +229,6 @@ function FullCirclePie({ data }) {
   );
 }
 
-
-
-
-
-
-
-
-
 function BookingRow({ id, user, event, tickets, amount, status }) {
   const isCancelled =
     status?.toLowerCase() === "cancelled" ||
@@ -264,3 +257,4 @@ function BookingRow({ id, user, event, tickets, amount, status }) {
   );
 }
 
+export default Dashboard;

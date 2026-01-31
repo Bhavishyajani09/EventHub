@@ -9,11 +9,14 @@ import {
   Settings, 
   LogOut, 
   Search,
-  Bell
+  Bell,
+  Menu,
+  X
 } from 'lucide-react';
 
 const AdminLayout = ({ children, activeTab, setActiveTab }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -25,9 +28,29 @@ const AdminLayout = ({ children, activeTab, setActiveTab }) => {
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex bg-gray-50" style={{ minHeight: 'calc(100vh - 70px)' }}>
+      {/* Mobile Menu Button */}
+      <button
+        className="lg:hidden fixed top-24 left-4 z-50 p-2 bg-blue-600 text-white rounded-md shadow-lg"
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+      >
+        {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
+
+      {/* Mobile Overlay */}
+      {mobileMenuOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow-lg">
+      <div className={`
+        bg-white shadow-lg transition-all duration-300 z-40
+        ${mobileMenuOpen ? 'fixed' : 'lg:relative lg:block hidden'}
+        w-64
+      `} style={{ height: 'calc(100vh - 70px)' }}>
         {/* Logo */}
         <div className="flex items-center px-6 py-4 border-b">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -43,7 +66,10 @@ const AdminLayout = ({ children, activeTab, setActiveTab }) => {
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveTab(item.id)}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  setMobileMenuOpen(false);
+                }}
                 className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-50 transition-colors ${
                   activeTab === item.id 
                     ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' 
@@ -69,22 +95,22 @@ const AdminLayout = ({ children, activeTab, setActiveTab }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b px-6 py-4">
+        <header className="bg-white shadow-sm border-b px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-gray-800 capitalize">
+            <h1 className="text-xl sm:text-2xl font-semibold text-gray-800 capitalize ml-12 lg:ml-0">
               {activeTab}
             </h1>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               {/* Search */}
-              <div className="relative">
+              <div className="relative hidden sm:block">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                 <input
                   type="text"
                   placeholder="Search..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80"
+                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-40 lg:w-80"
                 />
               </div>
 
@@ -99,14 +125,14 @@ const AdminLayout = ({ children, activeTab, setActiveTab }) => {
                 <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
                   <span className="text-white text-sm font-medium">AD</span>
                 </div>
-                <span className="text-gray-700 font-medium">Admin</span>
+                <span className="hidden sm:block text-gray-700 font-medium">Admin</span>
               </div>
             </div>
           </div>
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-auto p-4 sm:p-6">
           {children}
         </main>
       </div>

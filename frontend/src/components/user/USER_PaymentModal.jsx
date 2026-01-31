@@ -48,7 +48,7 @@ const PaymentModal = ({ isOpen, onClose, totalAmount, onPayment }) => {
         backgroundColor: 'white',
         borderRadius: '12px',
         width: '100%',
-        maxWidth: '500px',
+        maxWidth: window.innerWidth > 768 ? '500px' : '95vw',
         maxHeight: '90vh',
         overflow: 'hidden',
         boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
@@ -58,7 +58,7 @@ const PaymentModal = ({ isOpen, onClose, totalAmount, onPayment }) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '20px',
+          padding: 'clamp(16px, 4vw, 20px)',
           borderBottom: '1px solid #e5e7eb'
         }}>
           <button
@@ -77,7 +77,7 @@ const PaymentModal = ({ isOpen, onClose, totalAmount, onPayment }) => {
             Back
           </button>
           <h2 style={{
-            fontSize: '20px',
+            fontSize: 'clamp(16px, 4vw, 20px)',
             fontWeight: '600',
             color: '#111827',
             margin: 0
@@ -101,7 +101,7 @@ const PaymentModal = ({ isOpen, onClose, totalAmount, onPayment }) => {
         <div style={{
           maxHeight: 'calc(90vh - 140px)',
           overflowY: 'auto',
-          padding: '0 20px'
+          padding: '0 clamp(16px, 4vw, 20px)'
         }}>
           {paymentSections.map((section) => (
             <div key={section.id} style={{
@@ -241,7 +241,7 @@ const PaymentModal = ({ isOpen, onClose, totalAmount, onPayment }) => {
 
         {/* Pay Button */}
         <div style={{
-          padding: '20px',
+          padding: 'clamp(16px, 4vw, 20px)',
           borderTop: '1px solid #e5e7eb'
         }}>
           <button
