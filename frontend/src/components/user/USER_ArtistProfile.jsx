@@ -1,6 +1,6 @@
 import React from 'react';
-import SharedNavbar from './SharedNavbar';
-import SharedFooter from './SharedFooter';
+import SharedNavbar from '../../SharedNavbar';
+import SharedFooter from '../../SharedFooter';
 
 const ArtistProfile = ({ artist, isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBack, onEventClick }) => {
   if (!artist) {

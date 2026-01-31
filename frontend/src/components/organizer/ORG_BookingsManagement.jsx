@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Search, Filter, Download, Eye, X } from "lucide-react";
-import { bookings } from "../lib/data";
+import { bookings } from "../../lib/data";
 
 // const bookings = [
 //   {

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import AdminLayout from './AdminLayout';
-import Dashboard from './Dashboard';
-import Organizers from './Organizers';
-import Settings from './Settings';
-import AdminUserManagement from '../../pages/admin/AdminUserManagement';
-import AdminEvents from '../../pages/admin/AdminEvents';
-import AdminBooking from '../adminBooking';
+import Dashboard from './ADMIN_Dashboard';
+import Organizers from './ADMIN_Organizers';
+import Settings from './ADMIN_Settings';
+import AdminUserManagement from './AdminUserManagement';
+import AdminEvents from './AdminEvents';
+import AdminBooking from './adminBooking';
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('dashboard');

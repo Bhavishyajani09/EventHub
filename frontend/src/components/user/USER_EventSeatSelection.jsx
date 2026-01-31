@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import SharedNavbar from './SharedNavbar';
-import SharedFooter from './SharedFooter';
+import SharedNavbar from '../../SharedNavbar';
+import SharedFooter from '../../SharedFooter';
 
 const EventSeatSelection = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBack, onProceedToBooking }) => {
   const [selectedSection, setSelectedSection] = useState(null);

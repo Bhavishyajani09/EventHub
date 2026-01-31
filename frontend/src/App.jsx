@@ -1,14 +1,14 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import Sidebar from "./Pages/Sidebar";
-import Dashboard from "./Pages/Dashboard";
-import MyEvents from "./Pages/MyEvents";
+import Sidebar from "./components/organizer/ORG_Sidebar";
+import Dashboard from "./components/organizer/ORG_Dashboard";
+import MyEvents from "./components/organizer/ORG_MyEvents";
 import "./index.css";
-import CreateEvent from "./Pages/CreateEvent";
-import BookingsManagement from "./Pages/BookingsManagement";
-import ReviewsRatings from "./Pages/ReviewsRatings"
-import Settings from "./Pages/Settings"
-import ReportsAnalytics from "./Pages/ReportsAnalytics";
+import CreateEvent from "./components/organizer/ORG_CreateEvent";
+import BookingsManagement from "./components/organizer/ORG_BookingsManagement";
+import ReviewsRatings from "./components/organizer/ORG_ReviewsRatings";
+import Settings from "./components/organizer/ORG_Settings";
+import ReportsAnalytics from "./components/organizer/ORG_ReportsAnalytics";
 
 function App() {
   return (

@@ -10,10 +10,10 @@ import KaranAujla from './assets/KaranAujla.jpg';
 import SonuNigam from './assets/SonuNigam.jpg';
 import AadityaKullu from './assets/AadityaKulluKulshreshth.jpg';
 import KanhaKamboj from './assets/KanhaKamboj.jpg';
-import AuthModal from './AuthModal';
+import AuthModal from '../../AuthModal';
 import ProfilePanel from './ProfilePanel';
-import SharedNavbar from './SharedNavbar';
-import SharedFooter from './SharedFooter';
+import SharedNavbar from '../../SharedNavbar';
+import SharedFooter from '../../SharedFooter';
 import MovieDetail from './MovieDetail';
 
 const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick, onBookTickets, onArtistClick }) => {

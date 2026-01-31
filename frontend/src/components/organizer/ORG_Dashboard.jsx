@@ -1,5 +1,5 @@
 import { BarChart3, Ticket, Calendar, DollarSign } from "lucide-react";
-import { eventsData, bookings } from "../lib/data";
+import { eventsData, bookings } from "../../lib/data";
 
 export default function Dashboard() {
     const totalEvents = eventsData.length;

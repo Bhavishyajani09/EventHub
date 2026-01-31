@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import SharedNavbar from './SharedNavbar';
-import SharedFooter from './SharedFooter';
+import SharedNavbar from '../../SharedNavbar';
+import SharedFooter from '../../SharedFooter';
 
 const BookingPage = ({ movie, event, isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBack }) => {
   const [selectedSeatType, setSelectedSeatType] = useState(null);

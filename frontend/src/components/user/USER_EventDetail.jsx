@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Music, MapPin, Calendar, Clock, Ticket, Car, UtensilsCrossed, Accessibility, ChevronDown } from 'lucide-react';
-import SharedNavbar from './SharedNavbar';
-import SharedFooter from './SharedFooter';
+import SharedNavbar from '../../SharedNavbar';
+import SharedFooter from '../../SharedFooter';
 
 const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBack, onBookTickets }) => {
   const [isTermsOpen, setIsTermsOpen] = useState(false);

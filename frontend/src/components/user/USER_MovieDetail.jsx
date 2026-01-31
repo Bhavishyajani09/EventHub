@@ -1,7 +1,7 @@
 import React from 'react';
 import { Palette, Globe, Clock, Film, Calendar, MapPin, Ticket, ChevronDown } from 'lucide-react';
-import SharedNavbar from './SharedNavbar';
-import SharedFooter from './SharedFooter';
+import SharedNavbar from '../../SharedNavbar';
+import SharedFooter from '../../SharedFooter';
 
 const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBack, onBookTickets }) => {
   const [isTermsOpen, setIsTermsOpen] = React.useState(false);

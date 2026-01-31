@@ -294,8 +294,8 @@ import {
   Trash2,
   Filter,
 } from "lucide-react";
-import CommonModal from "../components/CommonModal";
-import { eventsData } from "../lib/data";
+import CommonModal from "./ORG_CommonModal";
+import { eventsData } from "../../lib/data";
 
 /* ================= MyEvents ================= */
 

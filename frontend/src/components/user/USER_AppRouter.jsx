@@ -7,7 +7,7 @@ import EventDetail from './EventDetail';
 import ArtistProfile from './ArtistProfile';
 import BookingPage from './BookingPage';
 import EventSeatSelection from './EventSeatSelection';
-import AuthModal from './AuthModal';
+import AuthModal from '../../AuthModal';
 import Profile from './Profile';
 import Bookings from './Bookings';
 import TermsAndConditions from './TermsAndConditions';

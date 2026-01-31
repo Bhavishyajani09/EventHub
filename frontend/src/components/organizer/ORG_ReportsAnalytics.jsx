@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ArrowUpRight, Download } from "lucide-react";
-import { eventsData, bookings } from "../lib/data";
+import { eventsData, bookings } from "../../lib/data";
 
 
 export default function ReportsAnalytics() {

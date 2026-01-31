@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Music, Laugh, Zap, Palette, Calendar, Clock } from 'lucide-react';
-import SharedNavbar from './SharedNavbar';
-import SharedFooter from './SharedFooter';
+import SharedNavbar from '../../SharedNavbar';
+import SharedFooter from '../../SharedFooter';
 import SonuNigam from './assets/SonuNigam.jpg';
 import SunidhiChauhan from './assets/SunidhiChauhan.jpg';
 import KaranAujla from './assets/KaranAujla.jpg';

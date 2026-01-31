@@ -16,8 +16,8 @@ import Gabbar from './assets/gabbar.jpg';
 import GreenlandMigration from './assets/Greenland 2 Migration.jpg';
 import LaaloKrishna from './assets/Laalo - Krishna Sada Sahaayate.jpg';
 import Sarfira from './assets/Sarfira.jpg';
-import SharedNavbar from './SharedNavbar';
-import SharedFooter from './SharedFooter';
+import SharedNavbar from '../../SharedNavbar';
+import SharedFooter from '../../SharedFooter';
 import MovieDetail from './MovieDetail';
 
 // Import Rahu Ketu with different approach
