@@ -100,11 +100,6 @@ const AdminBooking = () => {
 
   return (
     <div className="flex-1 p-4 bg-gray-50 h-screen overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold text-gray-900">Bookings</h1>
-      </div>
-
       {/* Statistics Cards */}
       <div className="grid grid-cols-4 gap-4 mb-4">
         <div className="bg-white p-3 rounded-lg shadow-sm">

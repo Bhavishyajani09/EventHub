@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Sidebar from "./components/organizer/ORG_Sidebar";
 import SharedNavbar from "./SharedNavbar";
 import AdminPanel from "./components/admin/AdminPanel";
+import UserHome from "./components/user/USER_Home";
 import "./index.css";
 
 // Lazy load components for better performance
@@ -27,11 +28,14 @@ function App() {
 
   return (
     <Routes>
+      {/* User Routes - Default */}
+      <Route path="/" element={<UserHome />} />
+      
       {/* Admin Routes */}
       <Route path="/admin/*" element={<AdminPanel />} />
       
       {/* Organizer Routes */}
-      <Route path="/*" element={
+      <Route path="/organizer/*" element={
         <div className="min-h-screen bg-gray-100">
           <SharedNavbar 
             isDark={isDark}
