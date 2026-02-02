@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useTheme } from "../../contexts/ThemeContext";
 import { ArrowUpRight, Download } from "lucide-react";
 import { eventsData, bookings } from "../../lib/data";
 
 
 export default function ReportsAnalytics() {
+  const { isDark } = useTheme();
   const [timeRange, setTimeRange] = useState("Last 30 Days");
   const [selectedEvent, setSelectedEvent] = useState("All Events");
   const [startDate, setStartDate] = useState("");
@@ -115,11 +117,11 @@ const ticketDistribution = Object.entries(ticketTypeCount).map(
 
 
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 p-6 min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold">Reports & Analytics</h1>
-        <p className="text-gray-500">
+        <h1 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Reports & Analytics</h1>
+        <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
           Analyze your event performance and trends
         </p>
       </div>
@@ -149,7 +151,7 @@ const ticketDistribution = Object.entries(ticketTypeCount).map(
       </div> */}
 
 
-<div className="bg-white p-4 rounded-xl border space-y-4">
+<div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} p-4 rounded-xl border space-y-4`}>
 
       {/* 🔹 Top Row – 4 Columns */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -158,7 +160,11 @@ const ticketDistribution = Object.entries(ticketTypeCount).map(
         <select
           value={timeRange}
           onChange={(e) => setTimeRange(e.target.value)}
-          className="px-3 py-2 border rounded-lg w-full"
+          className={`px-3 py-2 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+            isDark 
+              ? 'bg-gray-700 border-gray-600 text-white' 
+              : 'bg-white border-gray-300 text-gray-900'
+          }`}
         >
           <option>Last 7 Days</option>
           <option>Last 30 Days</option>
@@ -169,7 +175,11 @@ const ticketDistribution = Object.entries(ticketTypeCount).map(
         <select
           value={selectedEvent}
           onChange={(e) => setSelectedEvent(e.target.value)}
-          className="px-3 py-2 border rounded-lg w-full"
+          className={`px-3 py-2 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+            isDark 
+              ? 'bg-gray-700 border-gray-600 text-white' 
+              : 'bg-white border-gray-300 text-gray-900'
+          }`}
         >
           <option>All Events</option>
           {eventsData.map((event) => (
@@ -184,7 +194,11 @@ const ticketDistribution = Object.entries(ticketTypeCount).map(
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          className="px-3 py-2 border rounded-lg w-full"
+          className={`px-3 py-2 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+            isDark 
+              ? 'bg-gray-700 border-gray-600 text-white' 
+              : 'bg-white border-gray-300 text-gray-900'
+          }`}
         />
 
         {/* End Date */}
@@ -192,7 +206,11 @@ const ticketDistribution = Object.entries(ticketTypeCount).map(
           type="date"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
-          className="px-3 py-2 border rounded-lg w-full"
+          className={`px-3 py-2 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+            isDark 
+              ? 'bg-gray-700 border-gray-600 text-white' 
+              : 'bg-white border-gray-300 text-gray-900'
+          }`}
         />
 
       </div>
@@ -209,14 +227,22 @@ const ticketDistribution = Object.entries(ticketTypeCount).map(
 
         <button
           onClick={exportCSV}
-          className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50"
+          className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
+            isDark 
+              ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
+              : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+          }`}
         >
           <Download size={16} /> Export CSV
         </button>
 
         <button
           onClick={exportPDF}
-          className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50"
+          className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
+            isDark 
+              ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
+              : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+          }`}
         >
           <Download size={16} /> Export PDF
         </button>
@@ -257,22 +283,26 @@ const ticketDistribution = Object.entries(ticketTypeCount).map(
         title="Total Tickets Sold"
         value={totalTicketsSold}
         change="Live"
+        isDark={isDark}
       />
 
       <StatCard
         title="Total Capacity"
         value={totalTickets}
         subtitle="Across all events"
+        isDark={isDark}
       />
 
       <StatCard
         title="Remaining Tickets"
         value={totalTickets - totalTicketsSold}
+        isDark={isDark}
       />
 
       <StatCard
         title="Conversion Rate"
         value={`${conversionRate}%`}
+        isDark={isDark}
       />
 
     </div>
@@ -331,13 +361,13 @@ const ticketDistribution = Object.entries(ticketTypeCount).map(
 <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
 
   {/* Left Column: Ticket Type Distribution (smaller) */}
-  <div className="md:col-span-4 bg-white p-6 rounded-xl border">
-    <h2 className="font-semibold mb-4">
+  <div className={`md:col-span-4 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} p-6 rounded-xl border`}>
+    <h2 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
       Ticket Type Distribution
     </h2>
 
     {ticketDistribution.length === 0 ? (
-      <p className="text-sm text-gray-500">
+      <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
         No ticket data available
       </p>
     ) : (
@@ -346,22 +376,23 @@ const ticketDistribution = Object.entries(ticketTypeCount).map(
           key={item.label}
           label={item.label}
           percent={item.percent}
+          isDark={isDark}
         />
       ))
     )}
   </div>
 
   {/* Right Column: Booking Funnel (bigger) */}
-  <div className="md:col-span-8 bg-white p-6 rounded-xl border">
-    <h2 className="font-semibold mb-4">Booking Funnel</h2>
+  <div className={`md:col-span-8 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} p-6 rounded-xl border`}>
+    <h2 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Booking Funnel</h2>
 
-    <FunnelRow label="Page Views" value="10,000" percent="100%" />
-    <FunnelRow label="Add to Cart" value="3,500" percent="35%" />
-    <FunnelRow label="Checkout" value="2,100" percent="21%" />
-    <FunnelRow label="Purchase" value="1,850" percent="18.5%" />
+    <FunnelRow label="Page Views" value="10,000" percent="100%" isDark={isDark} />
+    <FunnelRow label="Add to Cart" value="3,500" percent="35%" isDark={isDark} />
+    <FunnelRow label="Checkout" value="2,100" percent="21%" isDark={isDark} />
+    <FunnelRow label="Purchase" value="1,850" percent="18.5%" isDark={isDark} />
 
-    <p className="text-sm text-gray-500 mt-4">
-      Overall Conversion Rate: <b>18.5%</b> from page view to completed purchase
+    <p className={`text-sm mt-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+      Overall Conversion Rate: <b className={isDark ? 'text-gray-300' : 'text-gray-700'}>18.5%</b> from page view to completed purchase
     </p>
   </div>
 
@@ -370,18 +401,18 @@ const ticketDistribution = Object.entries(ticketTypeCount).map(
 
 
       {/* Insights */}
-      <div className="bg-white p-6 rounded-xl border">
-        <h2 className="font-semibold mb-3">Key Insights</h2>
+      <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} p-6 rounded-xl border`}>
+        <h2 className={`font-semibold mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>Key Insights</h2>
 
-        <ul className="list-disc pl-5 text-sm text-gray-600 space-y-2">
+        <ul className={`list-disc pl-5 text-sm space-y-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
           <li>
-            Your conversion rate improved by <b>2.3%</b> this period.
+            Your conversion rate improved by <b className={isDark ? 'text-white' : 'text-gray-800'}>2.3%</b> this period.
           </li>
           <li>
-            Gold tickets are best sellers at <b>35%</b> of total sales.
+            Gold tickets are best sellers at <b className={isDark ? 'text-white' : 'text-gray-800'}>35%</b> of total sales.
           </li>
           <li>
-            Most drop-off occurs between <b>Add to Cart</b> and <b>Checkout</b>.
+            Most drop-off occurs between <b className={isDark ? 'text-white' : 'text-gray-800'}>Add to Cart</b> and <b className={isDark ? 'text-white' : 'text-gray-800'}>Checkout</b>.
           </li>
         </ul>
       </div>
@@ -428,11 +459,11 @@ const ticketDistribution = Object.entries(ticketTypeCount).map(
 // }
 
 
-function StatCard({ title, value, change, subtitle }) {
+function StatCard({ title, value, change, subtitle, isDark }) {
   return (
-    <div className="bg-white p-4 rounded-xl border">
-      <p className="text-sm text-gray-500">{title}</p>
-      <h3 className="text-2xl font-bold">{value}</h3>
+    <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} p-4 rounded-xl border`}>
+      <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{title}</p>
+      <h3 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{value}</h3>
 
       {change && (
         <p className="text-green-600 text-sm flex items-center gap-1">
@@ -441,18 +472,18 @@ function StatCard({ title, value, change, subtitle }) {
       )}
 
       {subtitle && (
-        <p className="text-gray-400 text-sm">{subtitle}</p>
+        <p className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>{subtitle}</p>
       )}
     </div>
   );
 }
 
-function FunnelRow({ label, value, percent }) {
+function FunnelRow({ label, value, percent, isDark }) {
   return (
-    <div className="flex justify-between py-2 border-b last:border-0">
-      <span>{label}</span>
-      <span className="font-medium">
-        {value} <span className="text-gray-400">({percent})</span>
+    <div className={`flex justify-between py-2 border-b last:border-0 ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+      <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>{label}</span>
+      <span className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+        {value} <span className={isDark ? 'text-gray-500' : 'text-gray-400'}>({percent})</span>
       </span>
     </div>
   );
@@ -476,14 +507,14 @@ function FunnelRow({ label, value, percent }) {
 // }
 
 
-function Distribution({ label, percent }) {
+function Distribution({ label, percent, isDark }) {
   return (
     <div className="mb-3">
-      <div className="flex justify-between text-sm mb-1">
+      <div className={`flex justify-between text-sm mb-1 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
         <span>{label}</span>
         <span>{percent}%</span>
       </div>
-      <div className="h-2 bg-gray-200 rounded">
+      <div className={`h-2 rounded ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}>
         <div
           className="h-2 bg-indigo-600 rounded"
           style={{ width: `${percent}%` }}

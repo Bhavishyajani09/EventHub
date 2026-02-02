@@ -1,57 +1,6 @@
-// import { Link, useLocation } from "react-router-dom";
-// import {
-//   LayoutDashboard,
-//   Calendar,
-//   PlusCircle,
-//   ClipboardList,
-//   Star,
-//   BarChart3,
-//   Settings
-// } from "lucide-react";
-
-// export default function Sidebar() {
-//   const location = useLocation();
-
-//   return (
-//     <aside className="fixed top-0 left-0 h-screen w-64 bg-white border-r px-5 py-6">
-      
-//       <h2 className="text-2xl font-bold mb-8">EventPro</h2>
-
-//       <nav className="space-y-1">
-//         <SidebarItem to="/" icon={<LayoutDashboard size={18} />} label="Dashboard" active={location.pathname === "/"} />
-//         <SidebarItem to="/events" icon={<Calendar size={18} />} label="My Events" active={location.pathname === "/events"} />
-//         <SidebarItem to="/create-event" icon={<PlusCircle size={18} />} label="Create Event" active={location.pathname === "/create-event"} />
-//         <SidebarItem to="/bookings" icon={<ClipboardList size={18} />} label="Bookings" active={location.pathname === "/bookings"}/>
-//         <SidebarItem to="/reviews" icon={<Star size={18} />} label="Reviews & Ratings" active={location.pathname === "/reviews"} />
-//         <SidebarItem to="/reports" icon={<BarChart3 size={18} />} label="Reports & Analytics" active={location.pathname === "/reports"}/>
-//         <SidebarItem to="/settings" icon={<Settings size={18} />} label="Settings" active={location.pathname === "/settings"}/>
-//       </nav>
-//     </aside>
-//   );
-// }
-
-// /* Sidebar Item */
-// function SidebarItem({ to, icon, label, active }) {
-//   return (
-//     <Link
-//       to={to}
-//       className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm
-//         ${
-//           active
-//             ? "bg-indigo-100 text-indigo-600 font-medium"
-//             : "text-gray-700 hover:bg-gray-100"
-//         }`}
-//     >
-//       {icon}
-//       <span>{label}</span>
-//     </Link>
-//   );
-// }
-
-
-
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useTheme } from "../../contexts/ThemeContext";
 import {
   LayoutDashboard,
   Calendar,
@@ -67,6 +16,7 @@ import {
 } from "lucide-react";
 
 export default function Sidebar() {
+  const { isDark } = useTheme();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -92,7 +42,7 @@ export default function Sidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          bg-white border-r h-screen transition-all duration-300 z-40 group
+          ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-r transition-all duration-300 z-40 group
           ${collapsed ? "w-16" : "w-64"} 
           ${mobileOpen ? "fixed" : "lg:relative lg:block hidden"}
           flex flex-col relative
@@ -101,95 +51,78 @@ export default function Sidebar() {
         {/* Collapse Toggle - Desktop Only */}
         <div className="hidden lg:flex absolute -right-4 top-6 z-10">
           <button
-            className="w-8 h-8 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-200 opacity-0 group-hover:opacity-100 hover:bg-gray-50"
+            className={`w-8 h-8 ${isDark ? 'bg-gray-800 border-gray-600 hover:bg-gray-700' : 'bg-white border-gray-200 hover:bg-gray-50'} border rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-200 opacity-0 group-hover:opacity-100`}
             onClick={() => setCollapsed(!collapsed)}
             title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
-            {collapsed ? <ChevronRight size={14} className="text-gray-600" /> : <ChevronLeft size={14} className="text-gray-600" />}
+            {collapsed ? <ChevronRight size={14} className={isDark ? 'text-gray-400' : 'text-gray-600'} /> : <ChevronLeft size={14} className={isDark ? 'text-gray-400' : 'text-gray-600'} />}
           </button>
         </div>
 
-        {/* Logo */}
-        <div className="p-4">
-          {!collapsed && (
-            <div className="flex items-center gap-3">
-              <img 
-                src="/new_icon_favicon.png" 
-                alt="EventHub Logo" 
-                className="w-9 h-9 rounded-lg"
-              />
-              <div>
-                <h2 className="text-lg font-bold text-gray-800">EventHub</h2>
-                <p className="text-xs text-gray-500 uppercase tracking-wide">Organizer</p>
-              </div>
-            </div>
-          )}
-          {collapsed && (
-            <img 
-              src="/new_icon_favicon.png" 
-              alt="EventHub Logo" 
-              className="w-8 h-8 rounded-lg mx-auto"
-            />
-          )}
-        </div>
-
         {/* Navigation */}
-        <nav className="flex-1 space-y-1 px-2 pb-4">
+        <nav className="flex-1 space-y-1 px-2 pb-4 p-5">
           <SidebarItem
-            to="/"
+            to="/organizer/"
             icon={<LayoutDashboard size={18} />}
             label="Dashboard"
-            active={location.pathname === "/"}
+            active={location.pathname === "/organizer/"}
             collapsed={collapsed}
             onClick={() => setMobileOpen(false)}
+            isDark={isDark}
           />
           <SidebarItem
-            to="/events"
+            to="/organizer/events"
             icon={<Calendar size={18} />}
             label="My Events"
-            active={location.pathname === "/events"}
+            active={location.pathname === "/organizer/events"}
             collapsed={collapsed}
             onClick={() => setMobileOpen(false)}
+            isDark={isDark}
           />
           <SidebarItem
-            to="/create-event"
+            to="/organizer/create-event"
             icon={<PlusCircle size={18} />}
             label="Create Event"
-            active={location.pathname === "/create-event"}
+            active={location.pathname === "/organizer/create-event"}
             collapsed={collapsed}
             onClick={() => setMobileOpen(false)}
+            isDark={isDark}
           />
           <SidebarItem
-            to="/bookings"
+            to="/organizer/bookings"
             icon={<ClipboardList size={18} />}
             label="Bookings"
-            active={location.pathname === "/bookings"}
+            active={location.pathname === "/organizer/bookings"}
             collapsed={collapsed}
             onClick={() => setMobileOpen(false)}
+            isDark={isDark}
           />
           <SidebarItem
-            to="/reviews"
+            to="/organizer/reviews"
             icon={<Star size={18} />}
             label="Reviews & Ratings"
-            active={location.pathname === "/reviews"}
+            active={location.pathname === "/organizer/reviews"}
             collapsed={collapsed}
             onClick={() => setMobileOpen(false)}
+            isDark={isDark}
           />
           <SidebarItem
-            to="/reports"
+            to="/organizer/reports"
             icon={<BarChart3 size={18} />}
             label="Reports & Analytics"
-            active={location.pathname === "/reports"}
+            active={location.pathname === "/organizer/reports"}
             collapsed={collapsed}
             onClick={() => setMobileOpen(false)}
+            isDark={isDark}
           />
           <SidebarItem
-            to="/settings"
+            to="/organizer/settings"
             icon={<Settings size={18} />}
             label="Settings"
-            active={location.pathname === "/settings"}
+            active={location.pathname === "/organizer/settings"}
             collapsed={collapsed}
             onClick={() => setMobileOpen(false)}
+            isDark={isDark}
           />
         </nav>
       </aside>
@@ -198,16 +131,18 @@ export default function Sidebar() {
 }
 
 /* Sidebar Item */
-function SidebarItem({ to, icon, label, active, collapsed, onClick }) {
+function SidebarItem({ to, icon, label, active, collapsed, onClick, isDark }) {
   return (
     <Link
       to={to}
       onClick={onClick}
-      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-gray-100 transition-colors
+      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors
         ${
           active
             ? "bg-indigo-100 text-indigo-600 font-medium"
-            : "text-gray-700"
+            : isDark 
+              ? "text-gray-300 hover:bg-gray-700 hover:text-white"
+              : "text-gray-700 hover:bg-gray-100"
         }`}
     >
       {icon}

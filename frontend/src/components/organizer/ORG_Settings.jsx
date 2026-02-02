@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useTheme } from "../../contexts/ThemeContext";
 
 export default function Settings() {
+  const { isDark } = useTheme();
   const [profile, setProfile] = useState(() => {
     const saved = localStorage.getItem("profileData");
     return saved
@@ -45,22 +47,22 @@ export default function Settings() {
   /* ================= UI ================= */
 
   return (
-    <div className="max-w-5xl mx-auto min-h-screen px-3 py-4 sm:p-6 bg-gray-100">
+    <div className={`max-w-5xl mx-auto min-h-screen px-3 py-4 sm:p-6 ${isDark ? 'bg-gray-900' : 'bg-gray-100'}`}>
       {/* Header */}
       <div className="mb-5 sm:mb-6">
-        <h1 className="text-xl sm:text-3xl font-bold">Settings</h1>
-        <p className="text-xs sm:text-sm text-gray-500">
+        <h1 className={`text-xl sm:text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Settings</h1>
+        <p className={`text-xs sm:text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
           Manage your account and preferences
         </p>
       </div>
 
       {/* Profile Card */}
-      <div className="bg-white rounded-xl border p-4 sm:p-6">
+      <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-xl border p-4 sm:p-6`}>
         <div className="mb-5">
-          <h2 className="text-lg sm:text-xl font-semibold">
+          <h2 className={`text-lg sm:text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
             Organizer Profile
           </h2>
-          <p className="text-xs sm:text-sm text-gray-500">
+          <p className={`text-xs sm:text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
             Update your personal information
           </p>
         </div>
@@ -82,7 +84,11 @@ export default function Settings() {
           </div>
 
           <div className="text-center sm:text-left">
-            <label className="inline-block px-4 py-2 border rounded-lg text-xs sm:text-sm cursor-pointer hover:bg-gray-50 transition">
+            <label className={`inline-block px-4 py-2 border rounded-lg text-xs sm:text-sm cursor-pointer transition ${
+              isDark 
+                ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
+                : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}>
               Change Photo
               <input
                 type="file"
@@ -91,7 +97,7 @@ export default function Settings() {
                 onChange={handlePhotoChange}
               />
             </label>
-            <p className="text-[10px] sm:text-xs text-gray-400 mt-2">
+            <p className={`text-[10px] sm:text-xs mt-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
               JPG, PNG. Max size 2MB
             </p>
           </div>
@@ -105,6 +111,7 @@ export default function Settings() {
               name="name"
               value={profile.name}
               onChange={handleChange}
+              isDark={isDark}
             />
             <Input
               label="Email"
@@ -112,6 +119,7 @@ export default function Settings() {
               type="email"
               value={profile.email}
               onChange={handleChange}
+              isDark={isDark}
             />
           </div>
 
@@ -121,6 +129,7 @@ export default function Settings() {
               name="phone"
               value={profile.phone}
               onChange={handleChange}
+              isDark={isDark}
             />
             <Input
               label="Experience (Years)"
@@ -128,12 +137,13 @@ export default function Settings() {
               type="number"
               value={profile.experience}
               onChange={handleChange}
+              isDark={isDark}
             />
           </div>
 
           {/* Bio */}
           <div>
-            <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-1">
+            <label className={`block text-xs sm:text-sm font-medium mb-1 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
               Bio
             </label>
             <textarea
@@ -141,7 +151,11 @@ export default function Settings() {
               name="bio"
               value={profile.bio}
               onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={`w-full border rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                isDark 
+                  ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                  : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+              }`}
             />
           </div>
 
@@ -162,15 +176,19 @@ export default function Settings() {
 
 /* ================= Reusable Input ================= */
 
-function Input({ label, ...props }) {
+function Input({ label, isDark, ...props }) {
   return (
     <div>
-      <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-1">
+      <label className={`block text-xs sm:text-sm font-medium mb-1 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
         {label}
       </label>
       <input
         {...props}
-        className="w-full border rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className={`w-full border rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+          isDark 
+            ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+        }`}
       />
     </div>
   );

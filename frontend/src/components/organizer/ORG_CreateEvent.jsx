@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useTheme } from "../../contexts/ThemeContext";
 
 export default function CreateEvent() {
+  const { isDark } = useTheme();
   const [step, setStep] = useState(1);
 
   const [formData, setFormData] = useState({
@@ -26,24 +28,6 @@ export default function CreateEvent() {
   });
 
   const totalSteps = 5;
-
-  // const handleChange = (e) => {
-  //   const { name, value, files } = e.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: files ? files : value,
-  //   });
-  // };
-
-//   const handleChange = (e) => {
-//   const { name, value, files } = e.target;
-
-//   setFormData((prev) => ({
-//     ...prev,
-//     [name]: files ? files[0] : value,
-//   }));
-// };
-
 
 const handleChange = (e) => {
   const { name, value, files, type } = e.target;
@@ -116,59 +100,12 @@ const nextStep = () => {
 
 const prevStep = () => setStep(step - 1);
 
-
-// const getTodayDate = () => {
-//   return new Date().toISOString().split("T")[0];
-// };
-
-// const getCurrentTime = () => {
-//   return new Date().toTimeString().slice(0, 5);
-// };
-
-// const handleChange = (e) => {
-//   const { name, value, files } = e.target;
-
-//   // 📁 File input
-//   if (files) {
-//     setFormData((prev) => ({
-//       ...prev,
-//       [name]: files[0],
-//     }));
-//     return;
-//   }
-
-//   // ⛔ Start time past block (only if date = today)
-//   if (
-//     name === "startTime" &&
-//     formData.date === getTodayDate() &&
-//     value < getCurrentTime()
-//   ) {
-//     return;
-//   }
-
-//   // ⛔ End time before start time block
-//   if (
-//     name === "endTime" &&
-//     formData.startTime &&
-//     value < formData.startTime
-//   ) {
-//     return;
-//   }
-
-//   // ✅ Normal update
-//   setFormData((prev) => ({
-//     ...prev,
-//     [name]: value,
-//   }));
-// };
-
-
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
+    <div className={`p-6 max-w-4xl mx-auto space-y-6 ${isDark ? 'bg-gray-900' : 'bg-gray-50'} min-h-screen`}>
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Create Event</h1>
-        <p className="text-gray-500">
+        <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Create Event</h1>
+        <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
           Fill in the details to create a new event
         </p>
       </div>
@@ -182,19 +119,21 @@ const prevStep = () => setStep(step - 1);
                 className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
                   step >= i + 1
                     ? "bg-blue-600 text-white border-blue-600"
-                    : "border-gray-300 text-gray-400"
+                    : isDark
+                      ? "border-gray-600 text-gray-400"
+                      : "border-gray-300 text-gray-400"
                 }`}
               >
                 {i + 1}
               </div>
-              <p className="text-xs mt-1 text-center">{label}</p>
+              <p className={`text-xs mt-1 text-center ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{label}</p>
             </div>
           )
         )}
       </div>
 
       {/* Content */}
-      <div className="bg-white p-6 rounded-xl border shadow-sm space-y-6">
+      <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} p-6 rounded-xl border shadow-sm space-y-6`}>
         {step === 1 && (
   <form
     onSubmit={(e) => {
@@ -203,26 +142,26 @@ const prevStep = () => setStep(step - 1);
     }}
     className="space-y-6"
   >
-    <h2 className="font-semibold text-lg">Basic Details</h2>
+    <h2 className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-gray-900'}`}>Basic Details</h2>
 
     <label className="block">
-      <span className="text-sm font-medium">Event Title *</span>
+      <span className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Event Title *</span>
       <input
         name="title"
         value={formData.title}
         onChange={handleChange}
-        className="input"
+        className={`input ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
         required
       />
     </label>
 
     <label className="block">
-      <span className="text-sm font-medium">Description *</span>
+      <span className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Description *</span>
       <textarea
         name="description"
         value={formData.description}
         onChange={handleChange}
-        className="input"
+        className={`input ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
         rows="4"
         required
       />
@@ -242,15 +181,15 @@ const prevStep = () => setStep(step - 1);
        <div className="space-y-6">
          {/* Title */}
          <div>
-           <h2 className="text-lg font-semibold">Date & Venue</h2>
-           <p className="text-sm text-gray-500">When and where</p>
+           <h2 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Date & Venue</h2>
+           <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>When and where</p>
          </div>
      
           {/* Date */}
            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
   {/* Start Date */}
   <div>
-    <label className="text-sm font-medium text-gray-700">
+    <label className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
       Start Date *
     </label>
     <input
@@ -266,7 +205,7 @@ const prevStep = () => setStep(step - 1);
 
   {/* End Date */}
   <div>
-    <label className="text-sm font-medium text-gray-700">
+    <label className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
       End Date *
     </label>
     <input
@@ -287,7 +226,7 @@ const prevStep = () => setStep(step - 1);
 
   {/* Start Time */}
   <div>
-    <label className="text-sm font-medium text-gray-700">
+    <label className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
       Start Time *
     </label>
    <input
@@ -308,7 +247,7 @@ const prevStep = () => setStep(step - 1);
 
   {/* End Time */}
   <div>
-    <label className="text-sm font-medium text-gray-700">
+    <label className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
       End Time *
     </label>
 <input
@@ -331,7 +270,7 @@ const prevStep = () => setStep(step - 1);
     {/* Venue Details */}
 <div className="space-y-4">
   <div>
-    <label className="text-sm font-medium text-gray-700">
+    <label className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
       Venue Name *
     </label>
     <input
@@ -347,7 +286,7 @@ const prevStep = () => setStep(step - 1);
 
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
-      <label className="text-sm font-medium text-gray-700">
+      <label className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
         City *
       </label>
       <input
@@ -362,7 +301,7 @@ const prevStep = () => setStep(step - 1);
     </div>
 
     <div>
-      <label className="text-sm font-medium text-gray-700">
+      <label className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
         Full Address *
       </label>
       <input
@@ -381,7 +320,7 @@ const prevStep = () => setStep(step - 1);
 
 
         <div>
-          <label className="text-sm font-medium text-gray-700">
+          <label className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
             Map Preview
           </label>
         
@@ -396,7 +335,11 @@ const prevStep = () => setStep(step - 1);
               )}&output=embed`}
             />
           ) : (
-            <div className="mt-2 h-48 w-full rounded-lg border flex items-center justify-center text-gray-400 text-sm bg-gray-50">
+            <div className={`mt-2 h-48 w-full rounded-lg border flex items-center justify-center text-sm ${
+              isDark 
+                ? 'bg-gray-700 border-gray-600 text-gray-400' 
+                : 'bg-gray-50 border-gray-300 text-gray-400'
+            }`}>
               Enter address to preview map
             </div>
           )}
@@ -407,27 +350,19 @@ const prevStep = () => setStep(step - 1);
         )}
         
         
-        {/* {step === 3 && (
-          <>
-            <h2 className="font-semibold text-lg">Ticketing</h2>
-            <input name="price" type="number" onChange={handleChange} className="input" placeholder="Ticket price" />
-            <input name="tickets" type="number" onChange={handleChange} className="input" placeholder="Available tickets" />
-          </>
-        )} */}
-
 
 {step === 3 && (
   <form className="space-y-6">
   <div className="space-y-6">
     <div>
-      <h2 className="text-lg font-semibold">Ticketing</h2>
-      <p className="text-sm text-gray-500">Pricing and capacity</p>
+      <h2 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Ticketing</h2>
+      <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Pricing and capacity</p>
     </div>
 
        {/* Silver */}
-        <div className="space-y-2 border rounded-lg p-4">
+        <div className={`space-y-2 border rounded-lg p-4 ${isDark ? 'border-gray-600 bg-gray-700' : 'border-gray-300 bg-gray-50'}`}>
           {/* Header */}
-          <div className="grid grid-cols-3 gap-4 text-sm font-medium ">
+          <div className={`grid grid-cols-3 gap-4 text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
             <div>Category</div>
             <div>Price (₹)</div>
             <div>Total Seats</div>
@@ -435,7 +370,7 @@ const prevStep = () => setStep(step - 1);
         
           {/* Row */}
           <div className="grid grid-cols-3 gap-4 items-center">
-            <div className="border p-2 rounded-lg bg-gray-100">Silver</div>
+            <div className={`border p-2 rounded-lg ${isDark ? 'border-gray-600 bg-gray-600 text-white' : 'border-gray-300 bg-gray-100 text-gray-900'}`}>Silver</div>
         
 <input
   type="number"
@@ -445,7 +380,7 @@ const prevStep = () => setStep(step - 1);
   onChange={handleChange}
   min="0"
   step="0.01"
-  className="input bg-gray-100"
+  className="input"
 />
         
 <input
@@ -456,21 +391,21 @@ const prevStep = () => setStep(step - 1);
   onChange={handleChange}
   min="0"
   step="1"
-  className="input bg-gray-100"
+  className="input"
 />
           </div>
         </div>
         
         {/* Gold */}
-        <div className="space-y-2 border rounded-lg p-4">
-          <div className="grid grid-cols-3 gap-4 text-sm font-medium">
+        <div className={`space-y-2 border rounded-lg p-4 ${isDark ? 'border-gray-600 bg-gray-700' : 'border-gray-300 bg-gray-50'}`}>
+          <div className={`grid grid-cols-3 gap-4 text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
             <div>Category</div>
             <div>Price (₹)</div>
             <div>Total Seats</div>
           </div>
         
           <div className="grid grid-cols-3 gap-4 items-center">
-            <div className="border p-2 rounded-lg bg-gray-100">Gold</div>
+            <div className={`border p-2 rounded-lg ${isDark ? 'border-gray-600 bg-gray-600 text-white' : 'border-gray-300 bg-gray-100 text-gray-900'}`}>Gold</div>
         
             <input
               type="number"
@@ -480,7 +415,7 @@ const prevStep = () => setStep(step - 1);
               onChange={handleChange}
               min="0"
               step="0.01"
-              className="input bg-gray-100"
+              className="input"
             />
         
             <input
@@ -491,21 +426,21 @@ const prevStep = () => setStep(step - 1);
               onChange={handleChange}
               min="0"
               step="1"
-              className="input bg-gray-100"
+              className="input"
             />
           </div>
         </div>
         
         {/* VIP */}
-        <div className="space-y-2 border rounded-lg p-4">
-          <div className="grid grid-cols-3 gap-4 text-sm font-medium ">
+        <div className={`space-y-2 border rounded-lg p-4 ${isDark ? 'border-gray-600 bg-gray-700' : 'border-gray-300 bg-gray-50'}`}>
+          <div className={`grid grid-cols-3 gap-4 text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
             <div>Category</div>
             <div>Price (₹)</div>
             <div>Total Seats</div>
           </div>
         
           <div className="grid grid-cols-3 gap-4 items-center ">
-            <div className="border p-2 rounded-lg bg-gray-100">VIP</div>
+            <div className={`border p-2 rounded-lg ${isDark ? 'border-gray-600 bg-gray-600 text-white' : 'border-gray-300 bg-gray-100 text-gray-900'}`}>VIP</div>
         
             <input
               type="number"
@@ -515,7 +450,7 @@ const prevStep = () => setStep(step - 1);
               onChange={handleChange}
               min="0"
               step="0.01"
-              className="input bg-gray-100" 
+              className="input" 
             />
         
             <input
@@ -526,7 +461,7 @@ const prevStep = () => setStep(step - 1);
               onChange={handleChange}
               min="0"
               step="1"
-              className="input bg-gray-100"
+              className="input"
             />
           </div>
         </div>
@@ -537,7 +472,7 @@ const prevStep = () => setStep(step - 1);
 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
   {/* Convenience Fee */}
   <div>
-    <label className="text-sm font-medium ">
+    <label className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
       Convenience Fee (%)
     </label>
     <input
@@ -546,13 +481,13 @@ const prevStep = () => setStep(step - 1);
       value={formData.convenienceFee}
       onChange={handleChange}
       placeholder="0"
-      className="input mt-1 bg-gray-100"
+      className="input mt-1"
     />
   </div>
 
   {/* Tax */}
   <div>
-    <label className="text-sm font-medium">
+    <label className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
       Tax (%)
     </label>
     <input
@@ -561,7 +496,7 @@ const prevStep = () => setStep(step - 1);
       value={formData.tax}
       onChange={handleChange}
       placeholder="0"
-      className="input mt-1 bg-gray-100"
+      className="input mt-1"
     />
   </div>
 </div>
@@ -578,20 +513,21 @@ const prevStep = () => setStep(step - 1);
       
 
   {step === 4 && (
+    <form className="space-y-6">
   <>
-    <h2 className="font-semibold text-lg mb-1">Media</h2>
-    <p className="text-sm text-gray-500 mb-6">
+    <h2 className={`font-semibold text-lg mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>Media</h2>
+    <p className={`text-sm mb-6 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
       Images and videos
     </p>
 
     {/* ================= Banner Image ================= */}
     <div className="mb-6">
-      <h3 className="font-medium mb-1">Banner Image</h3>
-      <p className="text-sm text-gray-400 mb-3">
+      <h3 className={`font-medium mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>Banner Image</h3>
+      <p className={`text-sm mb-3 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
         This image will be shown as the main banner
       </p>
 
-      <label className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-purple-500 transition">
+      <label className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer transition ${isDark ? 'border-gray-600 hover:border-blue-500 bg-gray-700' : 'border-gray-300 hover:border-purple-500 bg-gray-50'}`}>
         {formData.bannerPreview && (
   <img
     src={formData.bannerPreview}
@@ -607,14 +543,14 @@ const prevStep = () => setStep(step - 1);
           className="hidden"
         />
 
-        <span className="text-purple-600 font-medium">
+        <span className={`font-medium ${isDark ? 'text-blue-400' : 'text-purple-600'}`}>
           Click to upload banner image
         </span>
-        <span className="text-gray-500 text-sm">
+        <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
           or drag and drop
         </span>
 
-        <p className="text-xs text-gray-400 mt-2">
+        <p className={`text-xs mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
           PNG, JPG up to 10MB (1920×1080 recommended)
         </p>
       </label>
@@ -622,12 +558,12 @@ const prevStep = () => setStep(step - 1);
 
     {/* ================= Gallery Images ================= */}
     <div>
-      <h3 className="font-medium mb-1">Gallery Images</h3>
-      <p className="text-sm text-gray-400 mb-3">
+      <h3 className={`font-medium mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>Gallery Images</h3>
+      <p className={`text-sm mb-3 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
         These images will appear in event gallery
       </p>
 
-      <label className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-purple-500 transition">
+      <label className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer transition ${isDark ? 'border-gray-600 hover:border-blue-500 bg-gray-700' : 'border-gray-300 hover:border-purple-500 bg-gray-50'}`}>
         <input
           type="file"
           name="galleryImages"
@@ -637,14 +573,14 @@ const prevStep = () => setStep(step - 1);
           className="hidden"
         />
 
-        <span className="text-purple-600 font-medium">
+        <span className={`font-medium ${isDark ? 'text-blue-400' : 'text-purple-600'}`}>
           Click to upload gallery images
         </span>
-        <span className="text-gray-500 text-sm">
+        <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
           or drag and drop
         </span>
 
-        <p className="text-xs text-gray-400 mt-2">
+        <p className={`text-xs mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
           Up to 10 images, PNG or JPG
         </p>
       </label>
@@ -655,7 +591,7 @@ const prevStep = () => setStep(step - 1);
         key={index}
         src={src}
         alt="Gallery"
-        className="h-24 w-full object-cover rounded-lg border"
+        className={`h-24 w-full object-cover rounded-lg border ${isDark ? 'border-gray-600' : 'border-gray-300'}`}
       />
     ))}
   </div>
@@ -663,6 +599,7 @@ const prevStep = () => setStep(step - 1);
 
     </div>
   </>
+  </form>
 )}
 
 
@@ -670,8 +607,8 @@ const prevStep = () => setStep(step - 1);
 
         {step === 5 && (
           <>
-            <h2 className="font-semibold text-lg">Publish</h2>
-            <p className="text-gray-600">All details look good. Ready to publish 🎉</p>
+            <h2 className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-gray-900'}`}>Publish</h2>
+            <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>All details look good. Ready to publish 🎉</p>
           </>
         )}
       </div>
@@ -681,7 +618,11 @@ const prevStep = () => setStep(step - 1);
         <button
           onClick={prevStep}
           disabled={step === 1}
-          className="px-4 py-2 border rounded-lg disabled:opacity-50"
+          className={`px-4 py-2 border rounded-lg disabled:opacity-50 ${
+            isDark 
+              ? 'border-gray-600 text-gray-300 hover:bg-gray-700 disabled:text-gray-500' 
+              : 'border-gray-300 text-gray-700 hover:bg-gray-100 disabled:text-gray-400'
+          }`}
         >
           Previous
         </button>
@@ -689,11 +630,10 @@ const prevStep = () => setStep(step - 1);
         <button
           type="button"
           onClick={step === totalSteps ? () => alert("Event Created!") : nextStep}
-          className="px-5 py-2 bg-blue-600 text-white rounded-lg"
+          className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
           {step === totalSteps ? "Publish" : "Next"}
         </button>
-
       </div>
 
       {/* Tailwind reusable class */}
@@ -702,8 +642,15 @@ const prevStep = () => setStep(step - 1);
           .input {
             width: 100%;
             padding: 0.5rem 1rem;
-            border: 1px solid #d1d5db;
+            border: 1px solid ${isDark ? '#4B5563' : '#d1d5db'};
             border-radius: 0.5rem;
+            background-color: ${isDark ? '#374151' : '#ffffff'};
+            color: ${isDark ? '#ffffff' : '#000000'};
+          }
+          .input:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
           }
         `}
       </style>
