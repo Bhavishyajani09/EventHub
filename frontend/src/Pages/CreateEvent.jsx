@@ -1,7 +1,11 @@
 import React, { useState } from "react";
+import { Check } from "lucide-react";
+
 
 export default function CreateEvent() {
   const [step, setStep] = useState(1);
+  const [published, setPublished] = useState(false);
+
 
   const [formData, setFormData] = useState({
     title: "",
@@ -26,24 +30,6 @@ export default function CreateEvent() {
   });
 
   const totalSteps = 5;
-
-  // const handleChange = (e) => {
-  //   const { name, value, files } = e.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: files ? files : value,
-  //   });
-  // };
-
-//   const handleChange = (e) => {
-//   const { name, value, files } = e.target;
-
-//   setFormData((prev) => ({
-//     ...prev,
-//     [name]: files ? files[0] : value,
-//   }));
-// };
-
 
 const handleChange = (e) => {
   const { name, value, files, type } = e.target;
@@ -117,50 +103,10 @@ const nextStep = () => {
 const prevStep = () => setStep(step - 1);
 
 
-// const getTodayDate = () => {
-//   return new Date().toISOString().split("T")[0];
-// };
-
-// const getCurrentTime = () => {
-//   return new Date().toTimeString().slice(0, 5);
-// };
-
-// const handleChange = (e) => {
-//   const { name, value, files } = e.target;
-
-//   // 📁 File input
-//   if (files) {
-//     setFormData((prev) => ({
-//       ...prev,
-//       [name]: files[0],
-//     }));
-//     return;
-//   }
-
-//   // ⛔ Start time past block (only if date = today)
-//   if (
-//     name === "startTime" &&
-//     formData.date === getTodayDate() &&
-//     value < getCurrentTime()
-//   ) {
-//     return;
-//   }
-
-//   // ⛔ End time before start time block
-//   if (
-//     name === "endTime" &&
-//     formData.startTime &&
-//     value < formData.startTime
-//   ) {
-//     return;
-//   }
-
-//   // ✅ Normal update
-//   setFormData((prev) => ({
-//     ...prev,
-//     [name]: value,
-//   }));
-// };
+const handlePublish = () => {
+  alert("Event Created!");
+  // yahan API call / success animation / redirect aayega
+};
 
 
   return (
@@ -174,24 +120,63 @@ const prevStep = () => setStep(step - 1);
       </div>
 
       {/* Steps */}
-      <div className="flex justify-between">
-        {["Basic", "Date & Venue", "Ticketing", "Media", "Publish"].map(
-          (label, i) => (
-            <div key={i} className="flex flex-col items-center w-full">
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
-                  step >= i + 1
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "border-gray-300 text-gray-400"
-                }`}
-              >
-                {i + 1}
-              </div>
-              <p className="text-xs mt-1 text-center">{label}</p>
+
+      <div className="flex items-center w-full">
+  {["Basic", "Date & Venue", "Ticketing", "Media", "Publish"].map(
+    (label, i) => {
+      const isCompleted = step > i + 1;
+      const isActive = step === i + 1;
+
+      return (
+        <div key={i} className="flex items-center w-full last:w-auto">
+          
+          {/* Step */}
+          <div className="flex flex-col items-center">
+            <div
+              className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                isCompleted || isActive
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "border-gray-300 text-gray-400"
+              }`}
+            >
+              {isCompleted ? (
+                <Check className="w-5 h-5 animate-pop" />
+              ) : (
+                <span className="font-medium">{i + 1}</span>
+              )}
             </div>
-          )
-        )}
-      </div>
+
+            <p
+              className={`text-xs mt-1 text-center ${
+                isCompleted || isActive
+                  ? "text-blue-600"
+                  : "text-gray-400"
+              }`}
+            >
+              {label}
+            </p>
+          </div>
+
+          {/* Connector */}
+          {i !== 4 && (
+            <div className="flex-1 h-1 mx-2 rounded-full bg-gray-300 overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${
+                  isCompleted
+                    ? "w-full bg-blue-600"
+                    : isActive
+                    ? "w-1/2 bg-blue-400"
+                    : "w-0"
+                }`}
+              />
+            </div>
+          )}
+        </div>
+      );
+    }
+  )}
+</div>
+
 
       {/* Content */}
       <div className="bg-white p-6 rounded-xl border shadow-sm space-y-6">
@@ -578,6 +563,7 @@ const prevStep = () => setStep(step - 1);
       
 
   {step === 4 && (
+    <form className="space-y-6">
   <>
     <h2 className="font-semibold text-lg mb-1">Media</h2>
     <p className="text-sm text-gray-500 mb-6">
@@ -663,17 +649,69 @@ const prevStep = () => setStep(step - 1);
 
     </div>
   </>
+  </form>
 )}
 
 
 
 
-        {step === 5 && (
-          <>
-            <h2 className="font-semibold text-lg">Publish</h2>
-            <p className="text-gray-600">All details look good. Ready to publish 🎉</p>
-          </>
-        )}
+       {step === 5 && (
+  <div className="relative overflow-hidden rounded-3xl p-10 text-center shadow-2xl">
+    
+    {!published ? (
+      <>
+        <div className="mx-auto mb-5 h-16 w-16 rounded-full bg-gradient-to-tr from-indigo-500 to-blue-600 flex items-center justify-center text-white text-3xl shadow-lg">
+          🚀
+        </div>
+
+        <h2 className="text-2xl font-bold text-gray-800">
+          Everything is Ready
+        </h2>
+
+        <p className="text-gray-600 mb-6">
+          Publish your event and make it live instantly
+        </p>
+
+        <button
+          onClick={() => setPublished(true)}
+          className="relative z-10 px-7 py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition"
+        >
+          Publish Event
+        </button>
+      </>
+    ) : (
+      /* 🌟 UNIQUE SUCCESS */
+      <>
+        {/* Ripple Glow */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="h-40 w-40 rounded-full bg-green-400/30 animate-ripple" />
+        </div>
+
+        {/* Floating emojis */}
+        <span className="absolute top-6 left-10 animate-float">🎉</span>
+        <span className="absolute top-10 right-12 animate-float delay-200">✨</span>
+        <span className="absolute bottom-10 left-1/2 animate-float delay-500">🚀</span>
+
+        <div className="relative z-10 space-y-4">
+          <div className="mx-auto h-20 w-20 rounded-full bg-green-500 flex items-center justify-center text-white text-4xl shadow-lg">
+            ✓
+          </div>
+
+          <h2 className="text-2xl font-bold text-green-600">
+            Event Published Successfully
+          </h2>
+
+          <p className="text-gray-600">
+            Your event is now live and accepting attendees
+          </p>
+        </div>
+      </>
+    )}
+  </div>
+)}
+
+
+        
       </div>
 
       {/* Buttons */}
@@ -686,13 +724,14 @@ const prevStep = () => setStep(step - 1);
           Previous
         </button>
 
-        <button
-          type="button"
-          onClick={step === totalSteps ? () => alert("Event Created!") : nextStep}
-          className="px-5 py-2 bg-blue-600 text-white rounded-lg"
-        >
-          {step === totalSteps ? "Publish" : "Next"}
-        </button>
+<button
+  type="button"
+  onClick={step === totalSteps ? handlePublish : nextStep}
+  className="px-5 py-2 bg-blue-600 text-white rounded-lg"
+>
+  {step === totalSteps ? "Publish" : "Next"}
+</button>
+
 
       </div>
 
