@@ -43,16 +43,29 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
-    
-    if (token && user) {
-      dispatch({
-        type: 'LOGIN_SUCCESS',
-        payload: {
-          token,
-          user: JSON.parse(user)
-        }
-      });
+
+    if (token && user && user !== 'undefined') {
+      try {
+        const parsedUser = JSON.parse(user);
+        dispatch({
+          type: 'LOGIN_SUCCESS',
+          payload: {
+            token,
+            user: parsedUser
+          }
+        });
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        dispatch({ type: 'SET_LOADING', payload: false });
+      }
     } else {
+      // Clean up potentially corrupted data if token exists but user is undefined
+      if (token && (!user || user === 'undefined')) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
       dispatch({ type: 'SET_LOADING', payload: false });
     }
   }, []);

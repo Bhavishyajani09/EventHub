@@ -3,17 +3,22 @@ import React, { useState } from "react";
 export default function Settings() {
   const [profile, setProfile] = useState(() => {
     const saved = localStorage.getItem("profileData");
-    return saved
-      ? JSON.parse(saved)
-      : {
-          name: "John Doe",
-          email: "john.doe@email.com",
-          phone: "+1 (555) 123-4567",
-          experience: "5",
-          bio: "Experienced event organizer with 5+ years in the industry.",
-          photo: null,
-          photoPreview: null,
-        };
+    if (saved && saved !== "undefined") {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Error parsing profileData:", e);
+      }
+    }
+    return {
+      name: "John Doe",
+      email: "john.doe@email.com",
+      phone: "+1 (555) 123-4567",
+      experience: "5",
+      bio: "Experienced event organizer with 5+ years in the industry.",
+      photo: null,
+      photoPreview: null,
+    };
   });
 
   /* ================= HANDLERS ================= */
