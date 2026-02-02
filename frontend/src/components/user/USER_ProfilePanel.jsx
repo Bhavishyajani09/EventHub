@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { User, Ticket, Settings, HelpCircle, LogOut, Star } from 'lucide-react';
+import { User, Ticket, Settings, HelpCircle, LogOut } from 'lucide-react';
 
 const ProfilePanel = ({ user, isOpen, onClose, onLogout, onNavigate, isDark }) => {
   const [activeItem, setActiveItem] = useState('dashboard');
@@ -103,7 +103,7 @@ const ProfilePanel = ({ user, isOpen, onClose, onLogout, onNavigate, isDark }) =
             }}>
               {user?.name ? user.name.charAt(0).toUpperCase() : <User size={24} />}
             </div>
-            
+
             {/* User Info */}
             <div style={{ flex: 1 }}>
               <h3 style={{
@@ -114,20 +114,7 @@ const ProfilePanel = ({ user, isOpen, onClose, onLogout, onNavigate, isDark }) =
               }}>
                 {user?.name || 'Guest User'}
               </h3>
-              <div style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                padding: '4px 12px',
-                borderRadius: '12px',
-                fontSize: '12px',
-                fontWeight: '500',
-                backdropFilter: 'blur(10px)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}>
-                <Star size={12} fill="currentColor" />
-                Premium Member
-              </div>
+
             </div>
 
             {/* Close Button (Mobile) */}
