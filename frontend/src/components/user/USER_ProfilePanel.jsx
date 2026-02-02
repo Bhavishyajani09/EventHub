@@ -121,7 +121,6 @@ const ProfilePanel = ({ user, isOpen, onClose, onLogout, onNavigate, isDark }) =
                 {user?.name || 'Guest User'}
               </h3>
               <div style={{
-                display: 'inline-block',
                 backgroundColor: 'rgba(255, 255, 255, 0.2)',
                 padding: '4px 12px',
                 borderRadius: '12px',

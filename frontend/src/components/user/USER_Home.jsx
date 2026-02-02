@@ -41,7 +41,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
 
 
   return (
-    <div style={{ 
+    <div style={{
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       width: '100vw',
       minHeight: '100vh',
@@ -50,7 +50,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
       overflowX: 'hidden'
     }}>
       {/* Navbar */}
-      <SharedNavbar 
+      <SharedNavbar
         isDark={isDark}
         setIsDark={setIsDark}
         user={user}
@@ -133,7 +133,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                 margin: '0 auto 40px',
                 lineHeight: '1.6'
               }}>Join thousands discovering incredible events, movies, and experiences in your city</p>
-              
+
               <div style={{
                 display: 'flex',
                 maxWidth: '650px',
@@ -178,8 +178,6 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                   backgroundSize: '200% 200%',
                   animation: 'gradientMove 3s ease infinite',
                   color: 'white',
-                  boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
                   border: 'none',
                   borderRadius: '12px',
                   padding: '14px 24px',
@@ -190,14 +188,14 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                   whiteSpace: 'nowrap',
                   boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)'
                 }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.6)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
-                }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
+                  }}
                 >
                   <div style={{
                     display: 'flex',
@@ -218,7 +216,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
             color: isDark ? '#f9fafb' : '#111827',
             marginBottom: 'clamp(16px, 4vw, 24px)'
           }}>Top Hindi movies near you</h2>
-          
+
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(150px, 20vw, 200px), 1fr))',
@@ -232,73 +230,73 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
               { title: 'Happy Patel: Khatarnak Jasoos', rating: 'A', language: 'Hindi', genre: 'Comedy, Action', image: '/happy-patel.jpg' }
             ].map((movie, index) => {
               return (
-              <div key={index} 
-                onClick={() => handleMovieClick(movie)}
-                style={{
-                backgroundColor: isDark ? '#1f2937' : 'white',
-                borderRadius: '12px',
-                overflow: 'hidden',
-                boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
-                cursor: 'pointer',
-                transition: 'transform 0.2s'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-              >
-                <div style={{
-                  height: 'clamp(200px, 30vw, 280px)',
-                  backgroundImage: `url(${movie.image})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#6b7280',
-                  fontSize: 'clamp(12px, 2.5vw, 14px)'
-                }}>
-                </div>
-                <div style={{ padding: 'clamp(12px, 3vw, 16px)' }}>
-                  <h3 style={{
-                    fontSize: 'clamp(14px, 3vw, 16px)',
-                    fontWeight: '600',
-                    color: isDark ? '#f9fafb' : '#111827',
-                    marginBottom: '4px'
-                  }}>{movie.title}</h3>
-                  <p style={{
-                    fontSize: 'clamp(12px, 2.5vw, 14px)',
-                    color: isDark ? '#9ca3af' : '#6b7280',
-                    marginBottom: '12px'
-                  }}>{movie.rating} | {movie.language}</p>
-                  <button 
-                    onClick={(e) => handleBookTickets(movie, e)}
-                    style={{
-                      width: '100%',
-                      padding: '8px 16px',
-                      background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
-                      backgroundSize: '200% 200%',
-                      animation: 'gradientMove 3s ease infinite',
-                      color: 'white',
-                      boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      borderRadius: '6px',
-                      fontSize: '12px',
+                <div key={index}
+                  onClick={() => handleMovieClick(movie)}
+                  style={{
+                    backgroundColor: isDark ? '#1f2937' : 'white',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                  <div style={{
+                    height: 'clamp(200px, 30vw, 280px)',
+                    backgroundImage: `url(${movie.image})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#6b7280',
+                    fontSize: 'clamp(12px, 2.5vw, 14px)'
+                  }}>
+                  </div>
+                  <div style={{ padding: 'clamp(12px, 3vw, 16px)' }}>
+                    <h3 style={{
+                      fontSize: 'clamp(14px, 3vw, 16px)',
                       fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.transform = 'translateY(-2px)';
-                      e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.transform = 'translateY(0)';
-                      e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
-                    }}
-                  >
-                    Book Tickets
-                  </button>
+                      color: isDark ? '#f9fafb' : '#111827',
+                      marginBottom: '4px'
+                    }}>{movie.title}</h3>
+                    <p style={{
+                      fontSize: 'clamp(12px, 2.5vw, 14px)',
+                      color: isDark ? '#9ca3af' : '#6b7280',
+                      marginBottom: '12px'
+                    }}>{movie.rating} | {movie.language}</p>
+                    <button
+                      onClick={(e) => handleBookTickets(movie, e)}
+                      style={{
+                        width: '100%',
+                        padding: '8px 16px',
+                        background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+                        backgroundSize: '200% 200%',
+                        animation: 'gradientMove 3s ease infinite',
+                        color: 'white',
+                        boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.transform = 'translateY(-2px)';
+                        e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = 'translateY(0)';
+                        e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                      }}
+                    >
+                      Book Tickets
+                    </button>
+                  </div>
                 </div>
-              </div>
               );
             })}
           </div>
@@ -309,7 +307,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
             color: isDark ? '#f9fafb' : '#111827',
             marginBottom: 'clamp(16px, 4vw, 24px)'
           }}>Artists in your District</h2>
-          
+
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(120px, 15vw, 150px), 1fr))',
@@ -323,16 +321,16 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
               { name: 'Aaditya "Kullu" Kulshreshth', image: '/placeholder-artist.jpg' },
               { name: 'Kanha Kamboj', image: '/placeholder-artist.jpg' }
             ].map((artist, index) => (
-              <div key={index} 
+              <div key={index}
                 onClick={() => {
                   if (onArtistClick) {
                     onArtistClick(artist);
                   }
                 }}
                 style={{
-                textAlign: 'center',
-                cursor: 'pointer'
-              }}>
+                  textAlign: 'center',
+                  cursor: 'pointer'
+                }}>
                 <div style={{
                   width: 'clamp(80px, 15vw, 120px)',
                   height: 'clamp(80px, 15vw, 120px)',
@@ -344,8 +342,8 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                   transition: 'transform 0.2s',
                   boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
                 }}
-                onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-                onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                  onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+                  onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
                 >
                 </div>
                 <h4 style={{
@@ -424,14 +422,14 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                 transition: 'all 0.3s ease',
                 whiteSpace: 'nowrap'
               }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
-              }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                }}
               >
                 Subscribe
               </button>
@@ -444,8 +442,8 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
       <SharedFooter isDark={isDark} onNavigate={onNavigate} />
 
       {/* Auth Modal */}
-      <AuthModal 
-        isOpen={isAuthModalOpen} 
+      <AuthModal
+        isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         onAuthSuccess={handleAuthSuccess}
         isDark={isDark}
