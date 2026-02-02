@@ -434,51 +434,61 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
                   <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    marginBottom: '8px'
+                    alignItems: 'center',
+                    marginBottom: '12px',
+                    padding: '8px 0'
                   }}>
                     <span style={{
                       color: isDark ? '#d1d5db' : '#4b5563',
-                      fontSize: '14px',
+                      fontSize: '15px',
                       textTransform: 'capitalize'
                     }}>{selectedSeatType} ({quantity}x)</span>
                     <span style={{
                       color: isDark ? '#f9fafb' : '#111827',
-                      fontSize: '14px'
+                      fontSize: '15px',
+                      fontWeight: '500'
                     }}>₹{getTotalAmount()}</span>
                   </div>
                   
                   <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    marginBottom: '8px'
+                    alignItems: 'center',
+                    marginBottom: '16px',
+                    padding: '8px 0'
                   }}>
                     <span style={{
                       color: isDark ? '#d1d5db' : '#4b5563',
-                      fontSize: '14px'
+                      fontSize: '15px'
                     }}>Booking charges (incl. of GST)</span>
                     <span style={{
                       color: isDark ? '#f9fafb' : '#111827',
-                      fontSize: '14px'
+                      fontSize: '15px',
+                      fontWeight: '500'
                     }}>₹{getBookingCharges()}</span>
                   </div>
+                  
                   <hr style={{
                     border: 'none',
                     borderTop: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
-                    margin: '16px 0'
+                    margin: '20px 0'
                   }} />
+                  
                   <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    marginBottom: '20px'
+                    alignItems: 'center',
+                    marginBottom: '24px',
+                    padding: '12px 0'
                   }}>
                     <span style={{
                       color: isDark ? '#f9fafb' : '#111827',
-                      fontSize: '16px',
+                      fontSize: '18px',
                       fontWeight: '600'
                     }}>To be paid</span>
                     <span style={{
                       color: isDark ? '#f9fafb' : '#111827',
-                      fontSize: '16px',
+                      fontSize: '18px',
                       fontWeight: 'bold'
                     }}>₹{getFinalAmount()}</span>
                   </div>
@@ -541,41 +551,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
                   </div>
                 </div>
               </div>
-            ) : (
-              <div style={{
-                backgroundColor: isDark ? '#374151' : '#f9fafb',
-                borderRadius: '8px',
-                padding: '16px',
-                marginBottom: '20px',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  color: isDark ? '#9ca3af' : '#6b7280',
-                  fontSize: '14px',
-                  marginBottom: '12px'
-                }}>Please login to continue with booking</div>
-                <button 
-                  onClick={onAuthOpen}
-                  style={{
-                    padding: '8px 16px',
-                    background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
-                    backgroundSize: '200% 200%',
-                    marginTop: '8px',
-                    animation: 'gradientMove 3s ease infinite',
-                    color: 'white',
-                    boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  Login / Sign Up
-                </button>
-              </div>
-            )}
+            ) : null}
 
             <button 
               style={{

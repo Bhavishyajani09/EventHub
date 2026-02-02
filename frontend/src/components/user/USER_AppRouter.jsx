@@ -264,8 +264,7 @@ function AppRouter() {
       case 'booking':
         return (
           <BookingPage 
-            movie={selectedMovie}
-            event={selectedEvent}
+            item={selectedMovie || selectedEvent}
             isDark={isDark}
             setIsDark={setIsDark}
             user={user}
