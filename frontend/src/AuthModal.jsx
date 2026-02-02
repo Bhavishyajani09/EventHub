@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, User, Users } from 'lucide-react';
 
 const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
   const [currentScreen, setCurrentScreen] = useState('login');
@@ -9,7 +9,8 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
-    password: ''
+    password: '',
+    role: 'user'
   });
   const [errors, setErrors] = useState({});
 
@@ -107,7 +108,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
   };
 
   const resetForm = () => {
-    setFormData({ fullName: '', email: '', password: '' });
+    setFormData({ fullName: '', email: '', password: '', role: 'user' });
     setErrors({});
     setMessage({ text: '', type: '' });
     setShowPassword(false);
@@ -232,6 +233,61 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} style={{ marginBottom: '24px' }}>
+          {/* Role Selection - Only for Register */}
+          {currentScreen === 'register' && (
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              marginBottom: '24px'
+            }}>
+              <button
+                type="button"
+                onClick={() => setFormData({...formData, role: 'user'})}
+                style={{
+                  flex: 1,
+                  padding: '16px 12px',
+                  borderRadius: '12px',
+                  border: `2px solid ${formData.role === 'user' ? '#8b5cf6' : '#e5e7eb'}`,
+                  background: formData.role === 'user' ? '#f3f4f6' : 'white',
+                  color: formData.role === 'user' ? '#8b5cf6' : '#6b7280',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <User size={24} />
+                User
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData({...formData, role: 'organizer'})}
+                style={{
+                  flex: 1,
+                  padding: '16px 12px',
+                  borderRadius: '12px',
+                  border: `2px solid ${formData.role === 'organizer' ? '#8b5cf6' : '#e5e7eb'}`,
+                  background: formData.role === 'organizer' ? '#f3f4f6' : 'white',
+                  color: formData.role === 'organizer' ? '#8b5cf6' : '#6b7280',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <Users size={24} />
+                Organizer
+              </button>
+            </div>
+          )}
           {/* Full Name - Only for Register */}
           {currentScreen === 'register' && (
             <div style={{ marginBottom: '20px' }}>
