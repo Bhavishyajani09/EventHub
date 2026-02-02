@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { User, BarChart3, Ticket, Heart, Settings, HelpCircle, Star, LogOut } from 'lucide-react';
+import { User, Ticket, Settings, HelpCircle, LogOut } from 'lucide-react';
 
 const ProfilePanel = ({ user, isOpen, onClose, onLogout, onNavigate, isDark }) => {
   const [activeItem, setActiveItem] = useState('dashboard');
@@ -7,9 +7,7 @@ const ProfilePanel = ({ user, isOpen, onClose, onLogout, onNavigate, isDark }) =
 
   const menuItems = [
     { id: 'profile', label: 'Profile', icon: User },
-    { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'bookings', label: 'My Bookings', icon: Ticket },
-    { id: 'wishlist', label: 'Wishlist', icon: Heart },
     { id: 'settings', label: 'Settings', icon: Settings },
     { id: 'help', label: 'Help Center', icon: HelpCircle },
   ];
@@ -33,11 +31,7 @@ const ProfilePanel = ({ user, isOpen, onClose, onLogout, onNavigate, isDark }) =
 
   const handleItemClick = (itemId) => {
     setActiveItem(itemId);
-    if (itemId === 'profile') {
-      onNavigate();
-    } else {
-      onNavigate(itemId);
-    }
+    onNavigate(itemId);
     onClose();
   };
 

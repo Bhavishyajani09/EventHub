@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Bookings = ({ onBack, user, isDark, onProfileClick }) => {
+const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
   const [activeTab, setActiveTab] = useState('Events');
 
   const tabs = ['Events', 'Movies'];
@@ -55,7 +55,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick }) => {
           {/* Logo */}
           <div 
             onClick={() => {
-              window.location.href = '/';
+              onNavigate('home');
             }}
             style={{
             display: 'flex',
@@ -236,11 +236,11 @@ const Bookings = ({ onBack, user, isDark, onProfileClick }) => {
             onClick={() => {
               // Navigate to respective section
               if (activeTab === 'Movies') {
-                window.location.href = '/movies';
+                onNavigate('movies');
               } else if (activeTab === 'Events') {
-                window.location.href = '/events';
+                onNavigate('events');
               } else {
-                window.location.href = '/';
+                onNavigate('home');
               }
             }}
             style={{

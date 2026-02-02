@@ -8,8 +8,11 @@ import ArtistProfile from './USER_ArtistProfile';
 import BookingPage from './USER_BookingPage';
 import EventSeatSelection from './USER_EventSeatSelection';
 import AuthModal from '../../AuthModal';
-import Profile from './USER_ProfilePanel';
+import ProfilePanel from './USER_ProfilePanel';
+import ProfilePage from './USER_Profile';
 import Bookings from './USER_Bookings';
+import Settings from './USER_Settings';
+import HelpCenter from './USER_HelpCenter';
 import TermsAndConditions from './TermsAndConditions';
 import PrivacyPolicy from './USER_PrivacyPolicy';
 import ContactSupport from './USER_ContactSupport';
@@ -66,6 +69,10 @@ function AppRouter() {
       setCurrentPage('profile');
     } else if (path === '/bookings') {
       setCurrentPage('bookings');
+    } else if (path === '/settings') {
+      setCurrentPage('settings');
+    } else if (path === '/help') {
+      setCurrentPage('help');
     } else if (path === '/terms') {
       setCurrentPage('terms');
     } else if (path === '/privacy') {
@@ -88,6 +95,8 @@ function AppRouter() {
       'artistProfile': '/artist-profile',
       'profile': '/profile',
       'bookings': '/bookings',
+      'settings': '/settings',
+      'help': '/help',
       'terms': '/terms',
       'privacy': '/privacy',
       'contact': '/contact'
@@ -277,7 +286,32 @@ function AppRouter() {
             }}
           />
         );
-      case 'contact':
+      case 'settings':
+        return (
+          <Settings 
+            onBack={() => {
+              setCurrentPage('home');
+              updateURL('home');
+            }}
+            user={user}
+            isDark={isDark}
+            onProfileClick={handleProfileClick}
+            onNavigate={handleNavigate}
+          />
+        );
+      case 'help':
+        return (
+          <HelpCenter 
+            onBack={() => {
+              setCurrentPage('home');
+              updateURL('home');
+            }}
+            user={user}
+            isDark={isDark}
+            onProfileClick={handleProfileClick}
+            onNavigate={handleNavigate}
+          />
+        );
         return (
           <ContactSupport 
             onBack={() => {
@@ -314,18 +348,20 @@ function AppRouter() {
             user={user}
             isDark={isDark}
             onProfileClick={handleProfileClick}
+            onNavigate={handleNavigate}
           />
         );
       case 'profile':
         return (
-          <Profile 
-            isOpen={isProfileOpen}
-            onClose={() => setIsProfileOpen(false)}
-            onBack={() => setIsProfileOpen(false)}
-            onLogout={() => {
-              handleLogout();
-              setIsProfileOpen(false);
+          <ProfilePage 
+            onBack={() => {
+              setCurrentPage('home');
+              updateURL('home');
             }}
+            user={user}
+            isDark={isDark}
+            onProfileClick={handleProfileClick}
+            onNavigate={handleNavigate}
           />
         );
       default:
@@ -356,7 +392,7 @@ function AppRouter() {
         isDark={isDark}
       />
 
-      <Profile 
+      <ProfilePanel 
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
         onBack={() => setIsProfileOpen(false)}
@@ -365,26 +401,8 @@ function AppRouter() {
           setIsProfileOpen(false);
         }}
         user={user}
-        onNavigateToBookings={() => {
-          setCurrentPage('bookings');
-          updateURL('bookings');
-          setIsProfileOpen(false);
-        }}
-        onNavigateToTerms={() => {
-          setCurrentPage('terms');
-          updateURL('terms');
-          setIsProfileOpen(false);
-        }}
-        onNavigateToPrivacy={() => {
-          setCurrentPage('privacy');
-          updateURL('privacy');
-          setIsProfileOpen(false);
-        }}
-        onNavigateToContact={() => {
-          setCurrentPage('contact');
-          updateURL('contact');
-          setIsProfileOpen(false);
-        }}
+        onNavigate={handleNavigate}
+        isDark={isDark}
       />
     </div>
   );
