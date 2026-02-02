@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import Home from './Home';
-import MoviesPage from './MoviesPage';
-import EventsPage from './EventsPage';
-import MovieDetail from './MovieDetail';
-import EventDetail from './EventDetail';
-import ArtistProfile from './ArtistProfile';
-import BookingPage from './BookingPage';
-import EventSeatSelection from './EventSeatSelection';
+import Home from './USER_Home';
+import MoviesPage from './USER_MoviesPage';
+import EventsPage from './USER_EventsPage';
+import MovieDetail from './USER_MovieDetail';
+import EventDetail from './USER_EventDetail';
+import ArtistProfile from './USER_ArtistProfile';
+import BookingPage from './USER_BookingPage';
+import EventSeatSelection from './USER_EventSeatSelection';
 import AuthModal from '../../AuthModal';
-import Profile from './Profile';
-import Bookings from './Bookings';
+import Profile from './USER_ProfilePanel';
+import Bookings from './USER_Bookings';
 import TermsAndConditions from './TermsAndConditions';
-import PrivacyPolicy from './PrivacyPolicy';
-import ContactSupport from './ContactSupport';
+import PrivacyPolicy from './USER_PrivacyPolicy';
+import ContactSupport from './USER_ContactSupport';
 
 function AppRouter() {
   const [currentPage, setCurrentPage] = useState('home');
