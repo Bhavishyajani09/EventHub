@@ -6,7 +6,7 @@ import SharedFooter from '../../SharedFooter';
 
 const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBookTickets, onMovieClick, onArtistClick }) => {
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
-  
+
   useEffect(() => {
     document.title = 'Events - EventHub';
   }, []);
@@ -47,7 +47,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
   // Auto-rotate hero section every 3 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentHeroIndex((prevIndex) => 
+      setCurrentHeroIndex((prevIndex) =>
         prevIndex === heroEvents.length - 1 ? 0 : prevIndex + 1
       );
     }, 3000);
@@ -72,51 +72,51 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
   ];
 
   const allEvents = [
-    { 
-      title: 'Deewana Tera by Sonu Nigam', 
-      location: 'Phoenix Citadel Mall, Indore', 
-      date: 'Today', 
+    {
+      title: 'Deewana Tera by Sonu Nigam',
+      location: 'Phoenix Citadel Mall, Indore',
+      date: 'Today',
       time: '7:00 PM',
       fullDate: 'Sat, 28 Feb',
-      price: 'FREE', 
-      image: '/placeholder-artist.jpg', 
-      category: 'MUSIC', 
+      price: 'FREE',
+      image: '/placeholder-artist.jpg',
+      category: 'MUSIC',
       type: 'event',
       venue: 'Phoenix Citadel Mall, Indore'
     },
-    { 
-      title: 'Sunidhi Chauhan - I Am Home India Tour 2025-26', 
-      location: 'Indore', 
-      date: 'Tomorrow', 
+    {
+      title: 'Sunidhi Chauhan - I Am Home India Tour 2025-26',
+      location: 'Indore',
+      date: 'Tomorrow',
       time: '8:00 PM',
       fullDate: 'Sun, 1 Mar',
-      price: '₹1500', 
-      image: '/placeholder-artist.jpg', 
-      category: 'MUSIC', 
+      price: '₹1500',
+      image: '/placeholder-artist.jpg',
+      category: 'MUSIC',
       type: 'event',
       venue: 'Venue to be announced'
     },
-    { 
-      title: 'Karan Aujla Live Concert', 
-      location: 'Nehru Stadium, Indore', 
-      date: 'This Weekend', 
+    {
+      title: 'Karan Aujla Live Concert',
+      location: 'Nehru Stadium, Indore',
+      date: 'This Weekend',
       time: '9:00 PM',
       fullDate: 'Sat, 7 Mar',
-      price: '₹2500', 
-      image: '/placeholder-artist.jpg', 
-      category: 'MUSIC', 
+      price: '₹2500',
+      image: '/placeholder-artist.jpg',
+      category: 'MUSIC',
       type: 'event',
       venue: 'Nehru Stadium, Indore'
     },
-    { 
-      title: 'Comedy Night with Aaditya Kullu', 
-      location: 'Sayaji Hotel, Indore', 
-      date: 'Next Week', 
+    {
+      title: 'Comedy Night with Aaditya Kullu',
+      location: 'Sayaji Hotel, Indore',
+      date: 'Next Week',
       time: '7:30 PM',
       fullDate: 'Fri, 13 Mar',
-      price: '₹800', 
-      image: '/placeholder-artist.jpg', 
-      category: 'COMEDY', 
+      price: '₹800',
+      image: '/placeholder-artist.jpg',
+      category: 'COMEDY',
       type: 'event',
       venue: 'Sayaji Hotel, Indore'
     },
@@ -145,7 +145,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
       padding: 0,
       overflowX: 'hidden'
     }}>
-      <SharedNavbar 
+      <SharedNavbar
         isDark={isDark}
         setIsDark={setIsDark}
         user={user}
@@ -199,8 +199,8 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
               marginBottom: '40px',
               lineHeight: '1.6'
             }}>{heroEvents[currentHeroIndex].location}</p>
-            
-            <button 
+
+            <button
               onClick={() => {
                 if (onBookTickets) {
                   onBookTickets(heroEvents[currentHeroIndex]);
@@ -209,23 +209,23 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                 }
               }}
               style={{
-              padding: '12px 24px',
-              backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              color: '#000',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = 'white'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'}
+                padding: '12px 24px',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                color: '#000',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = 'white'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'}
             >
               Book now
             </button>
           </div>
-          
+
           {/* Right side - Artist poster */}
           <div style={{
             width: '200px',
@@ -237,7 +237,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
             boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
             transition: 'all 0.5s ease'
           }} />
-          
+
           {/* Navigation arrows */}
           <button
             onClick={() => setCurrentHeroIndex(currentHeroIndex === 0 ? heroEvents.length - 1 : currentHeroIndex - 1)}
@@ -261,7 +261,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           >
             ‹
           </button>
-          
+
           <button
             onClick={() => setCurrentHeroIndex(currentHeroIndex === heroEvents.length - 1 ? 0 : currentHeroIndex + 1)}
             style={{
@@ -284,7 +284,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           >
             ›
           </button>
-          
+
           {/* Dots indicator */}
           <div style={{
             position: 'absolute',
@@ -340,8 +340,8 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
               justifyContent: 'center',
               alignItems: 'center'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
             >
               <div style={{
                 fontSize: '32px',
@@ -377,16 +377,16 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           marginBottom: '40px'
         }}>
           {artists.map((artist, index) => (
-            <div key={index} 
+            <div key={index}
               onClick={() => {
                 if (onArtistClick) {
                   onArtistClick(artist);
                 }
               }}
               style={{
-              textAlign: 'center',
-              cursor: 'pointer'
-            }}>
+                textAlign: 'center',
+                cursor: 'pointer'
+              }}>
               <div style={{
                 width: '100px',
                 height: '100px',
@@ -398,8 +398,8 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                 transition: 'transform 0.2s',
                 boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
               }}
-              onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-              onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+                onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
               />
               <h4 style={{
                 fontSize: '14px',
@@ -463,46 +463,45 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
         {/* Events Grid */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, 300px)',
-          gap: '20px',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+          gap: '24px',
           marginBottom: '40px',
           justifyContent: 'center'
         }}>
           {filteredEvents.map((event, index) => (
-            <div key={index} 
+            <div key={index}
               onClick={() => {
                 if (onMovieClick) {
                   onMovieClick(event);
                 }
               }}
               style={{
-              backgroundColor: isDark ? '#1f2937' : 'white',
-              borderRadius: '12px',
-              overflow: 'hidden',
-              boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
-              cursor: 'pointer',
-              transition: 'transform 0.2s',
-              width: '300px',
-              height: '350px',
-              display: 'flex',
-              flexDirection: 'column'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                backgroundColor: isDark ? '#1f2937' : 'white',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                cursor: 'pointer',
+                transition: 'transform 0.2s',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                border: isDark ? '1px solid #374151' : '1px solid #e5e7eb'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
             >
               <div style={{
-                height: '200px',
+                height: '220px',
                 backgroundImage: `url(${event.image})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 flexShrink: 0
               }} />
-              <div style={{ 
-                padding: '16px',
+              <div style={{
+                padding: '20px',
                 flex: 1,
                 display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between'
+                flexDirection: 'column'
               }}>
                 <div>
                   <div style={{
@@ -512,41 +511,50 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                     WebkitTextFillColor: 'transparent',
                     backgroundClip: 'text',
                     fontWeight: '700',
-                    marginBottom: '6px',
+                    marginBottom: '8px',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '4px'
+                    gap: '6px'
                   }}>
-                    <Clock size={12} style={{ color: '#667eea' }} />
-                    {event.fullDate}, {event.time}
+                    <Clock size={14} style={{ color: '#667eea' }} />
+                    {event.fullDate} • {event.time}
                   </div>
-                  
+
                   <h3 style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
+                    fontSize: '18px',
+                    fontWeight: '700',
                     color: isDark ? '#f9fafb' : '#111827',
                     marginBottom: '8px',
-                    lineHeight: '1.3'
+                    lineHeight: '1.4'
                   }}>{event.title}</h3>
-                  
+
                   <p style={{
                     fontSize: '14px',
                     color: isDark ? '#9ca3af' : '#6b7280',
-                    marginBottom: '12px'
-                  }}>{event.venue}</p>
+                    marginBottom: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}>
+                    <span style={{ opacity: 0.7 }}>📍</span> {event.venue}
+                  </p>
                 </div>
-                
+
                 <div style={{
                   display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  marginTop: 'auto',
+                  width: '100%',
+                  paddingTop: '16px',
+                  borderTop: isDark ? '1px solid #374151' : '1px solid #f3f4f6'
                 }}>
                   <span style={{
-                    fontSize: '16px',
-                    fontWeight: 'bold',
+                    fontSize: '18px',
+                    fontWeight: '700',
                     color: event.price === 'FREE' ? '#10b981' : (isDark ? '#f9fafb' : '#111827')
                   }}>{event.price}</span>
-                  <button 
+                  <button
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent card click
                       if (onBookTickets) {
@@ -556,26 +564,27 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                       }
                     }}
                     style={{
-                    padding: '6px 12px',
-                    background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
-                    backgroundSize: '200% 200%',
-                    animation: 'gradientMove 3s ease infinite',
-                    color: 'white',
-                    boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: '6px',
-                    fontSize: '12px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.transform = 'translateY(-2px)';
-                    e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.transform = 'translateY(0)';
-                    e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
-                  }}>
+                      padding: '8px 16px',
+                      background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+                      backgroundSize: '200% 200%',
+                      animation: 'gradientMove 3s ease infinite',
+                      color: 'white',
+                      boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                    }}>
                     Book Now
                   </button>
                 </div>

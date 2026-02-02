@@ -238,7 +238,9 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                     overflow: 'hidden',
                     boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
                     cursor: 'pointer',
-                    transition: 'transform 0.2s'
+                    transition: 'transform 0.2s',
+                    display: 'flex',
+                    flexDirection: 'column'
                   }}
                   onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
                   onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
@@ -252,10 +254,16 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: '#6b7280',
-                    fontSize: 'clamp(12px, 2.5vw, 14px)'
+                    fontSize: 'clamp(12px, 2.5vw, 14px)',
+                    width: '100%'
                   }}>
                   </div>
-                  <div style={{ padding: 'clamp(12px, 3vw, 16px)' }}>
+                  <div style={{
+                    padding: 'clamp(12px, 3vw, 16px)',
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}>
                     <h3 style={{
                       fontSize: 'clamp(14px, 3vw, 16px)',
                       fontWeight: '600',
@@ -282,7 +290,8 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                         fontSize: '12px',
                         fontWeight: '600',
                         cursor: 'pointer',
-                        transition: 'all 0.3s ease'
+                        transition: 'all 0.3s ease',
+                        marginTop: 'auto'
                       }}
                       onMouseEnter={(e) => {
                         e.target.style.transform = 'translateY(-2px)';
