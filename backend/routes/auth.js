@@ -54,6 +54,10 @@ router.post('/register', async (req, res) => {
       password,
       role: role || 'user'
     });
+    
+    console.log('User created successfully:', user._id);
+    console.log('Database name:', user.db.databaseName);
+    console.log('Collection name:', user.collection.name);
 
     const token = generateToken(user._id);
 

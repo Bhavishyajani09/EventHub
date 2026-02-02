@@ -1,22 +1,74 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+import authService from './services/authService';
 
 const Login = () => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ 
+    email: '', 
+    password: '', 
+    userType: 'user' 
+  });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
+    setError('');
+
+    try {
+      let response;
+      
+      switch (formData.userType) {
+        case 'user':
+          response = await authService.userLogin(formData.email, formData.password);
+          break;
+        case 'organizer':
+          response = await authService.organizerLogin(formData.email, formData.password);
+          break;
+        case 'admin':
+          response = await authService.adminLogin(formData.email, formData.password);
+          break;
+        default:
+          throw new Error('Invalid user type');
+      }
+
+      if (response.success) {
+        login(response.token, response.user);
+        
+        // Redirect based on role
+        switch (response.user.role) {
+          case 'user':
+            navigate('/profile');
+            break;
+          case 'organizer':
+            navigate('/organizer/dashboard');
+            break;
+          case 'admin':
+            navigate('/admin');
+            break;
+          default:
+            navigate('/');
+        }
+      } else {
+        setError(response.message || 'Login failed');
+      }
+    } catch (error) {
+      if (error.response?.data?.message) {
+        setError(error.response.data.message);
+      } else {
+        setError('An error occurred during login');
+      }
+    } finally {
       setLoading(false);
-      navigate('/profile');
-    }, 2000);
+    }
   };
 
   return (
@@ -98,6 +150,28 @@ const Login = () => {
           </div>
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <select
+              name="userType"
+              value={formData.userType}
+              onChange={handleChange}
+              style={{
+                width: '100%',
+                padding: '16px 20px',
+                borderRadius: '16px',
+                border: '2px solid rgba(255, 255, 255, 0.3)',
+                fontSize: '16px',
+                outline: 'none',
+                boxSizing: 'border-box',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                backdropFilter: 'blur(10px)'
+              }}
+            >
+              <option value="user" style={{ background: '#333', color: 'white' }}>User</option>
+              <option value="organizer" style={{ background: '#333', color: 'white' }}>Organizer</option>
+              <option value="admin" style={{ background: '#333', color: 'white' }}>Admin</option>
+            </select>
+
             <input
               name="email"
               type="email"
@@ -149,6 +223,20 @@ const Login = () => {
                 Forgot Password?
               </Link>
             </div>
+
+            {error && (
+              <div style={{
+                color: '#ff6b6b',
+                fontSize: '14px',
+                textAlign: 'center',
+                background: 'rgba(255, 107, 107, 0.1)',
+                padding: '12px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 107, 107, 0.3)'
+              }}>
+                {error}
+              </div>
+            )}
 
             <button
               type="submit"

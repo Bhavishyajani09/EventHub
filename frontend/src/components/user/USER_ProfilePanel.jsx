@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { User, Ticket, Settings, HelpCircle, LogOut } from 'lucide-react';
+import { User, Ticket, Settings, HelpCircle, LogOut, Star } from 'lucide-react';
 
 const ProfilePanel = ({ user, isOpen, onClose, onLogout, onNavigate, isDark }) => {
   const [activeItem, setActiveItem] = useState('dashboard');

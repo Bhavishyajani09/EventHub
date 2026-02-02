@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, User, Users } from 'lucide-react';
+import { useAuth } from './context/AuthContext';
+import authService from './services/authService';
 
 const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
   const [currentScreen, setCurrentScreen] = useState('login');
@@ -9,10 +11,13 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
+    phone: '',
     password: '',
     role: 'user'
   });
   const [errors, setErrors] = useState({});
+  
+  const { login } = useAuth();
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,6 +29,10 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
     
     if (currentScreen === 'register' && !formData.fullName.trim()) {
       newErrors.fullName = 'Full name is required';
+    }
+    
+    if (currentScreen === 'register' && !formData.phone.trim()) {
+      newErrors.phone = 'Phone number is required';
     }
     
     if (!formData.email.trim()) {
@@ -57,26 +66,6 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
     }
   };
 
-  const simulateAuth = async (type) => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    if (type === 'login') {
-      // Simulate login validation
-      if (formData.email === 'test@example.com' && formData.password === 'password') {
-        return { success: true, user: { name: 'John Doe', email: formData.email } };
-      } else {
-        throw new Error('Invalid email or password');
-      }
-    } else if (type === 'register') {
-      // Simulate successful registration
-      return { success: true, user: { name: formData.fullName, email: formData.email } };
-    } else if (type === 'forgot') {
-      // Simulate forgot password
-      return { success: true, message: 'Reset link sent to your email' };
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -86,29 +75,83 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
     setMessage({ text: '', type: '' });
     
     try {
-      const result = await simulateAuth(currentScreen);
+      let response;
       
-      if (currentScreen === 'forgot') {
-        setMessage({ text: 'Reset link sent to your email', type: 'success' });
-      } else {
-        setMessage({ text: `${currentScreen === 'login' ? 'Login' : 'Registration'} successful!`, type: 'success' });
+      if (currentScreen === 'login') {
+        switch (formData.role) {
+          case 'user':
+            response = await authService.userLogin(formData.email, formData.password);
+            break;
+          case 'organizer':
+            response = await authService.organizerLogin(formData.email, formData.password);
+            break;
+          case 'admin':
+            response = await authService.adminLogin(formData.email, formData.password);
+            break;
+          default:
+            throw new Error('Invalid user type');
+        }
         
-        // Call success callback and close modal after short delay
-        setTimeout(() => {
-          onAuthSuccess(result.user);
-          onClose();
-          resetForm();
-        }, 1000);
+        if (response.success) {
+          login(response.token, response.user);
+          setMessage({ text: 'Login successful!', type: 'success' });
+          
+          setTimeout(() => {
+            onAuthSuccess(response.user);
+            onClose();
+            resetForm();
+          }, 1000);
+        } else {
+          setMessage({ text: response.message || 'Login failed', type: 'error' });
+        }
+      } else if (currentScreen === 'register') {
+        const userData = {
+          name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          password: formData.password,
+          role: formData.role
+        };
+        
+        switch (formData.role) {
+          case 'user':
+            response = await authService.userRegister(userData);
+            break;
+          case 'organizer':
+            response = await authService.organizerRegister(userData);
+            break;
+          default:
+            throw new Error('Admin registration not allowed');
+        }
+        
+        if (response.success) {
+          login(response.token, response.user);
+          setMessage({ text: 'Registration successful!', type: 'success' });
+          
+          setTimeout(() => {
+            onAuthSuccess(response.user);
+            onClose();
+            resetForm();
+          }, 1000);
+        } else {
+          setMessage({ text: response.message || 'Registration failed', type: 'error' });
+        }
+      } else if (currentScreen === 'forgot') {
+        setMessage({ text: 'Reset link sent to your email', type: 'success' });
       }
     } catch (error) {
-      setMessage({ text: error.message, type: 'error' });
+      if (error.response?.data?.message) {
+        setMessage({ text: error.response.data.message, type: 'error' });
+      } else {
+        setMessage({ text: error.message || 'An error occurred', type: 'error' });
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   const resetForm = () => {
-    setFormData({ fullName: '', email: '', password: '', role: 'user' });
+    setFormData({ fullName: '', email: '', phone: '', password: '', role: 'user' });
     setErrors({});
     setMessage({ text: '', type: '' });
     setShowPassword(false);
@@ -233,8 +276,8 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} style={{ marginBottom: '24px' }}>
-          {/* Role Selection - Only for Register */}
-          {currentScreen === 'register' && (
+          {/* Role Selection - For Login and Register */}
+          {(currentScreen === 'register' || currentScreen === 'login') && (
             <div style={{
               display: 'flex',
               gap: '12px',
@@ -286,6 +329,31 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                 <Users size={24} />
                 Organizer
               </button>
+              {currentScreen === 'login' && (
+                <button
+                  type="button"
+                  onClick={() => setFormData({...formData, role: 'admin'})}
+                  style={{
+                    flex: 1,
+                    padding: '16px 12px',
+                    borderRadius: '12px',
+                    border: `2px solid ${formData.role === 'admin' ? '#8b5cf6' : '#e5e7eb'}`,
+                    background: formData.role === 'admin' ? '#f3f4f6' : 'white',
+                    color: formData.role === 'admin' ? '#8b5cf6' : '#6b7280',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <Users size={24} />
+                  Admin
+                </button>
+              )}
             </div>
           )}
           {/* Full Name - Only for Register */}
@@ -324,6 +392,47 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
               {errors.fullName && (
                 <p style={{ color: '#ef4444', fontSize: '14px', margin: '4px 0 0 0' }}>
                   {errors.fullName}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Phone - Only for Register */}
+          {currentScreen === 'register' && (
+            <div style={{ marginBottom: '20px' }}>
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Phone Number"
+                value={formData.phone}
+                onChange={handleInputChange}
+                style={{
+                  width: '100%',
+                  padding: '16px 20px',
+                  border: `2px solid ${errors.phone ? '#ef4444' : '#e5e7eb'}`,
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  outline: 'none',
+                  transition: 'all 0.2s',
+                  backgroundColor: '#f9fafb',
+                  boxSizing: 'border-box'
+                }}
+                onFocus={(e) => {
+                  if (!errors.phone) {
+                    e.target.style.borderColor = '#8b5cf6';
+                  }
+                  e.target.style.backgroundColor = 'white';
+                }}
+                onBlur={(e) => {
+                  if (!errors.phone) {
+                    e.target.style.borderColor = '#e5e7eb';
+                  }
+                  e.target.style.backgroundColor = '#f9fafb';
+                }}
+              />
+              {errors.phone && (
+                <p style={{ color: '#ef4444', fontSize: '14px', margin: '4px 0 0 0' }}>
+                  {errors.phone}
                 </p>
               )}
             </div>

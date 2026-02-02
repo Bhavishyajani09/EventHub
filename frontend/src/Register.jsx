@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+import authService from './services/authService';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -7,21 +9,76 @@ const Register = () => {
     email: '',
     phone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    userType: 'user'
   });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
+    setError('');
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
       setLoading(false);
-      alert('Account created successfully!');
-    }, 2000);
+      return;
+    }
+
+    try {
+      let response;
+      const userData = {
+        name: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        role: formData.userType
+      };
+      
+      switch (formData.userType) {
+        case 'user':
+          response = await authService.userRegister(userData);
+          break;
+        case 'organizer':
+          response = await authService.organizerRegister(userData);
+          break;
+        default:
+          throw new Error('Admin registration not allowed');
+      }
+
+      if (response.success) {
+        login(response.token, response.user);
+        
+        // Redirect based on role
+        switch (response.user.role) {
+          case 'user':
+            navigate('/profile');
+            break;
+          case 'organizer':
+            navigate('/organizer/dashboard');
+            break;
+          default:
+            navigate('/');
+        }
+      } else {
+        setError(response.message || 'Registration failed');
+      }
+    } catch (error) {
+      if (error.response?.data?.message) {
+        setError(error.response.data.message);
+      } else {
+        setError('An error occurred during registration');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -103,6 +160,27 @@ const Register = () => {
           </div>
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <select
+              name="userType"
+              value={formData.userType}
+              onChange={handleChange}
+              style={{
+                width: '100%',
+                padding: '16px 20px',
+                borderRadius: '16px',
+                border: '2px solid rgba(255, 255, 255, 0.3)',
+                fontSize: '16px',
+                outline: 'none',
+                boxSizing: 'border-box',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                backdropFilter: 'blur(10px)'
+              }}
+            >
+              <option value="user" style={{ background: '#333', color: 'white' }}>User</option>
+              <option value="organizer" style={{ background: '#333', color: 'white' }}>Organizer</option>
+            </select>
+
             <input
               name="fullName"
               type="text"
@@ -207,6 +285,20 @@ const Register = () => {
                 backdropFilter: 'blur(10px)'
               }}
             />
+
+            {error && (
+              <div style={{
+                color: '#ff6b6b',
+                fontSize: '14px',
+                textAlign: 'center',
+                background: 'rgba(255, 107, 107, 0.1)',
+                padding: '12px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 107, 107, 0.3)'
+              }}>
+                {error}
+              </div>
+            )}
 
             <button
               type="submit"

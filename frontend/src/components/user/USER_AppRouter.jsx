@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import Home from './USER_Home';
 import MoviesPage from './USER_MoviesPage';
 import EventsPage from './USER_EventsPage';
@@ -16,6 +17,8 @@ import HelpCenter from './USER_HelpCenter';
 import TermsAndConditions from './TermsAndConditions';
 import PrivacyPolicy from './USER_PrivacyPolicy';
 import ContactSupport from './USER_ContactSupport';
+import Login from '../../Login';
+import Register from '../../Register';
 
 function AppRouter() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -23,10 +26,11 @@ function AppRouter() {
   const [isDark, setIsDark] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [user, setUser] = useState(null);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedArtist, setSelectedArtist] = useState(null);
+  
+  const { user, logout } = useAuth();
 
   // Scroll to top whenever page changes
   useEffect(() => {
@@ -39,6 +43,10 @@ function AppRouter() {
     const path = window.location.pathname;
     if (path === '/') {
       setCurrentPage('home');
+    } else if (path === '/login') {
+      setCurrentPage('login');
+    } else if (path === '/register') {
+      setCurrentPage('register');
     } else if (path === '/movies') {
       setCurrentPage('movies');
     } else if (path === '/events') {
@@ -86,6 +94,8 @@ function AppRouter() {
   const updateURL = (page) => {
     const routes = {
       'home': '/',
+      'login': '/login',
+      'register': '/register',
       'movies': '/movies',
       'events': '/events',
       'booking': '/booking',
@@ -105,12 +115,12 @@ function AppRouter() {
   };
 
   const handleAuthSuccess = (userData) => {
-    setUser(userData);
+    // Auth context handles this automatically
     setIsAuthModalOpen(false);
   };
 
   const handleLogout = () => {
-    setUser(null);
+    logout();
   };
 
   const handleNavigate = (page) => {
@@ -181,6 +191,10 @@ function AppRouter() {
 
   const renderPage = () => {
     switch(currentPage) {
+      case 'login':
+        return <Login />;
+      case 'register':
+        return <Register />;
       case 'movies':
         return (
           <MoviesPage 
