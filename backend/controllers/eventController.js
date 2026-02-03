@@ -120,28 +120,45 @@ exports.updateEvent = async (req, res) => {
   try {
     const { title, description, date, time, location, capacity, price, category, isPublished } = req.body;
     
-    let updateData = {
-      title,
-      description,
-      date: date && time ? new Date(`${date}T${time}`) : undefined,
-      location,
-      capacity: capacity ? parseInt(capacity) : undefined,
-      price: price ? parseFloat(price) : undefined,
-      category,
-      isPublished: isPublished === 'true'
-    };
-
-    // Remove undefined values
-    Object.keys(updateData).forEach(key => {
-      if (updateData[key] === undefined) {
-        delete updateData[key];
+    let updateData = {};
+    
+    if (title !== undefined) updateData.title = title;
+    if (description !== undefined) updateData.description = description;
+    if (location !== undefined) updateData.location = location;
+    if (category !== undefined) updateData.category = category;
+    if (capacity !== undefined && capacity !== '') updateData.capacity = parseInt(capacity);
+    if (price !== undefined && price !== '') updateData.price = parseFloat(price);
+    if (isPublished !== undefined) updateData.isPublished = isPublished === 'true' || isPublished === true;
+    
+    if (date) {
+      if (time) {
+        updateData.date = new Date(`${date}T${time}`);
+      } else {
+        const existingEvent = await Event.findById(req.params.id);
+        if (existingEvent && existingEvent.date) {
+          const existingTime = existingEvent.date.toTimeString().split(' ')[0];
+          updateData.date = new Date(`${date}T${existingTime}`);
+        } else {
+          updateData.date = new Date(`${date}T00:00:00`);
+        }
       }
-    });
+    }
 
-    // Handle image upload
     if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: 'eventhub/events'
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          {
+            folder: 'eventhub/events',
+            transformation: [
+              { width: 800, height: 600, crop: 'fill' },
+              { quality: 'auto' }
+            ]
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        ).end(req.file.buffer);
       });
       updateData.image = result.secure_url;
     }

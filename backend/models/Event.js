@@ -13,7 +13,7 @@ const eventSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: ['concert', 'sports', 'movie']
+    enum: ['Music', 'Comedy', 'Art', 'Sports', 'Seasonal Event', 'Movie']
   },
   location: {
     type: String,
