@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Sun, Moon, User, LogOut, Settings, UserCircle } from 'lucide-react';
 
-const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, activePage = 'home', hideNavigation = false, searchOnly = false, pageTitle, onLogout, hideThemeToggle = false, hideProfileOption = false }) => {
+const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, activePage = 'home', hideNavigation = false, searchOnly = false, pageTitle, onLogout, hideThemeToggle = false, hideProfileOption = false, enableDropdown = false }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
@@ -224,9 +224,41 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
             {/* Login/Profile Section */}
             {/* Login/Profile Section */}
             {user ? (
-              <div style={{ position: 'relative' }}>
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {/* Standalone Logout Button (Only if Dropdown is DISABLED) */}
+                {!enableDropdown && onLogout && (
+                  <button
+                    onClick={onLogout}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: isDark ? '#374151' : '#f8fafc',
+                      border: isDark ? '1px solid #4b5563' : '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      color: isDark ? '#f9fafb' : '#374151',
+                      fontSize: '14px',
+                      fontWeight: '500'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = isDark ? '#4b5563' : '#e2e8f0';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = isDark ? '#374151' : '#f8fafc';
+                    }}
+                  >
+                    Logout
+                  </button>
+                )}
+
                 <div
-                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  onClick={() => {
+                    if (enableDropdown) {
+                      setIsProfileOpen(!isProfileOpen);
+                    } else if (onProfileClick) {
+                      onProfileClick();
+                    }
+                  }}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -263,8 +295,8 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
                   </div>
                 </div>
 
-                {/* Dropdown Menu */}
-                {isProfileOpen && (
+                {/* Dropdown Menu (Only if Dropdown is ENABLED) */}
+                {enableDropdown && isProfileOpen && (
                   <>
                     <div
                       style={{

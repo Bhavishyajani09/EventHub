@@ -26,6 +26,7 @@ function AdminAppRouter() {
         <Route path="/users" element={<AdminUserManagement />} />
         <Route path="/events" element={<AdminEvents />} />
         <Route path="/bookings" element={<AdminBooking />} />
+        <Route path="*" element={<Dashboard />} />
       </Routes>
     </AdminLayout>
   );

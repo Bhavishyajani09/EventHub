@@ -17,6 +17,7 @@ const OrganizerLayout = ({ children, user, onLogout }) => {
         pageTitle="Organizer Panel"
         hideThemeToggle={true}
         hideProfileOption={true}
+        enableDropdown={true}
         onNavigate={(path) => {
           if (path === 'home') navigate('/');
           if (path === 'settings') navigate('/settings');

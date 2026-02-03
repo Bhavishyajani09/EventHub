@@ -28,6 +28,7 @@ function OrganizerAppRouter() {
         <Route path="/reviews" element={<ReviewsRatings />} />
         <Route path="/reports" element={<ReportsAnalytics />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="*" element={<Dashboard />} />
       </Routes>
     </OrganizerLayout>
   );
