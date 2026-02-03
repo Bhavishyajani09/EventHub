@@ -7,6 +7,9 @@ const eventController = require('../controllers/eventController');
 // Get organizer's events
 router.get('/organizer', auth, eventController.getOrganizerEvents);
 
+// Get event by ID
+router.get('/:id', auth, eventController.getEventById);
+
 // Create event with image upload
 router.post('/', auth, upload.single('image'), eventController.createEvent);
 

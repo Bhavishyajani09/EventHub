@@ -24,6 +24,34 @@ exports.getOrganizerEvents = async (req, res) => {
   }
 };
 
+// Get event by ID
+exports.getEventById = async (req, res) => {
+  try {
+    const event = await Event.findOne({ 
+      _id: req.params.id, 
+      organizer: req.user.id 
+    }).populate('organizer', 'name email');
+    
+    if (!event) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Event not found' 
+      });
+    }
+    
+    res.json({
+      success: true,
+      event
+    });
+  } catch (error) {
+    console.error('Get event by ID error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch event'
+    });
+  }
+};
+
 // Create event
 exports.createEvent = async (req, res) => {
   try {
