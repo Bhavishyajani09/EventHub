@@ -21,7 +21,7 @@ const AdminLayout = ({ children, user, onLogout }) => {
   const navigate = useNavigate();
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/' },
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { id: 'users', label: 'Users', icon: Users, path: '/users' },
     { id: 'organizers', label: 'Organizers', icon: UserCheck, path: '/organizers' },
     { id: 'events', label: 'Events', icon: Calendar, path: '/events' },
@@ -41,7 +41,7 @@ const AdminLayout = ({ children, user, onLogout }) => {
         hideProfileOption={true}
         enableDropdown={true}
         onNavigate={(path) => {
-          if (path === 'home') navigate('/');
+          if (path === 'home') navigate('/dashboard');
           if (path === 'settings') navigate('/settings');
         }}
         onAuthOpen={() => { }}

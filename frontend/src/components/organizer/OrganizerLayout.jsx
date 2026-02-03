@@ -19,7 +19,7 @@ const OrganizerLayout = ({ children, user, onLogout }) => {
         hideProfileOption={true}
         enableDropdown={true}
         onNavigate={(path) => {
-          if (path === 'home') navigate('/');
+          if (path === 'home') navigate('/dashboard');
           if (path === 'settings') navigate('/settings');
         }}
         onAuthOpen={() => { }}
