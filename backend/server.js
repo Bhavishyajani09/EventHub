@@ -20,14 +20,15 @@ app.use(express.json());
 
 // Routes
 app.use('/auth/user', require('./routes/auth'));
-app.use('/api/events', require('./routes/events'));
-app.use('/booking', require('./routes/bookings'));
+app.use('/api/bookings', require('./routes/bookings'));
+app.use('/booking', require('./routes/Bookings'));
 app.use('/payments', require('./routes/payments'));
 app.use('/api/reviews', require('./routes/reviews'));
+app.use('/api/upload', require('./routes/upload'));
 
 // Routes
 app.use('/api', organizerRoutes);
-app.use('/api', eventRoutes);
+app.use('/api/events', eventRoutes);
 app.use('/api', adminRoutes);
 
 // Health check route

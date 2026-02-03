@@ -154,7 +154,7 @@ const updateProfile = async (req, res) => {
     const { name, email, phone, password } = req.body;
     
     // Get organizer ID from authenticated request
-    const organizerId = req.organizer._id;
+    const organizerId = req.user.id;
 
     // Build update object with only provided fields
     const updateData = {};
@@ -227,7 +227,7 @@ const updateProfile = async (req, res) => {
 const getEventBookings = async (req, res) => {
   try {
     const { id } = req.params;
-    const organizerId = req.organizer._id;
+    const organizerId = req.user.id;
 
     const event = await Event.findOne({ _id: id, organizer: organizerId });
     if (!event) {
@@ -279,18 +279,25 @@ const getEventAttendees = async (req, res) => {
  */
 const getDashboard = async (req, res) => {
   try {
-    const organizerId = req.organizer._id;
+    const organizerId = req.user.id;
 
     const totalEvents = await Event.countDocuments({ organizer: organizerId });
     const publishedEvents = await Event.countDocuments({ organizer: organizerId, isPublished: true });
-    const totalBookings = await Booking.countDocuments({
-      event: { $in: await Event.find({ organizer: organizerId }).select('_id') }
-    });
-    const totalRevenue = await Booking.aggregate([
-      { $lookup: { from: 'events', localField: 'event', foreignField: '_id', as: 'eventData' } },
-      { $match: { 'eventData.organizer': organizerId, status: 'confirmed' } },
-      { $group: { _id: null, total: { $sum: '$totalAmount' } } }
-    ]);
+    
+    // Get organizer's events first
+    const organizerEvents = await Event.find({ organizer: organizerId }).select('_id');
+    const eventIds = organizerEvents.map(event => event._id);
+    
+    const totalBookings = eventIds.length > 0 ? await Booking.countDocuments({ event: { $in: eventIds } }) : 0;
+    
+    let totalRevenue = 0;
+    if (eventIds.length > 0) {
+      const revenueResult = await Booking.aggregate([
+        { $match: { event: { $in: eventIds }, status: 'confirmed' } },
+        { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+      ]);
+      totalRevenue = revenueResult[0]?.total || 0;
+    }
 
     res.json({
       success: true,
@@ -298,10 +305,11 @@ const getDashboard = async (req, res) => {
         totalEvents,
         publishedEvents,
         totalBookings,
-        totalRevenue: totalRevenue[0]?.total || 0
+        totalRevenue
       }
     });
   } catch (error) {
+    console.error('Dashboard error:', error);
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };

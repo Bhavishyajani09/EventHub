@@ -1,9 +1,11 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Organizer = require('../models/Organizer');
+const Admin = require('../models/Admin');
 
 /**
  * JWT Authentication Middleware
- * Protects routes by verifying JWT tokens and attaching organizer info to request
+ * Protects routes by verifying JWT tokens and attaching user info to request
  */
 const authMiddleware = async (req, res, next) => {
   try {
@@ -23,8 +25,16 @@ const authMiddleware = async (req, res, next) => {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // Find user by ID from token payload
-    const user = await User.findById(decoded.id).select('-password');
+    // Try to find user in different models
+    let user = await User.findById(decoded.id).select('-password');
+    
+    if (!user) {
+      user = await Organizer.findById(decoded.id).select('-password');
+    }
+    
+    if (!user) {
+      user = await Admin.findById(decoded.id).select('-password');
+    }
     
     if (!user) {
       return res.status(401).json({ 
@@ -53,6 +63,7 @@ const authMiddleware = async (req, res, next) => {
       });
     }
 
+    console.error('Auth middleware error:', error);
     res.status(500).json({ 
       success: false, 
       message: 'Server error during authentication.' 

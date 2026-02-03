@@ -4,6 +4,18 @@ const auth = require('../middleware/auth');
 const upload = require('../middleware/upload');
 const eventController = require('../controllers/eventController');
 
+// Get organizer's events
+router.get('/organizer', auth, eventController.getOrganizerEvents);
+
+// Create event with image upload
+router.post('/', auth, upload.single('image'), eventController.createEvent);
+
+// Update event
+router.put('/:id', auth, upload.single('image'), eventController.updateEvent);
+
+// Delete event
+router.delete('/:id', auth, eventController.deleteEvent);
+
 // Event management routes
 router.post('/organizer/events', auth, eventController.createEvent);
 router.put('/organizer/events/:id', auth, eventController.updateEvent);

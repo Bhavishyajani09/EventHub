@@ -1,8 +1,33 @@
 const express = require('express');
 const Event = require('../models/Event');
 const Review = require('../models/Review');
+const auth = require('../middleware/auth');
 
 const router = express.Router();
+
+// @route   GET /events/organizer
+// @desc    Get organizer's events
+// @access  Private
+router.get('/organizer', auth, async (req, res) => {
+  try {
+    console.log('Getting events for organizer:', req.user.id);
+    const events = await Event.find({ organizer: req.user.id })
+      .sort({ createdAt: -1 });
+    
+    console.log('Found events:', events.length);
+    
+    res.json({
+      success: true,
+      events
+    });
+  } catch (error) {
+    console.error('Get organizer events error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to fetch events' 
+    });
+  }
+});
 
 // @route   GET /events
 // @desc    Get all events

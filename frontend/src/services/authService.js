@@ -30,6 +30,7 @@ const authService = {
         token: response.data.data.token,
         user: {
           ...response.data.data.organizer,
+          name: response.data.data.organizer.name,
           role: 'organizer'
         }
       };

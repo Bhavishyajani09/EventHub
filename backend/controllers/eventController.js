@@ -1,27 +1,88 @@
 const Event = require('../models/Event');
+const Booking = require('../models/Booking');
 const multer = require('multer');
 const cloudinary = require('../config/cloudinary');
+
+// Get organizer's events
+exports.getOrganizerEvents = async (req, res) => {
+  try {
+    const organizerId = req.user.id;
+    const events = await Event.find({ organizer: organizerId })
+      .sort({ createdAt: -1 })
+      .populate('organizer', 'name email');
+    
+    res.json({
+      success: true,
+      events
+    });
+  } catch (error) {
+    console.error('Get organizer events error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch events'
+    });
+  }
+};
 
 // Create event
 exports.createEvent = async (req, res) => {
   try {
-    const { title, description, artistName, city, venue, date, time, ticketTypes } = req.body;
+    const { title, description, date, time, location, capacity, price, category, isPublished, seatTypes } = req.body;
+    
+    let imageUrl = '';
+    if (req.file) {
+      // Upload buffer to Cloudinary
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          {
+            folder: 'eventhub/events',
+            transformation: [
+              { width: 800, height: 600, crop: 'fill' },
+              { quality: 'auto' }
+            ]
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        ).end(req.file.buffer);
+      });
+      imageUrl = result.secure_url;
+    }
+    
+    // Parse seat types if provided
+    let parsedSeatTypes = [];
+    if (seatTypes) {
+      try {
+        parsedSeatTypes = JSON.parse(seatTypes).map(seat => ({
+          ...seat,
+          price: parseFloat(seat.price),
+          quantity: parseInt(seat.quantity),
+          available: parseInt(seat.quantity) // Initially all seats are available
+        }));
+      } catch (e) {
+        console.error('Error parsing seat types:', e);
+      }
+    }
     
     const event = new Event({
       title,
       description,
-      artistName,
-      city,
-      venue,
-      date,
-      time,
-      ticketTypes,
-      organizer: req.organizer._id
+      date: new Date(`${date}T${time}`),
+      location,
+      capacity: parseInt(capacity),
+      price: parseFloat(price),
+      category,
+      isPublished: isPublished === 'true',
+      image: imageUrl,
+      seatTypes: parsedSeatTypes,
+      organizer: req.user.id
     });
 
     await event.save();
     res.status(201).json({ success: true, event });
   } catch (error) {
+    console.error('Create event error:', error);
     res.status(400).json({ success: false, message: error.message });
   }
 };
@@ -29,9 +90,37 @@ exports.createEvent = async (req, res) => {
 // Update event
 exports.updateEvent = async (req, res) => {
   try {
+    const { title, description, date, time, location, capacity, price, category, isPublished } = req.body;
+    
+    let updateData = {
+      title,
+      description,
+      date: date && time ? new Date(`${date}T${time}`) : undefined,
+      location,
+      capacity: capacity ? parseInt(capacity) : undefined,
+      price: price ? parseFloat(price) : undefined,
+      category,
+      isPublished: isPublished === 'true'
+    };
+
+    // Remove undefined values
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === undefined) {
+        delete updateData[key];
+      }
+    });
+
+    // Handle image upload
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'eventhub/events'
+      });
+      updateData.image = result.secure_url;
+    }
+    
     const event = await Event.findOneAndUpdate(
-      { _id: req.params.id, organizer: req.organizer._id },
-      req.body,
+      { _id: req.params.id, organizer: req.user.id },
+      updateData,
       { new: true }
     );
     
@@ -41,6 +130,7 @@ exports.updateEvent = async (req, res) => {
     
     res.json({ success: true, event });
   } catch (error) {
+    console.error('Update event error:', error);
     res.status(400).json({ success: false, message: error.message });
   }
 };
@@ -132,7 +222,7 @@ exports.unpublishEvent = async (req, res) => {
 // Delete event
 exports.deleteEvent = async (req, res) => {
   try {
-    const event = await Event.findOneAndDelete({ _id: req.params.id, organizer: req.organizer._id });
+    const event = await Event.findOneAndDelete({ _id: req.params.id, organizer: req.user.id });
 
     if (!event) {
       return res.status(404).json({ success: false, message: 'Event not found' });
@@ -140,6 +230,7 @@ exports.deleteEvent = async (req, res) => {
 
     res.json({ success: true, message: 'Event deleted successfully' });
   } catch (error) {
+    console.error('Delete event error:', error);
     res.status(400).json({ success: false, message: error.message });
   }
 };

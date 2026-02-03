@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const eventSchema = new mongoose.Schema({
-  name: {
+  title: {
     type: String,
     required: true,
     trim: true
@@ -10,21 +10,12 @@ const eventSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  artist: {
-    type: String,
-    required: true
-  },
   category: {
     type: String,
     required: true,
-    enum: ['music', 'sports', 'comedy', 'theater', 'conference', 'workshop', 'other']
+    enum: ['concert', 'sports', 'movie']
   },
-  city: {
-    type: String,
-    required: true,
-    lowercase: true
-  },
-  venue: {
+  location: {
     type: String,
     required: true
   },
@@ -32,19 +23,22 @@ const eventSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
-  time: {
-    type: String,
-    required: true
+  capacity: {
+    type: Number,
+    required: true,
+    min: 1
   },
   price: {
     type: Number,
     required: true,
     min: 0
   },
-  ticketTypes: [{
+  // Seat types with different pricing
+  seatTypes: [{
     name: {
       type: String,
-      required: true
+      required: true,
+      enum: ['General', 'VIP', 'Premium']
     },
     price: {
       type: Number,
@@ -55,35 +49,30 @@ const eventSchema = new mongoose.Schema({
       type: Number,
       required: true,
       min: 0
+    },
+    available: {
+      type: Number,
+      required: true,
+      min: 0
     }
   }],
-  totalTickets: {
-    type: Number,
-    required: true,
-    min: 1
-  },
-  availableTickets: {
-    type: Number,
-    required: true
-  },
   image: {
     type: String,
     default: ''
   },
   organizer: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'Organizer',
     required: true
   },
-  status: {
-    type: String,
-    enum: ['active', 'cancelled', 'completed'],
-    default: 'active'
+  isPublished: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true
 });
 
-eventSchema.index({ name: 'text', artist: 'text', description: 'text' });
+eventSchema.index({ title: 'text', description: 'text' });
 
 module.exports = mongoose.model('Event', eventSchema);
