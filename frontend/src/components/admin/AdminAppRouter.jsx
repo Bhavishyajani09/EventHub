@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import AdminLayout from './AdminLayout';
 import Dashboard from './ADMIN_Dashboard';
@@ -20,12 +20,14 @@ function AdminAppRouter() {
   return (
     <AdminLayout user={user} onLogout={handleLogout}>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/organizers" element={<Organizers />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/users" element={<AdminUserManagement />} />
         <Route path="/events" element={<AdminEvents />} />
         <Route path="/bookings" element={<AdminBooking />} />
+        <Route path="*" element={<Dashboard />} />
       </Routes>
     </AdminLayout>
   );

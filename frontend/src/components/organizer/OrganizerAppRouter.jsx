@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import OrganizerLayout from './OrganizerLayout';
 import Dashboard from './ORG_Dashboard';
@@ -21,13 +21,15 @@ function OrganizerAppRouter() {
   return (
     <OrganizerLayout user={user} onLogout={handleLogout}>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/events" element={<MyEvents />} />
         <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/bookings" element={<BookingsManagement />} />
         <Route path="/reviews" element={<ReviewsRatings />} />
         <Route path="/reports" element={<ReportsAnalytics />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="*" element={<Dashboard />} />
       </Routes>
     </OrganizerLayout>
   );

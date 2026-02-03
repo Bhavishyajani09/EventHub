@@ -4,10 +4,10 @@ import { useAuth } from './context/AuthContext';
 import authService from './services/authService';
 
 const Login = () => {
-  const [formData, setFormData] = useState({ 
-    email: '', 
-    password: '', 
-    userType: 'user' 
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    userType: 'user'
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -25,7 +25,7 @@ const Login = () => {
 
     try {
       let response;
-      
+
       switch (formData.userType) {
         case 'user':
           response = await authService.userLogin(formData.email, formData.password);
@@ -42,9 +42,9 @@ const Login = () => {
 
       if (response.success) {
         login(response.token, response.user);
-        
+
         // The MainRouter will automatically redirect based on role
-        navigate('/');
+        navigate('/', { replace: true });
       } else {
         setError(response.message || 'Login failed');
       }
@@ -73,7 +73,7 @@ const Login = () => {
           animation: float 6s ease-in-out infinite;
         }
       `}</style>
-      
+
       <div style={{
         minHeight: '100vh',
         width: '100vw',
@@ -87,7 +87,7 @@ const Login = () => {
         position: 'relative',
         overflow: 'hidden'
       }}>
-        
+
         <div style={{
           position: 'absolute',
           top: 0,
@@ -98,7 +98,7 @@ const Login = () => {
           zIndex: 1
         }}></div>
 
-        <div 
+        <div
           className="floating-card"
           style={{
             background: 'rgba(255, 255, 255, 0.1)',
@@ -247,9 +247,9 @@ const Login = () => {
           </form>
 
           <div style={{ textAlign: 'center', marginTop: '32px' }}>
-            <p style={{ 
-              color: 'rgba(255, 255, 255, 0.8)', 
-              fontSize: '16px', 
+            <p style={{
+              color: 'rgba(255, 255, 255, 0.8)',
+              fontSize: '16px',
               margin: 0
             }}>
               Don't have an account?{' '}

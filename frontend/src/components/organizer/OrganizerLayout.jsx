@@ -1,21 +1,29 @@
 import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from './ORG_Sidebar';
 import SharedNavbar from '../../SharedNavbar';
 
 const OrganizerLayout = ({ children, user, onLogout }) => {
   const [isDark, setIsDark] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <SharedNavbar 
+      <SharedNavbar
         isDark={isDark}
         setIsDark={setIsDark}
         user={user}
         hideNavigation={true}
         pageTitle="Organizer Panel"
-        onNavigate={() => {}}
-        onAuthOpen={() => {}}
-        onProfileClick={() => {}}
+        hideThemeToggle={true}
+        hideProfileOption={true}
+        enableDropdown={true}
+        onNavigate={(path) => {
+          if (path === 'home') navigate('/dashboard');
+          if (path === 'settings') navigate('/settings');
+        }}
+        onAuthOpen={() => { }}
+        onProfileClick={() => navigate('/settings')}
         onLogout={onLogout}
       />
       <div className="flex">

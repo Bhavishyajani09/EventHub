@@ -14,7 +14,7 @@
 
 //   return (
 //     <aside className="fixed top-0 left-0 h-screen w-64 bg-white border-r px-5 py-6">
-      
+
 //       <h2 className="text-2xl font-bold mb-8">EventPro</h2>
 
 //       <nav className="space-y-1">
@@ -83,7 +83,7 @@ export default function Sidebar() {
 
       {/* Mobile Overlay */}
       {mobileOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
           onClick={() => setMobileOpen(false)}
         />
@@ -113,9 +113,9 @@ export default function Sidebar() {
         <div className="p-4">
           {!collapsed && (
             <div className="flex items-center gap-3">
-              <img 
-                src="/new_icon_favicon.png" 
-                alt="EventHub Logo" 
+              <img
+                src="/new_icon_favicon.png"
+                alt="EventHub Logo"
                 className="w-9 h-9 rounded-lg"
               />
               <div>
@@ -125,9 +125,9 @@ export default function Sidebar() {
             </div>
           )}
           {collapsed && (
-            <img 
-              src="/new_icon_favicon.png" 
-              alt="EventHub Logo" 
+            <img
+              src="/new_icon_favicon.png"
+              alt="EventHub Logo"
               className="w-8 h-8 rounded-lg mx-auto"
             />
           )}
@@ -135,10 +135,10 @@ export default function Sidebar() {
 
         <nav className="flex-1 space-y-1 px-2 pb-4">
           <SidebarItem
-            to="/"
+            to="/dashboard"
             icon={<LayoutDashboard size={18} />}
             label="Dashboard"
-            active={location.pathname === "/"}
+            active={location.pathname === "/dashboard" || location.pathname === "/"}
             collapsed={collapsed}
             onClick={() => setMobileOpen(false)}
           />
@@ -203,10 +203,9 @@ function SidebarItem({ to, icon, label, active, collapsed, onClick }) {
       to={to}
       onClick={onClick}
       className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-gray-100 transition-colors
-        ${
-          active
-            ? "bg-indigo-100 text-indigo-600 font-medium"
-            : "text-gray-700"
+        ${active
+          ? "bg-indigo-100 text-indigo-600 font-medium"
+          : "text-gray-700"
         }`}
     >
       {icon}
