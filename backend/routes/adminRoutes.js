@@ -8,6 +8,7 @@ const {
   toggleUserBlock,
   getAllOrganizers,
   toggleOrganizerApproval,
+  getAllEvents,
   getDashboardStats
 } = require('../controllers/adminController');
 
@@ -22,6 +23,9 @@ router.put('/admin/users/:id/block', adminAuth, toggleUserBlock);
 // Organizer Management Routes
 router.get('/admin/organizers', adminAuth, getAllOrganizers);
 router.put('/admin/organizers/:id/approve', adminAuth, toggleOrganizerApproval);
+
+// Event Management Routes
+router.get('/admin/events', adminAuth, getAllEvents);
 
 // Dashboard Route
 router.get('/admin/dashboard', adminAuth, getDashboardStats);

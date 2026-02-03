@@ -128,6 +128,23 @@ const toggleOrganizerApproval = async (req, res) => {
   }
 };
 
+// View all events
+const getAllEvents = async (req, res) => {
+  try {
+    const events = await Event.find({})
+      .populate('organizer', 'name email')
+      .sort({ createdAt: -1 });
+      
+    res.json({
+      success: true,
+      count: events.length,
+      events
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Admin dashboard stats
 const getDashboardStats = async (req, res) => {
   try {
@@ -173,5 +190,6 @@ module.exports = {
   toggleUserBlock,
   getAllOrganizers,
   toggleOrganizerApproval,
+  getAllEvents,
   getDashboardStats
 };

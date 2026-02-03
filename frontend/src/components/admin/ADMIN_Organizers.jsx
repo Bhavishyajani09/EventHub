@@ -1,51 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const Organizers = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
+  const [organizers, setOrganizers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const organizers = [
-    { 
-      id: 1, 
-      name: 'Alex Turner', 
-      email: 'alex@musiccorp.com', 
-      organization: 'Music Corp Events', 
-      status: 'pending', 
-      requestDate: '2026-01-22',
-      initials: 'AT',
-      bgColor: 'bg-purple-500'
-    },
-    { 
-      id: 2, 
-      name: 'Maria Garcia', 
-      email: 'maria@techevents.com', 
-      organization: 'Tech Events Inc', 
-      status: 'approved', 
-      requestDate: '2026-01-20',
-      initials: 'MG',
-      bgColor: 'bg-pink-500'
-    },
-    { 
-      id: 3, 
-      name: 'James Wilson', 
-      email: 'james@comedyclub.com', 
-      organization: 'Comedy Club Productions', 
-      status: 'pending', 
-      requestDate: '2026-01-23',
-      initials: 'JW',
-      bgColor: 'bg-purple-500'
-    },
-    { 
-      id: 4, 
-      name: 'Sophie Chen', 
-      email: 'sophie@sportsevents.com', 
-      organization: 'Sports Events Management', 
-      status: 'approved', 
-      requestDate: '2026-01-18',
-      initials: 'SC',
-      bgColor: 'bg-purple-500'
+  const fetchOrganizers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/api/admin/organizers', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.data.success) {
+        const mappedOrganizers = response.data.organizers.map(org => ({
+          id: org._id,
+          name: org.name,
+          email: org.email,
+          organization: org.name + ' Inc.', // Placeholder if org name not separate
+          status: org.isApproved ? 'approved' : 'pending', // Assuming only approved/pending logic for simplifies
+          requestDate: new Date(org.createdAt).toLocaleDateString(),
+          initials: org.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2),
+          bgColor: 'bg-purple-500'
+        }));
+        setOrganizers(mappedOrganizers);
+      }
+    } catch (error) {
+      console.error('Error fetching organizers:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchOrganizers();
+  }, []);
+
+  const handleApproval = async (id, isApproved) => {
+    try {
+      const token = localStorage.getItem('token');
+      // Logic for approval toggling based on backend: 
+      // Backend toggles based on current state, so just calling it might be enough if UI reflects it.
+      // But we probably want explicit approve/reject.
+      // The current backend `toggleOrganizerApproval` just toggles.
+      // So calling it on a pending organizer approves it.
+      // Calling it on an approved organizer will reject (unapprove) it?
+      // Let's assume the button click intends to toggle.
+
+      await axios.put(`http://localhost:5000/api/admin/organizers/${id}/approve`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchOrganizers();
+    } catch (error) {
+      console.error('Error updating organizer status:', error);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -64,7 +74,7 @@ const Organizers = () => {
           />
         </div>
         <div className="relative w-full sm:w-auto">
-          <select 
+          <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="appearance-none px-4 py-2 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white w-full sm:w-auto"
@@ -111,25 +121,32 @@ const Organizers = () => {
                   <td className="px-3 sm:px-6 py-4 text-sm text-gray-900 hidden sm:table-cell">{organizer.email}</td>
                   <td className="px-3 sm:px-6 py-4 text-sm text-gray-900 hidden lg:table-cell">{organizer.organization}</td>
                   <td className="px-3 sm:px-6 py-4">
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                      organizer.status === 'approved' 
-                        ? 'bg-green-100 text-green-800' 
-                        : organizer.status === 'pending'
+                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${organizer.status === 'approved'
+                      ? 'bg-green-100 text-green-800'
+                      : organizer.status === 'pending'
                         ? 'bg-yellow-100 text-yellow-800'
                         : 'bg-red-100 text-red-800'
-                    }`}>
+                      }`}>
                       {organizer.status}
                     </span>
                   </td>
                   <td className="px-3 sm:px-6 py-4 text-sm text-gray-500 hidden md:table-cell">{organizer.requestDate}</td>
                   <td className="px-3 sm:px-6 py-4">
                     <div className="flex items-center space-x-2">
-                      <button className="p-1 text-gray-400 hover:text-green-600" title="Approve">
+                      <button
+                        className="p-1 text-gray-400 hover:text-green-600"
+                        title="Approve"
+                        onClick={() => handleApproval(organizer.id, true)}
+                      >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                       </button>
-                      <button className="p-1 text-gray-400 hover:text-red-600" title="Reject">
+                      <button
+                        className="p-1 text-gray-400 hover:text-red-600"
+                        title="Reject"
+                        onClick={() => handleApproval(organizer.id, false)}
+                      >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
