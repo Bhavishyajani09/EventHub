@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import AdminPanel from './AdminPanel';
+import AdminLayout from './AdminLayout';
+import Dashboard from './ADMIN_Dashboard';
+import Organizers from './ADMIN_Organizers';
+import Settings from './ADMIN_Settings';
+import AdminUserManagement from './AdminUserManagement';
+import AdminEvents from './AdminEvents';
+import AdminBooking from './adminBooking';
 
 function AdminAppRouter() {
   const { user, logout } = useAuth();
-
-  // Handle URL changes for admin routes
-  useEffect(() => {
-    const path = window.location.pathname;
-    if (!path.startsWith('/admin')) {
-      window.history.pushState({}, '', '/admin');
-    }
-  }, []);
 
   const handleLogout = () => {
     logout();
@@ -19,9 +18,16 @@ function AdminAppRouter() {
   };
 
   return (
-    <div className="App">
-      <AdminPanel user={user} onLogout={handleLogout} />
-    </div>
+    <AdminLayout user={user} onLogout={handleLogout}>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/organizers" element={<Organizers />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/users" element={<AdminUserManagement />} />
+        <Route path="/events" element={<AdminEvents />} />
+        <Route path="/bookings" element={<AdminBooking />} />
+      </Routes>
+    </AdminLayout>
   );
 }
 
