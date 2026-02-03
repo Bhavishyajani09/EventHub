@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Sun, Moon, User, LogOut, Settings, UserCircle } from 'lucide-react';
 
-const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, activePage = 'home', hideNavigation = false, searchOnly = false, pageTitle, onLogout, hideThemeToggle = false }) => {
+const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, activePage = 'home', hideNavigation = false, searchOnly = false, pageTitle, onLogout, hideThemeToggle = false, hideProfileOption = false }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
@@ -291,33 +291,35 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
                       border: isDark ? '1px solid #4b5563' : '1px solid #e5e7eb',
                       overflow: 'hidden'
                     }}>
-                      <button
-                        onClick={() => {
-                          onProfileClick && onProfileClick();
-                          setIsProfileOpen(false);
-                        }}
-                        style={{
-                          width: '100%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '12px',
-                          padding: '12px',
-                          border: 'none',
-                          backgroundColor: 'transparent',
-                          color: isDark ? '#f9fafb' : '#374151',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          cursor: 'pointer',
-                          borderRadius: '8px',
-                          textAlign: 'left',
-                          transition: 'all 0.2s ease'
-                        }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = isDark ? '#4b5563' : '#f3f4f6'}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                      >
-                        <UserCircle size={18} />
-                        Profile
-                      </button>
+                      {!hideProfileOption && (
+                        <button
+                          onClick={() => {
+                            onProfileClick && onProfileClick();
+                            setIsProfileOpen(false);
+                          }}
+                          style={{
+                            width: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            padding: '12px',
+                            border: 'none',
+                            backgroundColor: 'transparent',
+                            color: isDark ? '#f9fafb' : '#374151',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            cursor: 'pointer',
+                            borderRadius: '8px',
+                            textAlign: 'left',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = isDark ? '#4b5563' : '#f3f4f6'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        >
+                          <UserCircle size={18} />
+                          Profile
+                        </button>
+                      )}
 
                       <button
                         onClick={() => {

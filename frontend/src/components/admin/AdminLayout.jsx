@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import SharedNavbar from '../../SharedNavbar';
-import { 
-  LayoutDashboard, 
-  Users, 
-  UserCheck, 
-  Calendar, 
-  BookOpen, 
-  Settings, 
-  LogOut, 
+import {
+  LayoutDashboard,
+  Users,
+  UserCheck,
+  Calendar,
+  BookOpen,
+  Settings,
+  LogOut,
   Menu,
   X
 } from 'lucide-react';
@@ -17,6 +18,7 @@ const AdminLayout = ({ children, user, onLogout }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/' },
@@ -29,15 +31,20 @@ const AdminLayout = ({ children, user, onLogout }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <SharedNavbar 
+      <SharedNavbar
         isDark={isDark}
         setIsDark={setIsDark}
         user={user}
         hideNavigation={true}
         pageTitle="Admin Panel"
-        onNavigate={() => {}}
-        onAuthOpen={() => {}}
-        onProfileClick={() => {}}
+        hideThemeToggle={true}
+        hideProfileOption={true}
+        onNavigate={(path) => {
+          if (path === 'home') navigate('/');
+          if (path === 'settings') navigate('/settings');
+        }}
+        onAuthOpen={() => { }}
+        onProfileClick={() => navigate('/settings')}
         onLogout={onLogout}
       />
       <div className="flex" style={{ minHeight: 'calc(100vh - 70px)' }}>
@@ -51,7 +58,7 @@ const AdminLayout = ({ children, user, onLogout }) => {
 
         {/* Mobile Overlay */}
         {mobileMenuOpen && (
-          <div 
+          <div
             className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
             onClick={() => setMobileMenuOpen(false)}
           />
@@ -73,11 +80,10 @@ const AdminLayout = ({ children, user, onLogout }) => {
                   key={item.id}
                   to={item.path}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`w-full flex items-center px-8 py-4 text-left hover:bg-blue-50 transition-all duration-200 group ${
-                    isActive 
-                      ? 'bg-blue-50 text-blue-600 border-r-3 border-blue-600 font-medium' 
-                      : 'text-gray-700 hover:text-blue-600'
-                  }`}
+                  className={`w-full flex items-center px-8 py-4 text-left hover:bg-blue-50 transition-all duration-200 group ${isActive
+                    ? 'bg-blue-50 text-blue-600 border-r-3 border-blue-600 font-medium'
+                    : 'text-gray-700 hover:text-blue-600'
+                    }`}
                 >
                   <Icon size={22} className={`${isActive ? 'text-blue-600' : 'text-gray-500 group-hover:text-blue-600'} transition-colors duration-200`} />
                   <span className="ml-4 text-base">{item.label}</span>
@@ -86,16 +92,6 @@ const AdminLayout = ({ children, user, onLogout }) => {
             })}
           </nav>
 
-          {/* Logout */}
-          <div className="absolute bottom-0 w-64 p-6 border-t border-gray-100">
-            <button 
-              onClick={onLogout}
-              className="w-full flex items-center px-4 py-3 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 group"
-            >
-              <LogOut size={20} className="text-gray-500 group-hover:text-red-600 transition-colors duration-200" />
-              <span className="ml-4 text-base">Logout</span>
-            </button>
-          </div>
         </div>
 
         {/* Main Content */}
