@@ -1,7 +1,7 @@
 import React from 'react';
 import { Sun, Moon, User } from 'lucide-react';
 
-const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, activePage = 'home', hideNavigation = false, searchOnly = false, pageTitle }) => {
+const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, activePage = 'home', hideNavigation = false, searchOnly = false, pageTitle, onLogout }) => {
   return (
     <nav style={{
       width: '100%',
@@ -219,45 +219,73 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
 
             {/* Login/Profile Section */}
             {user ? (
-              <div 
-                onClick={onProfileClick}
-                style={{
-                  width: '42px',
-                  height: '42px',
-                  borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
-                  border: '2px solid transparent'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = 'scale(1.05)';
-                  e.target.style.boxShadow = '0 6px 20px rgba(139, 92, 246, 0.4)';
-                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = 'scale(1)';
-                  e.target.style.boxShadow = '0 4px 12px rgba(139, 92, 246, 0.3)';
-                  e.target.style.borderColor = 'transparent';
-                }}
-                title={`${user.name || 'User'} - Click to open profile menu`}
-              >
-                <span style={{
-                  color: 'white',
-                  fontSize: '16px',
-                  fontWeight: '700',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  {user.name ? user.name.charAt(0).toUpperCase() : <User size={18} />}
-                </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {/* Logout Button */}
+                {onLogout && (
+                  <button 
+                    onClick={onLogout}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: isDark ? '#374151' : '#f8fafc',
+                      border: isDark ? '1px solid #4b5563' : '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      color: isDark ? '#f9fafb' : '#374151',
+                      fontSize: '14px',
+                      fontWeight: '500'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = isDark ? '#4b5563' : '#e2e8f0';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = isDark ? '#374151' : '#f8fafc';
+                    }}
+                  >
+                    Logout
+                  </button>
+                )}
+                {/* Profile Avatar */}
+                <div 
+                  onClick={onProfileClick}
+                  style={{
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: '12px',
+                    background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
+                    border: '2px solid transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'scale(1.05)';
+                    e.target.style.boxShadow = '0 6px 20px rgba(139, 92, 246, 0.4)';
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'scale(1)';
+                    e.target.style.boxShadow = '0 4px 12px rgba(139, 92, 246, 0.3)';
+                    e.target.style.borderColor = 'transparent';
+                  }}
+                  title={`${user.name || 'User'} - Click to open profile menu`}
+                >
+                  <span style={{
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    {user.name ? user.name.charAt(0).toUpperCase() : <User size={18} />}
+                  </span>
+                </div>
               </div>
-            ) : (
+            ) : onAuthOpen ? (
               <button 
                 onClick={onAuthOpen}
                 style={{
@@ -284,7 +312,7 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
               >
                 Login
               </button>
-            )}
+            ) : null}}
           </div>
         </div>
       </div>

@@ -8,10 +8,9 @@ import AdminEvents from './AdminEvents';
 import AdminBooking from './adminBooking';
 import SharedNavbar from '../../SharedNavbar';
 
-const AdminPanel = () => {
+const AdminPanel = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isDark, setIsDark] = useState(false);
-  const [user] = useState({ name: "Admin" });
 
   const renderContent = () => {
     switch (activeTab) {
@@ -43,6 +42,7 @@ const AdminPanel = () => {
         onNavigate={() => {}}
         onAuthOpen={() => {}}
         onProfileClick={() => {}}
+        onLogout={onLogout}
       />
       <AdminLayout activeTab={activeTab} setActiveTab={setActiveTab}>
         {renderContent()}

@@ -43,20 +43,8 @@ const Login = () => {
       if (response.success) {
         login(response.token, response.user);
         
-        // Redirect based on role
-        switch (response.user.role) {
-          case 'user':
-            navigate('/profile');
-            break;
-          case 'organizer':
-            navigate('/organizer/dashboard');
-            break;
-          case 'admin':
-            navigate('/admin/dashboard');
-            break;
-          default:
-            navigate('/');
-        }
+        // The MainRouter will automatically redirect based on role
+        navigate('/');
       } else {
         setError(response.message || 'Login failed');
       }
