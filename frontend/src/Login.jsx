@@ -33,6 +33,9 @@ const Login = () => {
         case 'organizer':
           response = await authService.organizerLogin(formData.email, formData.password);
           break;
+        case 'admin':
+          response = await authService.adminLogin(formData.email, formData.password);
+          break;
         default:
           throw new Error('Invalid user type');
       }
@@ -47,6 +50,9 @@ const Login = () => {
             break;
           case 'organizer':
             navigate('/organizer/dashboard');
+            break;
+          case 'admin':
+            navigate('/admin/dashboard');
             break;
           default:
             navigate('/');
@@ -163,6 +169,7 @@ const Login = () => {
             >
               <option value="user" style={{ background: '#333', color: 'white' }}>User</option>
               <option value="organizer" style={{ background: '#333', color: 'white' }}>Organizer</option>
+              <option value="admin" style={{ background: '#333', color: 'white' }}>Admin</option>
             </select>
 
             <input

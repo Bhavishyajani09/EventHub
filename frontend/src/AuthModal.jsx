@@ -85,6 +85,9 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
           case 'organizer':
             response = await authService.organizerLogin(formData.email, formData.password);
             break;
+          case 'admin':
+            response = await authService.adminLogin(formData.email, formData.password);
+            break;
           default:
             throw new Error('Invalid user type');
         }
@@ -326,6 +329,31 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                 <Users size={24} />
                 Organizer
               </button>
+              {currentScreen === 'login' && (
+                <button
+                  type="button"
+                  onClick={() => setFormData({...formData, role: 'admin'})}
+                  style={{
+                    flex: 1,
+                    padding: '16px 12px',
+                    borderRadius: '12px',
+                    border: `2px solid ${formData.role === 'admin' ? '#8b5cf6' : '#e5e7eb'}`,
+                    background: formData.role === 'admin' ? '#f3f4f6' : 'white',
+                    color: formData.role === 'admin' ? '#8b5cf6' : '#6b7280',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <Users size={24} />
+                  Admin
+                </button>
+              )}
             </div>
           )}
           {/* Full Name - Only for Register */}
