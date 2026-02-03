@@ -51,26 +51,6 @@ const authService = {
       };
     }
     return response.data;
-  },
-
-  // Admin authentication
-  adminLogin: async (email, password) => {
-    const response = await axios.post(`${API_BASE_URL}/api/auth/admin/login`, {
-      email,
-      password
-    });
-    // Transform response to match expected format
-    if (response.data.token) {
-      return {
-        success: true,
-        token: response.data.token,
-        user: {
-          ...response.data.admin,
-          name: response.data.admin.email // Use email as name for admin
-        }
-      };
-    }
-    return response.data;
   }
 };
 

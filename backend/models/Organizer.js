@@ -37,6 +37,13 @@ const organizerSchema = new mongoose.Schema({
     match: [/^\d{10}$/, 'Please enter a valid 10-digit phone number']
   },
   
+  // Role-based access control
+  role: {
+    type: String,
+    enum: ['organizer', 'admin', 'super_admin'],
+    default: 'organizer'
+  },
+  
   // Admin approval status
   isApproved: {
     type: Boolean,

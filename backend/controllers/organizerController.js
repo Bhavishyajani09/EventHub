@@ -57,7 +57,8 @@ const registerOrganizer = async (req, res) => {
           id: organizer._id,
           name: organizer.name,
           email: organizer.email,
-          phone: organizer.phone
+          phone: organizer.phone,
+          role: organizer.role
         },
         token
       }
@@ -128,7 +129,8 @@ const loginOrganizer = async (req, res) => {
           id: organizer._id,
           name: organizer.name,
           email: organizer.email,
-          phone: organizer.phone
+          phone: organizer.phone,
+          role: organizer.role
         },
         token
       }
@@ -194,7 +196,8 @@ const updateProfile = async (req, res) => {
           id: updatedOrganizer._id,
           name: updatedOrganizer.name,
           email: updatedOrganizer.email,
-          phone: updatedOrganizer.phone
+          phone: updatedOrganizer.phone,
+          role: updatedOrganizer.role
         }
       }
     });

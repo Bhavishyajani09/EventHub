@@ -37,9 +37,6 @@ const LoginForm = () => {
         case 'organizer':
           response = await authService.organizerLogin(formData.email, formData.password);
           break;
-        case 'admin':
-          response = await authService.adminLogin(formData.email, formData.password);
-          break;
         default:
           throw new Error('Invalid user type');
       }
@@ -54,9 +51,6 @@ const LoginForm = () => {
             break;
           case 'organizer':
             navigate('/organizer/dashboard');
-            break;
-          case 'admin':
-            navigate('/admin/dashboard');
             break;
           default:
             navigate('/');
@@ -94,7 +88,6 @@ const LoginForm = () => {
               >
                 <option value="user">User</option>
                 <option value="organizer">Organizer</option>
-                <option value="admin">Admin</option>
               </select>
             </div>
             <div>
