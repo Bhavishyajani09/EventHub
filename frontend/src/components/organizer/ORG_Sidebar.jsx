@@ -133,7 +133,6 @@ export default function Sidebar() {
           )}
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 space-y-1 px-2 pb-4">
           <SidebarItem
             to="/"
