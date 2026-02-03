@@ -4,6 +4,7 @@ const User = require('../models/User');
 const Organizer = require('../models/Organizer');
 const Event = require('../models/Event');
 const Booking = require('../models/Booking');
+const Settings = require('../models/Settings');
 
 // Generate JWT token
 const generateToken = (id) => {
@@ -183,6 +184,122 @@ const getDashboardStats = async (req, res) => {
   }
 };
 
+// Get Admin Profile
+const getAdminProfile = async (req, res) => {
+  try {
+    console.log('Fetching admin profile for ID:', req.admin.id);
+    const admin = await Admin.findById(req.admin.id).select('-password');
+    if (!admin) {
+        console.log('Admin not found for ID:', req.admin.id);
+        return res.status(404).json({ message: 'Admin not found' });
+    }
+    res.json({
+      success: true,
+      admin
+    });
+  } catch (error) {
+    console.error('Error in getAdminProfile:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update Admin Profile
+const updateAdminProfile = async (req, res) => {
+  try {
+    const { name, email, phone } = req.body;
+    const admin = await Admin.findById(req.admin.id);
+
+    if (name) admin.name = name;
+    if (email) admin.email = email;
+    if (phone) admin.phone = phone;
+
+    await admin.save();
+    
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+      admin: {
+        id: admin._id,
+        name: admin.name,
+        email: admin.email,
+        phone: admin.phone,
+        role: admin.role
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Change Admin Password
+const changeAdminPassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const admin = await Admin.findById(req.admin.id);
+
+    const isMatch = await admin.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Incorrect current password' });
+    }
+
+    admin.password = newPassword;
+    await admin.save();
+
+    res.json({
+      success: true,
+      message: 'Password updated successfully'
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get Platform Settings
+const getPlatformSettings = async (req, res) => {
+  try {
+    console.log('Fetching platform settings...');
+    let settings = await Settings.findOne();
+    if (!settings) {
+      console.log('No settings found, creating default...');
+      settings = await Settings.create({});
+    }
+    console.log('Settings fetched successfully');
+    res.json({
+      success: true,
+      settings
+    });
+  } catch (error) {
+    console.error('Error in getPlatformSettings:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update Platform Settings
+const updatePlatformSettings = async (req, res) => {
+  try {
+    const { commission, taxPercentage, convenienceFee } = req.body;
+    
+    let settings = await Settings.findOne();
+    if (!settings) {
+      settings = new Settings({});
+    }
+
+    if (commission !== undefined) settings.commission = commission;
+    if (taxPercentage !== undefined) settings.taxPercentage = taxPercentage;
+    if (convenienceFee !== undefined) settings.convenienceFee = convenienceFee;
+
+    await settings.save();
+
+    res.json({
+      success: true,
+      message: 'Settings updated successfully',
+      settings
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   adminLogin,
   adminLogout,
@@ -191,5 +308,10 @@ module.exports = {
   getAllOrganizers,
   toggleOrganizerApproval,
   getAllEvents,
-  getDashboardStats
+  getDashboardStats,
+  getAdminProfile,
+  updateAdminProfile,
+  changeAdminPassword,
+  getPlatformSettings,
+  updatePlatformSettings
 };
