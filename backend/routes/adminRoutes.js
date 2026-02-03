@@ -8,7 +8,13 @@ const {
   toggleUserBlock,
   getAllOrganizers,
   toggleOrganizerApproval,
-  getDashboardStats
+  getAllEvents,
+  getDashboardStats,
+  getAdminProfile,
+  updateAdminProfile,
+  changeAdminPassword,
+  getPlatformSettings,
+  updatePlatformSettings
 } = require('../controllers/adminController');
 
 // Admin Authentication Routes
@@ -23,7 +29,19 @@ router.put('/admin/users/:id/block', adminAuth, toggleUserBlock);
 router.get('/admin/organizers', adminAuth, getAllOrganizers);
 router.put('/admin/organizers/:id/approve', adminAuth, toggleOrganizerApproval);
 
+// Event Management Routes
+router.get('/admin/events', adminAuth, getAllEvents);
+
 // Dashboard Route
 router.get('/admin/dashboard', adminAuth, getDashboardStats);
+
+// Profile Management
+router.get('/admin/profile', adminAuth, getAdminProfile);
+router.put('/admin/profile', adminAuth, updateAdminProfile);
+router.put('/admin/change-password', adminAuth, changeAdminPassword);
+
+// Platform Settings
+router.get('/admin/settings', adminAuth, getPlatformSettings);
+router.put('/admin/settings', adminAuth, updatePlatformSettings);
 
 module.exports = router;

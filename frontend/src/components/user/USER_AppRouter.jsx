@@ -17,7 +17,7 @@ import HelpCenter from './USER_HelpCenter';
 import TermsAndConditions from './TermsAndConditions';
 import PrivacyPolicy from './USER_PrivacyPolicy';
 import ContactSupport from './USER_ContactSupport';
-import Login from '../../Login';
+
 import Register from '../../Register';
 
 function AppRouter() {
@@ -29,7 +29,7 @@ function AppRouter() {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedArtist, setSelectedArtist] = useState(null);
-  
+
   const { user, logout } = useAuth();
 
   // Scroll to top whenever page changes
@@ -43,8 +43,7 @@ function AppRouter() {
     const path = window.location.pathname;
     if (path === '/') {
       setCurrentPage('home');
-    } else if (path === '/login') {
-      setCurrentPage('login');
+
     } else if (path === '/register') {
       setCurrentPage('register');
     } else if (path === '/movies') {
@@ -94,7 +93,7 @@ function AppRouter() {
   const updateURL = (page) => {
     const routes = {
       'home': '/',
-      'login': '/login',
+
       'register': '/register',
       'movies': '/movies',
       'events': '/events',
@@ -159,10 +158,10 @@ function AppRouter() {
     // Clear both selections first, then set the correct one
     setSelectedMovie(null);
     setSelectedEvent(null);
-    
+
     // Set previous page to current page (preserve navigation history)
     setPreviousPage(currentPage);
-    
+
     if (item.type === 'movie' || item.genre) {
       setSelectedMovie(item);
     } else {
@@ -190,14 +189,13 @@ function AppRouter() {
   };
 
   const renderPage = () => {
-    switch(currentPage) {
-      case 'login':
-        return <Login />;
+    switch (currentPage) {
+
       case 'register':
-        return <Register />;
+        return <Register onAuthOpen={() => setIsAuthModalOpen(true)} />;
       case 'movies':
         return (
-          <MoviesPage 
+          <MoviesPage
             isDark={isDark}
             setIsDark={setIsDark}
             user={user}
@@ -210,7 +208,7 @@ function AppRouter() {
         );
       case 'events':
         return (
-          <EventsPage 
+          <EventsPage
             isDark={isDark}
             setIsDark={setIsDark}
             user={user}
@@ -224,7 +222,7 @@ function AppRouter() {
         );
       case 'movieDetail':
         return (
-          <MovieDetail 
+          <MovieDetail
             movie={selectedMovie}
             isDark={isDark}
             setIsDark={setIsDark}
@@ -238,7 +236,7 @@ function AppRouter() {
         );
       case 'eventDetail':
         return (
-          <EventDetail 
+          <EventDetail
             event={selectedEvent}
             isDark={isDark}
             setIsDark={setIsDark}
@@ -252,7 +250,7 @@ function AppRouter() {
         );
       case 'eventSeats':
         return (
-          <EventSeatSelection 
+          <EventSeatSelection
             event={selectedEvent || selectedMovie}
             isDark={isDark}
             setIsDark={setIsDark}
@@ -268,7 +266,7 @@ function AppRouter() {
         );
       case 'artistProfile':
         return (
-          <ArtistProfile 
+          <ArtistProfile
             artist={selectedArtist}
             isDark={isDark}
             setIsDark={setIsDark}
@@ -286,7 +284,7 @@ function AppRouter() {
         );
       case 'booking':
         return (
-          <BookingPage 
+          <BookingPage
             item={selectedMovie || selectedEvent}
             isDark={isDark}
             setIsDark={setIsDark}
@@ -302,7 +300,7 @@ function AppRouter() {
         );
       case 'settings':
         return (
-          <Settings 
+          <Settings
             onBack={() => {
               setCurrentPage('home');
               updateURL('home');
@@ -315,7 +313,7 @@ function AppRouter() {
         );
       case 'help':
         return (
-          <HelpCenter 
+          <HelpCenter
             onBack={() => {
               setCurrentPage('home');
               updateURL('home');
@@ -327,7 +325,7 @@ function AppRouter() {
           />
         );
         return (
-          <ContactSupport 
+          <ContactSupport
             onBack={() => {
               setCurrentPage('home');
               updateURL('home');
@@ -336,7 +334,7 @@ function AppRouter() {
         );
       case 'privacy':
         return (
-          <PrivacyPolicy 
+          <PrivacyPolicy
             onBack={() => {
               setCurrentPage('home');
               updateURL('home');
@@ -345,7 +343,7 @@ function AppRouter() {
         );
       case 'terms':
         return (
-          <TermsAndConditions 
+          <TermsAndConditions
             onBack={() => {
               setCurrentPage('home');
               updateURL('home');
@@ -354,7 +352,7 @@ function AppRouter() {
         );
       case 'bookings':
         return (
-          <Bookings 
+          <Bookings
             onBack={() => {
               setCurrentPage('home');
               updateURL('home');
@@ -367,7 +365,7 @@ function AppRouter() {
         );
       case 'profile':
         return (
-          <ProfilePage 
+          <ProfilePage
             onBack={() => {
               setCurrentPage('home');
               updateURL('home');
@@ -380,7 +378,7 @@ function AppRouter() {
         );
       default:
         return (
-          <Home 
+          <Home
             isDark={isDark}
             setIsDark={setIsDark}
             user={user}
@@ -398,15 +396,15 @@ function AppRouter() {
   return (
     <div className="App">
       {renderPage()}
-      
-      <AuthModal 
-        isOpen={isAuthModalOpen} 
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         onAuthSuccess={handleAuthSuccess}
         isDark={isDark}
       />
 
-      <ProfilePanel 
+      <ProfilePanel
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
         onBack={() => setIsProfileOpen(false)}

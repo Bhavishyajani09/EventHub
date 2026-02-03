@@ -17,8 +17,8 @@ const Dashboard = () => {
   useEffect(() => {
     // Debug: Check authentication
     console.log('Current user:', user);
-    console.log('Token in localStorage:', localStorage.getItem('token'));
-    
+    console.log('Token in sessionStorage:', sessionStorage.getItem('token'));
+
     if (user && user.role === 'organizer') {
       fetchDashboardStats();
     } else {
@@ -54,7 +54,7 @@ const Dashboard = () => {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
         <p className="text-red-600">{error}</p>
-        <button 
+        <button
           onClick={fetchDashboardStats}
           className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
         >

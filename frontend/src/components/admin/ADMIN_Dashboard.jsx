@@ -1,48 +1,80 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Users, UserCheck, Calendar, BookOpen, TrendingUp } from 'lucide-react';
 
 const Dashboard = () => {
+  const [statsData, setStatsData] = useState({
+    totalUsers: 0,
+    totalOrganizers: 0,
+    totalEvents: 0,
+    totalBookings: 0
+  });
+  const [recentEvents, setRecentEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardStats = async () => {
+      try {
+        const token = sessionStorage.getItem('token');
+        const response = await axios.get('http://localhost:5000/api/admin/dashboard', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (response.data.success) {
+          setStatsData(response.data.stats);
+          setRecentEvents(response.data.recentEvents);
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardStats();
+  }, []);
+
   const stats = [
     {
       title: 'Total Users',
-      value: '12,456',
-      change: '+12.5%',
+      value: statsData.totalUsers,
+      change: '+12.5%', // Mock change for now
       icon: Users,
       color: 'bg-blue-500',
       bgColor: 'bg-blue-50'
     },
     {
       title: 'Total Organizers',
-      value: '342',
-      change: '+8.2%',
+      value: statsData.totalOrganizers,
+      change: '+8.2%', // Mock change for now
       icon: UserCheck,
       color: 'bg-purple-500',
       bgColor: 'bg-purple-50'
     },
     {
       title: 'Total Events',
-      value: '1,284',
-      change: '+23.1%',
+      value: statsData.totalEvents,
+      change: '+23.1%', // Mock change for now
       icon: Calendar,
       color: 'bg-green-500',
       bgColor: 'bg-green-50'
     },
     {
       title: 'Total Bookings',
-      value: '8,932',
-      change: '+15.3%',
+      value: statsData.totalBookings,
+      change: '+15.3%', // Mock change for now
       icon: BookOpen,
       color: 'bg-orange-500',
       bgColor: 'bg-orange-50'
     }
   ];
 
-  const topEvents = [
-    { name: 'Tech Conference 2024', bookings: 1250, revenue: '₹375,000', platformFee: '₹18,750' },
-    { name: 'Music Festival', bookings: 980, revenue: '₹147,000', platformFee: '₹7,350' },
-    { name: 'Business Summit', bookings: 750, revenue: '₹337,500', platformFee: '₹16,875' },
-    { name: 'Art Exhibition', bookings: 420, revenue: '₹31,500', platformFee: '₹1,650' }
-  ];
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -72,7 +104,10 @@ const Dashboard = () => {
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Events by Category */}
+        {/* Events by Category - Keeping as mock for now or removing if cleaner
+            Let's keep it but maybe it's less relevant without real data.
+            I'll keep it as a placeholder for future implementation.
+         */}
         <div className="bg-white rounded-lg shadow-sm p-6 border">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Events by Category</h3>
           <div className="space-y-4">
@@ -94,31 +129,29 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Platform Revenue */}
+        {/* Recent Events (Replacing Platform Revenue) */}
         <div className="bg-white rounded-lg shadow-sm border">
           <div className="p-6 border-b">
-            <h3 className="text-lg font-semibold text-gray-800">Platform Revenue</h3>
+            <h3 className="text-lg font-semibold text-gray-800">Recent Events</h3>
           </div>
           <div className="p-6">
             <div className="space-y-4">
-              {topEvents.map((event, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div>
-                    <h4 className="font-medium text-gray-900">{event.name}</h4>
-                    <p className="text-sm text-gray-600">{event.bookings} bookings</p>
+              {recentEvents.length > 0 ? (
+                recentEvents.map((event, index) => (
+                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div>
+                      <h4 className="font-medium text-gray-900">{event.title}</h4>
+                      <p className="text-sm text-gray-600">by {event.organizer?.name || 'Unknown'}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-green-600">{new Date(event.date).toLocaleDateString()}</p>
+                      <p className="text-sm text-gray-600">{event.location}</p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-semibold text-green-600">{event.platformFee}</p>
-                    <p className="text-sm text-gray-600">Platform Fee (5%)</p>
-                  </div>
-                </div>
-              ))}
-              <div className="border-t pt-4 mt-4">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-gray-900">Total Platform Revenue</span>
-                  <span className="font-bold text-green-600 text-lg">₹44,625</span>
-                </div>
-              </div>
+                ))
+              ) : (
+                <p className="text-center text-gray-500">No recent events</p>
+              )}
             </div>
           </div>
         </div>

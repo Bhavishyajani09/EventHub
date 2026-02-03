@@ -1,72 +1,63 @@
 import React, { useState, useEffect } from 'react';
 
+import axios from 'axios';
+
 const AdminUserManagement = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
+  const [loading, setLoading] = useState(true);
+
+  const fetchUsers = async () => {
+    try {
+      const token = sessionStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/api/admin/users', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.data.success) {
+        // Map backend user to frontend structure
+        const mappedUsers = response.data.users.map(user => ({
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone || 'N/A',
+          status: user.isBlocked ? 'blocked' : 'active',
+          registered: new Date(user.createdAt).toLocaleDateString(),
+          avatar: user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
+        }));
+        setUsers(mappedUsers);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const mockUsers = [
-      {
-        id: 1,
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        phone: '+1 234-567-8901',
-        status: 'active',
-        registered: '2026-01-15',
-        avatar: 'JD'
-      },
-      {
-        id: 2,
-        name: 'Sarah Smith',
-        email: 'sarah.smith@example.com',
-        phone: '+1 234-567-8902',
-        status: 'active',
-        registered: '2026-01-20',
-        avatar: 'SS'
-      },
-      {
-        id: 3,
-        name: 'Mike Johnson',
-        email: 'mike.j@example.com',
-        phone: '+1 234-567-8903',
-        status: 'blocked',
-        registered: '2026-01-10',
-        avatar: 'MJ'
-      },
-      {
-        id: 4,
-        name: 'Emily Brown',
-        email: 'emily.b@example.com',
-        phone: '+1 234-567-8904',
-        status: 'active',
-        registered: '2026-01-18',
-        avatar: 'EB'
-      },
-      {
-        id: 5,
-        name: 'David Wilson',
-        email: 'david.w@example.com',
-        phone: '+1 234-567-8905',
-        status: 'active',
-        registered: '2026-01-22',
-        avatar: 'DW'
-      }
-    ];
-    setUsers(mockUsers);
+    fetchUsers();
   }, []);
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'All Status' || user.status === statusFilter.toLowerCase();
     return matchesSearch && matchesStatus;
   });
 
-  const handleStatusChange = (userId, newStatus) => {
-    setUsers(users.map(user => 
-      user.id === userId ? { ...user, status: newStatus } : user
-    ));
+  const handleStatusChange = async (userId, newStatus) => {
+    try {
+      const token = sessionStorage.getItem('token');
+      await axios.put(`http://localhost:5000/api/admin/users/${userId}/block`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      // Refresh users or update local state
+      fetchUsers();
+    } catch (error) {
+      console.error('Error updating user status:', error);
+      alert('Failed to update user status');
+    }
   };
 
   const getAvatarColor = (index) => {
@@ -106,6 +97,11 @@ const AdminUserManagement = () => {
         </div>
       </div>
 
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        </div>
+      ) : (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[600px]">
@@ -136,18 +132,17 @@ const AdminUserManagement = () => {
                     <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">{user.email}</td>
                     <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">{user.phone}</td>
                     <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        user.status === 'active' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.status === 'active'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                        }`}>
                         {user.status}
                       </span>
                     </td>
                     <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">{user.registered}</td>
                     <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-2">
-                        <button 
+                        <button
                           className="p-1 text-gray-400 hover:text-green-600"
                           onClick={() => handleStatusChange(user.id, 'active')}
                           title="Unblock User"
@@ -156,7 +151,7 @@ const AdminUserManagement = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
                         </button>
-                        <button 
+                        <button
                           className="p-1 text-gray-400 hover:text-red-600"
                           onClick={() => handleStatusChange(user.id, 'blocked')}
                           title="Block User"
@@ -173,21 +168,22 @@ const AdminUserManagement = () => {
             </table>
           </div>
         </div>
+      )}
 
-        <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
-          <div className="text-sm text-gray-700">
-            Showing <span className="font-medium">1</span> to <span className="font-medium">5</span> of{' '}
-            <span className="font-medium">8</span> results
-          </div>
-          <div className="flex space-x-2">
-            <button className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
-              Previous
-            </button>
-            <button className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
-              Next
-            </button>
-          </div>
+      <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
+        <div className="text-sm text-gray-700">
+          Showing <span className="font-medium">1</span> to <span className="font-medium">5</span> of{' '}
+          <span className="font-medium">8</span> results
         </div>
+        <div className="flex space-x-2">
+          <button className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+            Previous
+          </button>
+          <button className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+            Next
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

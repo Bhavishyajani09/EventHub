@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import authService from './services/authService';
 
-const Register = () => {
+const Register = ({ onAuthOpen }) => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -41,7 +41,7 @@ const Register = () => {
         password: formData.password,
         role: formData.userType
       };
-      
+
       switch (formData.userType) {
         case 'user':
           response = await authService.userRegister(userData);
@@ -55,7 +55,7 @@ const Register = () => {
 
       if (response.success) {
         login(response.token, response.user);
-        
+
         // Redirect based on role
         switch (response.user.role) {
           case 'user':
@@ -95,7 +95,7 @@ const Register = () => {
           animation: float 6s ease-in-out infinite;
         }
       `}</style>
-      
+
       <div style={{
         minHeight: '100vh',
         width: '100vw',
@@ -109,7 +109,7 @@ const Register = () => {
         position: 'relative',
         overflow: 'hidden'
       }}>
-        
+
         <div style={{
           position: 'absolute',
           top: 0,
@@ -120,7 +120,7 @@ const Register = () => {
           zIndex: 1
         }}></div>
 
-        <div 
+        <div
           className="floating-card"
           style={{
             background: 'rgba(255, 255, 255, 0.1)',
@@ -322,19 +322,30 @@ const Register = () => {
           </form>
 
           <div style={{ textAlign: 'center', marginTop: '32px' }}>
-            <p style={{ 
-              color: 'rgba(255, 255, 255, 0.8)', 
-              fontSize: '16px', 
+            <p style={{
+              color: 'rgba(255, 255, 255, 0.8)',
+              fontSize: '16px',
               margin: 0
             }}>
               Already have an account?{' '}
-              <Link to="/login" style={{
-                color: '#3b82f6',
-                textDecoration: 'none',
-                fontWeight: '600'
-              }}>
+              <span
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (onAuthOpen) {
+                    onAuthOpen();
+                  } else {
+                    navigate('/');
+                  }
+                }}
+                style={{
+                  color: '#3b82f6',
+                  textDecoration: 'none',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
                 Sign in
-              </Link>
+              </span>
             </p>
           </div>
         </div>

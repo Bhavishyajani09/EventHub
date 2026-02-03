@@ -9,6 +9,14 @@ const adminSchema = new mongoose.Schema({
     lowercase: true,
     match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
   },
+  name: {
+    type: String,
+    default: 'Admin User'
+  },
+  phone: {
+    type: String,
+    default: ''
+  },
   password: {
     type: String,
     required: [true, 'Password is required'],
