@@ -9,7 +9,7 @@ const Organizers = () => {
 
   const fetchOrganizers = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       const response = await axios.get('http://localhost:5000/api/admin/organizers', {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -39,7 +39,7 @@ const Organizers = () => {
 
   const handleApproval = async (id, isApproved) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       // Logic for approval toggling based on backend: 
       // Backend toggles based on current state, so just calling it might be enough if UI reflects it.
       // But we probably want explicit approve/reject.

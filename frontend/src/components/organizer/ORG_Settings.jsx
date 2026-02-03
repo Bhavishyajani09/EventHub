@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 export default function Settings() {
   const [profile, setProfile] = useState(() => {
-    const saved = localStorage.getItem("profileData");
+    const saved = sessionStorage.getItem("profileData");
     if (saved && saved !== "undefined") {
       try {
         return JSON.parse(saved);
@@ -75,7 +75,7 @@ export default function Settings() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    localStorage.setItem("profileData", JSON.stringify(profile));
+    sessionStorage.setItem("profileData", JSON.stringify(profile));
     alert("Profile updated successfully ✅");
   };
 

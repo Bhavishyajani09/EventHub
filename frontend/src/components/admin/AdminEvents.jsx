@@ -9,7 +9,7 @@ const AdminEvents = () => {
 
   const fetchEvents = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       const response = await axios.get('http://localhost:5000/api/admin/events', {
         headers: { Authorization: `Bearer ${token}` }
       });

@@ -33,7 +33,7 @@ const authReducer = (state, action) => {
 const initialState = {
   isAuthenticated: false,
   user: null,
-  token: localStorage.getItem('token'),
+  token: sessionStorage.getItem('token'),
   loading: true
 };
 
@@ -41,8 +41,8 @@ export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
+    const token = sessionStorage.getItem('token');
+    const user = sessionStorage.getItem('user');
 
     if (token && user && user !== 'undefined') {
       try {
@@ -56,23 +56,23 @@ export const AuthProvider = ({ children }) => {
         });
       } catch (error) {
         console.error('Error parsing user data:', error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
         dispatch({ type: 'SET_LOADING', payload: false });
       }
     } else {
       // Clean up potentially corrupted data if token exists but user is undefined
       if (token && (!user || user === 'undefined')) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
       }
       dispatch({ type: 'SET_LOADING', payload: false });
     }
   }, []);
 
   const login = (token, user) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
+    sessionStorage.setItem('token', token);
+    sessionStorage.setItem('user', JSON.stringify(user));
     dispatch({
       type: 'LOGIN_SUCCESS',
       payload: { token, user }
@@ -80,8 +80,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     dispatch({ type: 'LOGOUT' });
   };
 

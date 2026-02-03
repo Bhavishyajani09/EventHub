@@ -10,7 +10,7 @@ const AdminUserManagement = () => {
 
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       const response = await axios.get('http://localhost:5000/api/admin/users', {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -47,7 +47,7 @@ const AdminUserManagement = () => {
 
   const handleStatusChange = async (userId, newStatus) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       await axios.put(`http://localhost:5000/api/admin/users/${userId}/block`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
