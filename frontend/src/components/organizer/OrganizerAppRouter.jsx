@@ -21,7 +21,7 @@ function OrganizerAppRouter() {
   return (
     <OrganizerLayout user={user} onLogout={handleLogout}>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route index element={<Dashboard />} />
         <Route path="/events" element={<MyEvents />} />
         <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/bookings" element={<BookingsManagement />} />

@@ -20,7 +20,7 @@ function AdminAppRouter() {
   return (
     <AdminLayout user={user} onLogout={handleLogout}>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route index element={<Dashboard />} />
         <Route path="/organizers" element={<Organizers />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/users" element={<AdminUserManagement />} />
