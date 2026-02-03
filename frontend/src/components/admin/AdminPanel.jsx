@@ -33,15 +33,19 @@ const AdminPanel = ({ user, onLogout }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <SharedNavbar 
+      <SharedNavbar
         isDark={isDark}
         setIsDark={setIsDark}
         user={user}
         hideNavigation={true}
         pageTitle="Admin Panel"
-        onNavigate={() => {}}
-        onAuthOpen={() => {}}
-        onProfileClick={() => {}}
+        hideThemeToggle={true}
+        onNavigate={(path) => {
+          if (path === 'home') setActiveTab('dashboard');
+          if (path === 'settings') setActiveTab('settings');
+        }}
+        onAuthOpen={() => { }}
+        onProfileClick={() => setActiveTab('settings')}
         onLogout={onLogout}
       />
       <AdminLayout activeTab={activeTab} setActiveTab={setActiveTab}>
