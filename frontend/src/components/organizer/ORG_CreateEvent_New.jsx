@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, MapPin, Users, DollarSign, Upload, X } from 'lucide-react';
+import { Calendar, MapPin, Users, IndianRupee, Upload, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import organizerService from '../../services/organizerService';
 
@@ -346,7 +346,7 @@ const CreateEvent = () => {
               <div className="space-y-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">
-                    Price ($)
+                    Price (₹)
                   </label>
                   <input
                     type="number"
@@ -380,7 +380,7 @@ const CreateEvent = () => {
               <div className="space-y-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">
-                    Price ($)
+                    Price (₹)
                   </label>
                   <input
                     type="number"
@@ -414,7 +414,7 @@ const CreateEvent = () => {
               <div className="space-y-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">
-                    Price ($)
+                    Price (₹)
                   </label>
                   <input
                     type="number"

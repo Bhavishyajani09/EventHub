@@ -125,6 +125,7 @@ const MyEvents = () => {
               key={event._id} 
               event={event} 
               onDelete={handleDeleteEvent}
+              onEdit={() => navigate(`/edit-event/${event._id}`)}
             />
           ))}
         </div>
@@ -133,21 +134,20 @@ const MyEvents = () => {
   );
 };
 
-const EventCard = ({ event, onDelete }) => {
+const EventCard = ({ event, onDelete, onEdit }) => {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
       {/* Event Image */}
-      <div className="h-48 bg-gray-200 relative">
+      <div className="h-48 bg-gray-200 relative flex items-center justify-center">
         {event.image ? (
           <img 
             src={event.image} 
             alt={event.title}
-            className="w-full h-full object-contain bg-gray-50"
+            className="w-full h-full object-contain"
+            style={{ objectPosition: 'center' }}
           />
         ) : (
-          <div className="flex items-center justify-center h-full">
-            <Calendar className="h-12 w-12 text-gray-400" />
-          </div>
+          <Calendar className="h-12 w-12 text-gray-400" />
         )}
         <div className="absolute top-2 right-2">
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -183,11 +183,14 @@ const EventCard = ({ event, onDelete }) => {
 
         <div className="mt-4 flex justify-between items-center">
           <span className="text-lg font-bold text-indigo-600">
-            ${event.price}
+            ₹{event.price}
           </span>
           
           <div className="flex gap-2">
-            <button className="p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded">
+            <button 
+              onClick={onEdit}
+              className="p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded"
+            >
               <Edit size={16} />
             </button>
             <button 

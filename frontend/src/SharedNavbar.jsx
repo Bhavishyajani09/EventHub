@@ -3,6 +3,21 @@ import { Sun, Moon, User, LogOut, Settings, UserCircle } from 'lucide-react';
 
 const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, activePage = 'home', hideNavigation = false, searchOnly = false, pageTitle, onLogout, hideThemeToggle = false, hideProfileOption = false, enableDropdown = false }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  
+  // Get profile data from localStorage
+  const getProfileData = () => {
+    const saved = localStorage.getItem("profileData");
+    if (saved && saved !== "undefined") {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  };
+  
+  const profileData = getProfileData();
 
   return (
     <nav style={{
@@ -274,24 +289,38 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
                       width: '42px',
                       height: '42px',
                       borderRadius: '12px',
-                      background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                      background: profileData?.photoPreview ? 'transparent' : 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
-                      border: '2px solid transparent'
+                      border: '2px solid transparent',
+                      overflow: 'hidden'
                     }}
                   >
-                    <span style={{
-                      color: 'white',
-                      fontSize: '16px',
-                      fontWeight: '700',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      {user.name ? user.name.charAt(0).toUpperCase() : <User size={18} />}
-                    </span>
+                    {profileData?.photoPreview ? (
+                      <img
+                        src={profileData.photoPreview}
+                        alt="Profile"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          borderRadius: '10px'
+                        }}
+                      />
+                    ) : (
+                      <span style={{
+                        color: 'white',
+                        fontSize: '16px',
+                        fontWeight: '700',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        {user.name ? user.name.charAt(0).toUpperCase() : <User size={18} />}
+                      </span>
+                    )}
                   </div>
                 </div>
 

@@ -5,6 +5,7 @@ import OrganizerLayout from './OrganizerLayout';
 import Dashboard from './ORG_Dashboard';
 import MyEvents from './ORG_MyEvents_New';
 import CreateEvent from './ORG_CreateEvent_New';
+import EditEvent from './ORG_edit';
 import BookingsManagement from './ORG_BookingsManagement_New';
 import ReviewsRatings from './ORG_ReviewsRatings';
 import ReportsAnalytics from './ORG_ReportsAnalytics';
@@ -25,6 +26,7 @@ function OrganizerAppRouter() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/events" element={<MyEvents />} />
         <Route path="/create-event" element={<CreateEvent />} />
+        <Route path="/edit-event/:id" element={<EditEvent />} />
         <Route path="/bookings" element={<BookingsManagement />} />
         <Route path="/reviews" element={<ReviewsRatings />} />
         <Route path="/reports" element={<ReportsAnalytics />} />

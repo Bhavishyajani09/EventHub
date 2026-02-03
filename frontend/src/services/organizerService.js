@@ -72,6 +72,23 @@ const organizerService = {
     return response.data;
   },
 
+  getEventById: async (eventId) => {
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+      
+      const response = await axios.get(`${API_BASE_URL}/api/events/${eventId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Get event by ID error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
+
   deleteEvent: async (eventId) => {
     const response = await axios.delete(`${API_BASE_URL}/api/events/${eventId}`, {
       headers: { Authorization: `Bearer ${getAuthToken()}` }

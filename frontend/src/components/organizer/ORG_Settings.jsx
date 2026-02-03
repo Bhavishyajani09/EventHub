@@ -28,17 +28,49 @@ export default function Settings() {
     setProfile((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePhotoChange = (e) => {
+  const handlePhotoChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const preview = URL.createObjectURL(file);
+    try {
+      // Create FormData for Cloudinary upload
+      const formData = new FormData();
+      formData.append('image', file);
 
-    setProfile({
-      ...profile,
-      photo: file,
-      photoPreview: preview,
-    });
+      // Upload to backend which will handle Cloudinary
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const cloudinaryUrl = data.imageUrl;
+
+        setProfile({
+          ...profile,
+          photo: file,
+          photoPreview: cloudinaryUrl,
+        });
+      } else {
+        // Fallback to local preview if upload fails
+        const preview = URL.createObjectURL(file);
+        setProfile({
+          ...profile,
+          photo: file,
+          photoPreview: preview,
+        });
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      // Fallback to local preview
+      const preview = URL.createObjectURL(file);
+      setProfile({
+        ...profile,
+        photo: file,
+        photoPreview: preview,
+      });
+    }
   };
 
   const handleSubmit = (e) => {

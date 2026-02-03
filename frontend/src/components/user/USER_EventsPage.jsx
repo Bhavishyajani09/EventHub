@@ -232,8 +232,10 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
             height: '280px',
             borderRadius: '12px',
             backgroundImage: `url(${heroEvents[currentHeroIndex].image})`,
-            backgroundSize: 'cover',
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
             boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
             transition: 'all 0.5s ease'
           }} />
@@ -392,8 +394,10 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                 height: '100px',
                 borderRadius: '50%',
                 backgroundImage: `url(${artist.image})`,
-                backgroundSize: 'cover',
+                backgroundSize: 'contain',
+                backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
+                backgroundColor: '#f9fafb',
                 margin: '0 auto 12px',
                 transition: 'transform 0.2s',
                 boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
@@ -493,8 +497,10 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
               <div style={{
                 height: '220px',
                 backgroundImage: `url(${event.image})`,
-                backgroundSize: 'cover',
+                backgroundSize: 'contain',
+                backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
+                backgroundColor: '#f9fafb',
                 flexShrink: 0
               }} />
               <div style={{

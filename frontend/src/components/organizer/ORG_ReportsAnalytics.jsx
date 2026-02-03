@@ -18,14 +18,6 @@ export default function ReportsAnalytics() {
       startDate,
       endDate,
     });
-  };
-
-  const exportCSV = () => {
-    console.log("Exporting CSV...");
-  };
-
-  const exportPDF = () => {
-    console.log("Exporting PDF...");
   }; 
 
 
@@ -207,20 +199,6 @@ const ticketDistribution = Object.entries(ticketTypeCount).map(
           Apply Filters
         </button>
 
-        <button
-          onClick={exportCSV}
-          className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50"
-        >
-          <Download size={16} /> Export CSV
-        </button>
-
-        <button
-          onClick={exportPDF}
-          className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50"
-        >
-          <Download size={16} /> Export PDF
-        </button>
-
       </div>
     </div>
 
@@ -254,25 +232,27 @@ const ticketDistribution = Object.entries(ticketTypeCount).map(
  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
       <StatCard
-        title="Total Tickets Sold"
-        value={totalTicketsSold}
+        title="Total Revenue"
+        value={`₹${confirmedBookings.reduce((sum, b) => sum + Number(b.amount), 0).toLocaleString()}`}
         change="Live"
       />
 
       <StatCard
-        title="Total Capacity"
-        value={totalTickets}
-        subtitle="Across all events"
+        title="Total Tickets Sold"
+        value={totalConfirmedTickets}
+        subtitle="From confirmed bookings"
       />
 
       <StatCard
-        title="Remaining Tickets"
-        value={totalTickets - totalTicketsSold}
+        title="Avg Ticket Price"
+        value={`₹${totalConfirmedTickets > 0 ? Math.round(confirmedBookings.reduce((sum, b) => sum + Number(b.amount), 0) / totalConfirmedTickets) : 0}`}
+        subtitle="Per ticket"
       />
 
       <StatCard
         title="Conversion Rate"
-        value={`${conversionRate}%`}
+        value={`${bookings.length > 0 ? ((confirmedBookings.length / bookings.length) * 100).toFixed(1) : 0}%`}
+        subtitle="Confirmed vs Total bookings"
       />
 
     </div>
@@ -355,13 +335,13 @@ const ticketDistribution = Object.entries(ticketTypeCount).map(
   <div className="md:col-span-8 bg-white p-6 rounded-xl border">
     <h2 className="font-semibold mb-4">Booking Funnel</h2>
 
-    <FunnelRow label="Page Views" value="10,000" percent="100%" />
-    <FunnelRow label="Add to Cart" value="3,500" percent="35%" />
-    <FunnelRow label="Checkout" value="2,100" percent="21%" />
-    <FunnelRow label="Purchase" value="1,850" percent="18.5%" />
+    <FunnelRow label="Total Bookings" value={bookings.length} percent="100%" />
+    <FunnelRow label="Confirmed Bookings" value={confirmedBookings.length} percent={`${bookings.length > 0 ? ((confirmedBookings.length / bookings.length) * 100).toFixed(1) : 0}%`} />
+    <FunnelRow label="Cancelled Bookings" value={bookings.filter(b => b.status?.toLowerCase() === 'cancelled').length} percent={`${bookings.length > 0 ? ((bookings.filter(b => b.status?.toLowerCase() === 'cancelled').length / bookings.length) * 100).toFixed(1) : 0}%`} />
+    <FunnelRow label="Total Revenue" value={`₹${confirmedBookings.reduce((sum, b) => sum + Number(b.amount), 0).toLocaleString()}`} percent={`${bookings.length > 0 ? ((confirmedBookings.length / bookings.length) * 100).toFixed(1) : 0}%`} />
 
     <p className="text-sm text-gray-500 mt-4">
-      Overall Conversion Rate: <b>18.5%</b> from page view to completed purchase
+      Overall Conversion Rate: <b>{bookings.length > 0 ? ((confirmedBookings.length / bookings.length) * 100).toFixed(1) : 0}%</b> from total bookings to confirmed bookings
     </p>
   </div>
 
