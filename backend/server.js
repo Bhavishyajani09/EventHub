@@ -28,10 +28,11 @@ app.use('/api/bookings', require('./routes/bookings'));
 app.use('/payments', require('./routes/payments'));
 app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/upload', require('./routes/upload'));
+app.use('/api/events', require('./routes/events')); // Public events routes
 
 // Routes
 app.use('/api', organizerRoutes);
-app.use('/api/events', eventRoutes);
+app.use('/api/organizer/events', eventRoutes); // Organizer-specific events routes
 app.use('/api', adminRoutes);
 
 // Health check route

@@ -30,11 +30,60 @@ router.get('/organizer', auth, async (req, res) => {
 });
 
 // @route   GET /events
-// @desc    Get all events
+// @desc    Get all published events
 // @access  Public
 router.get('/', async (req, res) => {
   try {
-    const events = await Event.find({ status: 'active' })
+    const events = await Event.find({ 
+      isPublished: true,
+      approvalStatus: 'approved'
+    })
+      .populate('organizer', 'name email')
+      .sort({ date: 1 });
+
+    res.json({
+      success: true,
+      count: events.length,
+      events
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// @route   GET /events/movies
+// @desc    Get movie events only
+// @access  Public
+router.get('/movies', async (req, res) => {
+  try {
+    const events = await Event.find({ 
+      category: 'Movie',
+      isPublished: true,
+      approvalStatus: 'approved'
+    })
+      .populate('organizer', 'name email')
+      .sort({ date: 1 });
+
+    res.json({
+      success: true,
+      count: events.length,
+      events
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// @route   GET /events/non-movies
+// @desc    Get non-movie events only
+// @access  Public
+router.get('/non-movies', async (req, res) => {
+  try {
+    const events = await Event.find({ 
+      category: { $ne: 'Movie' },
+      isPublished: true,
+      approvalStatus: 'approved'
+    })
       .populate('organizer', 'name email')
       .sort({ date: 1 });
 

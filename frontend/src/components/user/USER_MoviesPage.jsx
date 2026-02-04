@@ -2,19 +2,46 @@ import React, { useState, useEffect } from 'react';
 import { Film } from 'lucide-react';
 import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
-import USER_MovieDetail from './USER_MovieDetail';
-
-
+import eventService from '../../services/eventService';
 
 const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick, onBookTickets }) => {
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const heroMovies = [
-    { title: 'Dhurandhar', genre: 'Action, Thriller', rating: 'A', image: '/placeholder-movie.jpg' },
-    { title: 'Border 2', genre: 'Action, War', rating: 'UA13+', image: '/placeholder-movie.jpg' },
-    { title: 'Rahu Ketu', genre: 'Horror, Thriller', rating: 'UA16+', image: '/rahu-ketu.jpg' },
-    { title: 'Happy Patel: Khatarnak Jasoos', genre: 'Comedy, Action', rating: 'A', image: '/happy-patel.jpg' }
+  // Fetch movies from API
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        setLoading(true);
+        const response = await eventService.getMovieEvents();
+        if (response.success) {
+          setMovies(response.events || []);
+        } else {
+          setError('Failed to load movies');
+        }
+      } catch (err) {
+        setError('Failed to load movies');
+        console.error('Error fetching movies:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMovies();
+  }, []);
+
+  const heroMovies = movies.length > 0 ? movies.slice(0, 4).map(movie => ({
+    title: movie.title,
+    genre: movie.category,
+    rating: 'UA',
+    image: movie.image || '/placeholder-movie.jpg',
+    price: movie.price,
+    location: movie.location
+  })) : [
+    { title: 'Loading...', genre: 'Loading', rating: 'UA', image: '/placeholder-movie.jpg' }
   ];
 
   useEffect(() => {
@@ -39,32 +66,8 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
     { id: '3d', label: '3D', type: 'format' }
   ];
 
-  const movies = [
-    { title: 'Rahu Ketu', genre: 'Horror', language: 'Hindi', image: '/rahu-ketu.jpg' },
-    { title: 'Happy Patel: Khatarnak Jasoos', genre: 'Comedy', language: 'Hindi', image: '/happy-patel.jpg' },
-    { title: 'Dhurandhar', genre: 'Action, Thriller', language: 'Hindi', image: '/placeholder-movie.jpg' },
-    { title: 'Border 2', genre: 'Action', language: 'Hindi', image: '/placeholder-movie.jpg' }
-  ];
-
-  const theatreMovies = [
-    { title: 'Anaganaga Oka Raju', genre: 'Drama', language: 'Telugu', image: '/anaganaga-oka-raju.jpg' },
-    { title: 'Band Baaja Baaraat', genre: 'Romance', language: 'Hindi', image: '/band-baaja-baaraat.jpg' },
-    { title: 'Bihu Attack', genre: 'Action', language: 'Assamese', image: '/bihu-attack.jpg' },
-    { title: 'One Two Cha Cha Chaa', genre: 'Comedy', language: 'Hindi', image: '/one-two-cha-cha-chaa.jpg' },
-    { title: 'Tere Ishk Mein', genre: 'Romance', language: 'Hindi', image: '/placeholder-movie.jpg' },
-    { title: 'The Raja Saab', genre: 'Horror', language: 'Telugu', image: '/placeholder-movie.jpg' },
-    { title: 'Tu Meri Main Tera', genre: 'Romance', language: 'Hindi', image: '/placeholder-movie.jpg' },
-    { title: 'Rahu Ketu', genre: 'Horror', language: 'Hindi', image: '/rahu-ketu.jpg' },
-    { title: 'Happy Patel: Khatarnak Jasoos', genre: 'Comedy', language: 'Hindi', image: '/happy-patel.jpg' },
-    { title: 'Dhurandhar', genre: 'Action', language: 'Hindi', image: '/placeholder-movie.jpg' },
-    { title: 'Border 2', genre: 'War', language: 'Hindi', image: '/placeholder-movie.jpg' },
-    { title: '83', genre: 'Sports', language: 'Hindi', image: '/placeholder-movie.jpg' },
-    { title: 'Chhaava', genre: 'Historical', language: 'Hindi', image: '/placeholder-movie.jpg' },
-    { title: 'Gabbar', genre: 'Action', language: 'Hindi', image: '/placeholder-movie.jpg' },
-    { title: 'Greenland 2: Migration', genre: 'Thriller', language: 'English', image: '/placeholder-movie.jpg' },
-    { title: 'Laalo - Krishna Sada Sahaayate', genre: 'Drama', language: 'Hindi', image: '/laalo-krishna.jpg' },
-    { title: 'Sarfira', genre: 'Drama', language: 'Hindi', image: '/placeholder-movie.jpg' }
-  ];
+  const weeklyMovies = movies.slice(0, 4);
+  const theatreMovies = movies.slice(4);
 
   const toggleFilter = (filterId) => {
     setSelectedFilters(prev => 
@@ -251,54 +254,68 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
             marginBottom: '24px'
           }}>This Week's Releases</h2>
           
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-            gap: '20px',
-            marginBottom: '32px'
-          }}>
-            {movies.map((movie, index) => (
-              <div key={index} 
-                onClick={() => handleMovieClick(movie)}
-                style={{
-                backgroundColor: isDark ? '#1f2937' : 'white',
-                borderRadius: '12px',
-                overflow: 'hidden',
-                boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                cursor: 'pointer',
-                transition: 'transform 0.2s'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-              >
-                <div style={{
-                  height: '220px',
-                  backgroundImage: `url(${movie.image})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundColor: '#f3f4f6',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#9ca3af'
-                }}>
-                  {!movie.image && <Film size={48} />}
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+              <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>Loading movies...</p>
+            </div>
+          ) : error ? (
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+              <p style={{ color: '#ef4444' }}>{error}</p>
+            </div>
+          ) : weeklyMovies.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+              <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>No movies available</p>
+            </div>
+          ) : (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+              gap: '20px',
+              marginBottom: '32px'
+            }}>
+              {weeklyMovies.map((movie, index) => (
+                <div key={index} 
+                  onClick={() => handleMovieClick(movie)}
+                  style={{
+                  backgroundColor: isDark ? '#1f2937' : 'white',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                  <div style={{
+                    height: '220px',
+                    backgroundImage: `url(${movie.image})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundColor: '#f3f4f6',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#9ca3af'
+                  }}>
+                    {!movie.image && <Film size={48} />}
+                  </div>
+                  <div style={{ padding: '12px' }}>
+                    <h3 style={{
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: isDark ? '#f9fafb' : '#111827',
+                      marginBottom: '4px'
+                    }}>{movie.title}</h3>
+                    <p style={{
+                      fontSize: '12px',
+                      color: isDark ? '#9ca3af' : '#6b7280'
+                    }}>{movie.category} | ₹{movie.price}</p>
+                  </div>
                 </div>
-                <div style={{ padding: '12px' }}>
-                  <h3 style={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: isDark ? '#f9fafb' : '#111827',
-                    marginBottom: '4px'
-                  }}>{movie.title}</h3>
-                  <p style={{
-                    fontSize: '12px',
-                    color: isDark ? '#9ca3af' : '#6b7280'
-                  }}>{movie.genre} | {movie.language}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Only in Theatres */}
@@ -311,54 +328,59 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           }}>Only in Theatres</h2>
 
           {/* Movies Grid */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(5, 1fr)',
-            gap: '20px'
-          }}>
-            {/* Movie cards with actual data */}
-            {theatreMovies.map((movie, index) => (
-              <div key={index} 
-                onClick={() => handleMovieClick(movie)}
-                style={{
-                backgroundColor: isDark ? '#1f2937' : 'white',
-                borderRadius: '12px',
-                overflow: 'hidden',
-                boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                cursor: 'pointer',
-                transition: 'transform 0.2s'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-              >
-                <div style={{
-                  height: '220px',
-                  backgroundImage: `url(${movie.image})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundColor: '#f3f4f6',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#9ca3af'
-                }}>
-                  {!movie.image && <Film size={48} />}
+          {theatreMovies.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+              <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>No theatre movies available</p>
+            </div>
+          ) : (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(5, 1fr)',
+              gap: '20px'
+            }}>
+              {theatreMovies.map((movie, index) => (
+                <div key={index} 
+                  onClick={() => handleMovieClick(movie)}
+                  style={{
+                  backgroundColor: isDark ? '#1f2937' : 'white',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                  <div style={{
+                    height: '220px',
+                    backgroundImage: `url(${movie.image})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundColor: '#f3f4f6',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#9ca3af'
+                  }}>
+                    {!movie.image && <Film size={48} />}
+                  </div>
+                  <div style={{ padding: '12px' }}>
+                    <h3 style={{
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: isDark ? '#f9fafb' : '#111827',
+                      marginBottom: '4px'
+                    }}>{movie.title}</h3>
+                    <p style={{
+                      fontSize: '12px',
+                      color: isDark ? '#9ca3af' : '#6b7280'
+                    }}>{movie.category} | ₹{movie.price}</p>
+                  </div>
                 </div>
-                <div style={{ padding: '12px' }}>
-                  <h3 style={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: isDark ? '#f9fafb' : '#111827',
-                    marginBottom: '4px'
-                  }}>{movie.title}</h3>
-                  <p style={{
-                    fontSize: '12px',
-                    color: isDark ? '#9ca3af' : '#6b7280'
-                  }}>{movie.genre} | {movie.language}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

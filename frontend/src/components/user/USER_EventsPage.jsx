@@ -2,44 +2,50 @@ import React, { useState, useEffect } from 'react';
 import { Music, Laugh, Zap, Palette, Calendar, Clock } from 'lucide-react';
 import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
-
+import eventService from '../../services/eventService';
 
 const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBookTickets, onMovieClick, onArtistClick }) => {
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch events from API
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        const response = await eventService.getNonMovieEvents();
+        if (response.success) {
+          setEvents(response.events || []);
+        } else {
+          setError('Failed to load events');
+        }
+      } catch (err) {
+        setError('Failed to load events');
+        console.error('Error fetching events:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   useEffect(() => {
     document.title = 'Events - EventHub';
   }, []);
 
-  const heroEvents = [
+  const heroEvents = events.length > 0 ? events.slice(0, 5).map(event => ({
+    title: event.title,
+    location: event.location,
+    price: event.price === 0 ? 'FREE CONCERT' : `₹${event.price} ONWARDS`,
+    image: event.image || '/placeholder-artist.jpg'
+  })) : [
     {
-      title: 'Deewana Tera by Sonu Nigam | Indore',
-      location: 'Phoenix Citadel Mall, Indore',
-      price: 'FREE CONCERT',
-      image: '/placeholder-artist.jpg'
-    },
-    {
-      title: 'Sunidhi Chauhan - I Am Home India Tour 2025-26',
-      location: 'Venue to be announced, Indore',
-      price: '₹1500 ONWARDS',
-      image: '/placeholder-artist.jpg'
-    },
-    {
-      title: 'Karan Aujla Live Concert',
-      location: 'Nehru Stadium, Indore',
-      price: '₹2500 ONWARDS',
-      image: '/placeholder-artist.jpg'
-    },
-    {
-      title: 'Comedy Night with Aaditya Kullu',
-      location: 'Sayaji Hotel, Indore',
-      price: '₹800 ONWARDS',
-      image: '/placeholder-artist.jpg'
-    },
-    {
-      title: 'Kanha Kamboj Live Performance',
-      location: 'Brilliant Convention Centre, Indore',
-      price: '₹1200 ONWARDS',
+      title: 'Loading Events...',
+      location: 'Please wait',
+      price: 'Loading...',
       image: '/placeholder-artist.jpg'
     }
   ];
@@ -63,68 +69,32 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
     { name: 'SEASONAL EVENTS', icon: Calendar, color: '#f97316' }
   ];
 
-  const artists = [
-    { name: 'Sunidhi Chauhan', image: '/placeholder-artist.jpg' },
-    { name: 'Karan Aujla', image: '/placeholder-artist.jpg' },
-    { name: 'Sonu Nigam', image: '/placeholder-artist.jpg' },
-    { name: 'Aaditya Kullu', image: '/placeholder-artist.jpg' },
-    { name: 'Kanha Kamboj', image: '/placeholder-artist.jpg' }
-  ];
+  const artists = events.slice(0, 5).map(event => ({
+    name: event.title.split(' ')[0] || 'Artist',
+    image: event.image || '/placeholder-artist.jpg'
+  }));
 
-  const allEvents = [
-    {
-      title: 'Deewana Tera by Sonu Nigam',
-      location: 'Phoenix Citadel Mall, Indore',
-      date: 'Today',
-      time: '7:00 PM',
-      fullDate: 'Sat, 28 Feb',
-      price: 'FREE',
-      image: '/placeholder-artist.jpg',
-      category: 'MUSIC',
-      type: 'event',
-      venue: 'Phoenix Citadel Mall, Indore'
-    },
-    {
-      title: 'Sunidhi Chauhan - I Am Home India Tour 2025-26',
-      location: 'Indore',
-      date: 'Tomorrow',
-      time: '8:00 PM',
-      fullDate: 'Sun, 1 Mar',
-      price: '₹1500',
-      image: '/placeholder-artist.jpg',
-      category: 'MUSIC',
-      type: 'event',
-      venue: 'Venue to be announced'
-    },
-    {
-      title: 'Karan Aujla Live Concert',
-      location: 'Nehru Stadium, Indore',
-      date: 'This Weekend',
-      time: '9:00 PM',
-      fullDate: 'Sat, 7 Mar',
-      price: '₹2500',
-      image: '/placeholder-artist.jpg',
-      category: 'MUSIC',
-      type: 'event',
-      venue: 'Nehru Stadium, Indore'
-    },
-    {
-      title: 'Comedy Night with Aaditya Kullu',
-      location: 'Sayaji Hotel, Indore',
-      date: 'Next Week',
-      time: '7:30 PM',
-      fullDate: 'Fri, 13 Mar',
-      price: '₹800',
-      image: '/placeholder-artist.jpg',
-      category: 'COMEDY',
-      type: 'event',
-      venue: 'Sayaji Hotel, Indore'
-    },
-
-  ];
+  const allEvents = events.map(event => ({
+    title: event.title,
+    location: event.location,
+    date: new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+    time: new Date(event.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+    fullDate: new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+    price: event.price === 0 ? 'FREE' : `₹${event.price}`,
+    image: event.image || '/placeholder-artist.jpg',
+    category: event.category.toUpperCase(),
+    type: 'event',
+    venue: event.location,
+    _id: event._id
+  }));
 
   const [selectedCategory, setSelectedCategory] = useState('All Events');
-  const [filteredEvents, setFilteredEvents] = useState(allEvents);
+  const [filteredEvents, setFilteredEvents] = useState([]);
+
+  // Update filtered events when allEvents changes
+  useEffect(() => {
+    setFilteredEvents(allEvents);
+  }, [events]);
 
   const filterEvents = (category) => {
     setSelectedCategory(category);
@@ -163,24 +133,53 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
         boxSizing: 'border-box'
       }}>
         {/* Hero Section */}
-        <div style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${heroEvents[currentHeroIndex].image})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          borderRadius: '24px',
-          padding: 'clamp(60px, 10vw, 100px)',
-          marginBottom: '40px',
-          color: 'white',
-          transition: 'all 0.5s ease-in-out',
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
-          height: '500px',
-          overflow: 'hidden',
-          backdropFilter: 'blur(10px)'
-        }}>
+        {loading ? (
+          <div style={{
+            backgroundColor: isDark ? '#1f2937' : '#f3f4f6',
+            borderRadius: '24px',
+            padding: '100px',
+            marginBottom: '40px',
+            textAlign: 'center',
+            height: '500px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <p style={{ color: isDark ? '#9ca3af' : '#6b7280', fontSize: '18px' }}>Loading events...</p>
+          </div>
+        ) : error ? (
+          <div style={{
+            backgroundColor: isDark ? '#1f2937' : '#f3f4f6',
+            borderRadius: '24px',
+            padding: '100px',
+            marginBottom: '40px',
+            textAlign: 'center',
+            height: '500px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <p style={{ color: '#ef4444', fontSize: '18px' }}>{error}</p>
+          </div>
+        ) : (
+          <div style={{
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${heroEvents[currentHeroIndex].image})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            borderRadius: '24px',
+            padding: 'clamp(60px, 10vw, 100px)',
+            marginBottom: '40px',
+            color: 'white',
+            transition: 'all 0.5s ease-in-out',
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+            height: '500px',
+            overflow: 'hidden',
+            backdropFilter: 'blur(10px)'
+          }}>
           {/* Left side - Text content */}
           <div style={{
             flex: 1,
@@ -312,6 +311,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
             ))}
           </div>
         </div>
+        )}
 
         {/* Explore Events */}
         <h2 style={{
@@ -465,13 +465,22 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
         </div>
 
         {/* Events Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: '24px',
-          marginBottom: '40px',
-          justifyContent: 'center'
-        }}>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>Loading events...</p>
+          </div>
+        ) : filteredEvents.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>No events available</p>
+          </div>
+        ) : (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: '24px',
+            marginBottom: '40px',
+            justifyContent: 'center'
+          }}>
           {filteredEvents.map((event, index) => (
             <div key={index}
               onClick={() => {
@@ -597,7 +606,8 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        )}
       </div>
 
       <SharedFooter isDark={isDark} onNavigate={onNavigate} />
