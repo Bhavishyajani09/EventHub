@@ -5,14 +5,44 @@ import USER_ProfilePanel from './USER_ProfilePanel';
 import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
 import USER_MovieDetail from './USER_MovieDetail';
+import eventService from '../../services/eventService';
 
 const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick, onBookTickets, onArtistClick }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfilePanelOpen, setIsProfilePanelOpen] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     document.title = 'EventHub - Discover Amazing Events';
+    fetchEvents();
+    fetchMovies();
   }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const response = await eventService.getNonMovieEvents();
+      if (response.success) {
+        setEvents(response.events.slice(0, 4) || []);
+      }
+    } catch (err) {
+      console.error('Error fetching events:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMovies = async () => {
+    try {
+      const response = await eventService.getMovieEvents();
+      if (response.success) {
+        setMovies(response.events.slice(0, 4) || []);
+      }
+    } catch (err) {
+      console.error('Error fetching movies:', err);
+    }
+  };
 
   const handleAuthSuccess = (userData) => {
     console.log('User logged in:', userData);
@@ -232,93 +262,205 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
             gap: 'clamp(12px, 3vw, 20px)',
             marginBottom: 'clamp(32px, 6vw, 48px)'
           }}>
-            {[
-              { title: 'Border 2', rating: 'UA13+', language: 'Hindi', genre: 'Action, War', image: '/placeholder-movie.jpg' },
-              { title: 'Dhurandhar', rating: 'A', language: 'Hindi', genre: 'Action, Thriller', image: '/placeholder-movie.jpg' },
-              { title: 'Rahu Ketu', rating: 'UA16+', language: 'Hindi', genre: 'Horror, Thriller', image: '/rahu-ketu.jpg' },
-              { title: 'Happy Patel: Khatarnak Jasoos', rating: 'A', language: 'Hindi', genre: 'Comedy, Action', image: '/happy-patel.jpg' }
-            ].map((movie, index) => {
-              return (
-                <div key={index}
-                  onClick={() => handleMovieClick(movie)}
-                  style={{
-                    backgroundColor: isDark ? '#1f2937' : 'white',
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
-                    cursor: 'pointer',
-                    transition: 'transform 0.2s',
-                    display: 'flex',
-                    flexDirection: 'column'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-                >
-                  <div style={{
-                    height: 'clamp(200px, 30vw, 280px)',
-                    backgroundImage: `url(${movie.image})`,
-                    backgroundSize: 'contain',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center',
-                    backgroundColor: '#f9fafb',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#6b7280',
-                    fontSize: 'clamp(12px, 2.5vw, 14px)',
-                    width: '100%'
-                  }}>
-                  </div>
-                  <div style={{
-                    padding: 'clamp(12px, 3vw, 16px)',
-                    flex: 1,
-                    display: 'flex',
-                    flexDirection: 'column'
-                  }}>
-                    <h3 style={{
-                      fontSize: 'clamp(14px, 3vw, 16px)',
-                      fontWeight: '600',
-                      color: isDark ? '#f9fafb' : '#111827',
-                      marginBottom: '4px'
-                    }}>{movie.title}</h3>
-                    <p style={{
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
+                <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>Loading movies...</p>
+              </div>
+            ) : movies.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
+                <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>No movies available</p>
+              </div>
+            ) : (
+              movies.map((movie, index) => {
+                return (
+                  <div key={index}
+                    onClick={() => handleMovieClick(movie)}
+                    style={{
+                      backgroundColor: isDark ? '#1f2937' : 'white',
+                      borderRadius: '12px',
+                      overflow: 'hidden',
+                      boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s',
+                      display: 'flex',
+                      flexDirection: 'column'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                  >
+                    <div style={{
+                      height: 'clamp(200px, 30vw, 280px)',
+                      backgroundImage: `url(${movie.image || '/placeholder-movie.jpg'})`,
+                      backgroundSize: 'contain',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'center',
+                      backgroundColor: '#f9fafb',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#6b7280',
                       fontSize: 'clamp(12px, 2.5vw, 14px)',
-                      color: isDark ? '#9ca3af' : '#6b7280',
-                      marginBottom: '12px'
-                    }}>{movie.rating} | {movie.language}</p>
-                    <button
-                      onClick={(e) => handleBookTickets(movie, e)}
-                      style={{
-                        width: '100%',
-                        padding: '8px 16px',
-                        background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
-                        backgroundSize: '200% 200%',
-                        animation: 'gradientMove 3s ease infinite',
-                        color: 'white',
-                        boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        borderRadius: '6px',
-                        fontSize: '12px',
+                      width: '100%'
+                    }}>
+                    </div>
+                    <div style={{
+                      padding: 'clamp(12px, 3vw, 16px)',
+                      flex: 1,
+                      display: 'flex',
+                      flexDirection: 'column'
+                    }}>
+                      <h3 style={{
+                        fontSize: 'clamp(14px, 3vw, 16px)',
                         fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        marginTop: 'auto'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.transform = 'translateY(-2px)';
-                        e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.transform = 'translateY(0)';
-                        e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
-                      }}
-                    >
-                      Book Tickets
-                    </button>
+                        color: isDark ? '#f9fafb' : '#111827',
+                        marginBottom: '4px'
+                      }}>{movie.title}</h3>
+                      <p style={{
+                        fontSize: 'clamp(12px, 2.5vw, 14px)',
+                        color: isDark ? '#9ca3af' : '#6b7280',
+                        marginBottom: '12px'
+                      }}>{movie.category} | {movie.location}</p>
+                      <button
+                        onClick={(e) => handleBookTickets(movie, e)}
+                        style={{
+                          width: '100%',
+                          padding: '8px 16px',
+                          background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+                          backgroundSize: '200% 200%',
+                          animation: 'gradientMove 3s ease infinite',
+                          color: 'white',
+                          boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                          marginTop: 'auto'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.transform = 'translateY(-2px)';
+                          e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.transform = 'translateY(0)';
+                          e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                        }}
+                      >
+                        Book Tickets
+                      </button>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
+          </div>
+
+          <h2 style={{
+            fontSize: 'clamp(20px, 5vw, 24px)',
+            fontWeight: 'bold',
+            color: isDark ? '#f9fafb' : '#111827',
+            marginBottom: 'clamp(16px, 4vw, 24px)'
+          }}>Trending Events</h2>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(150px, 20vw, 200px), 1fr))',
+            gap: 'clamp(12px, 3vw, 20px)',
+            marginBottom: 'clamp(32px, 6vw, 48px)'
+          }}>
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
+                <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>Loading events...</p>
+              </div>
+            ) : events.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
+                <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>No events available</p>
+              </div>
+            ) : (
+              events.map((event, index) => {
+                return (
+                  <div key={index}
+                    onClick={() => handleMovieClick({...event, type: 'event'})}
+                    style={{
+                      backgroundColor: isDark ? '#1f2937' : 'white',
+                      borderRadius: '12px',
+                      overflow: 'hidden',
+                      boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s',
+                      display: 'flex',
+                      flexDirection: 'column'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                  >
+                    <div style={{
+                      height: 'clamp(200px, 30vw, 280px)',
+                      backgroundImage: `url(${event.image})`,
+                      backgroundSize: 'contain',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'center',
+                      backgroundColor: '#f9fafb',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#6b7280',
+                      fontSize: 'clamp(12px, 2.5vw, 14px)',
+                      width: '100%'
+                    }}>
+                    </div>
+                    <div style={{
+                      padding: 'clamp(12px, 3vw, 16px)',
+                      flex: 1,
+                      display: 'flex',
+                      flexDirection: 'column'
+                    }}>
+                      <h3 style={{
+                        fontSize: 'clamp(14px, 3vw, 16px)',
+                        fontWeight: '600',
+                        color: isDark ? '#f9fafb' : '#111827',
+                        marginBottom: '4px'
+                      }}>{event.title}</h3>
+                      <p style={{
+                        fontSize: 'clamp(12px, 2.5vw, 14px)',
+                        color: isDark ? '#9ca3af' : '#6b7280',
+                        marginBottom: '12px'
+                      }}>{event.category} | {event.location}</p>
+                      <button
+                        onClick={(e) => handleBookTickets({...event, type: 'event'}, e)}
+                        style={{
+                          width: '100%',
+                          padding: '8px 16px',
+                          background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+                          backgroundSize: '200% 200%',
+                          animation: 'gradientMove 3s ease infinite',
+                          color: 'white',
+                          boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                          marginTop: 'auto'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.transform = 'translateY(-2px)';
+                          e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.transform = 'translateY(0)';
+                          e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                        }}
+                      >
+                        Book Tickets
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
 
           <h2 style={{

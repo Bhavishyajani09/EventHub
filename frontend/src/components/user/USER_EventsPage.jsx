@@ -39,7 +39,10 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
   const heroEvents = events.length > 0 ? events.slice(0, 5).map(event => ({
     title: event.title,
     location: event.location,
-    price: event.price === 0 ? 'FREE CONCERT' : `₹${event.price} ONWARDS`,
+    price: event.price === 0 ? 'FREE CONCERT' : 
+           (event.seatTypes && event.seatTypes.length > 0 
+            ? `₹${Math.min(...event.seatTypes.map(seat => seat.price))} ONWARDS` 
+            : `₹${event.price} ONWARDS`),
     image: event.image || '/placeholder-artist.jpg'
   })) : [
     {
@@ -80,11 +83,15 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
     date: new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
     time: new Date(event.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
     fullDate: new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
-    price: event.price === 0 ? 'FREE' : `₹${event.price}`,
+    price: event.price === 0 ? 'FREE' : 
+           (event.seatTypes && event.seatTypes.length > 0 
+            ? `₹${Math.min(...event.seatTypes.map(seat => seat.price))}` 
+            : `₹${event.price}`),
     image: event.image || '/placeholder-artist.jpg',
     category: event.category.toUpperCase(),
     type: 'event',
     venue: event.location,
+    seatTypes: event.seatTypes,
     _id: event._id
   }));
 

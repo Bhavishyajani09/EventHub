@@ -38,8 +38,11 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
     genre: movie.category,
     rating: 'UA',
     image: movie.image || '/placeholder-movie.jpg',
-    price: movie.price,
-    location: movie.location
+    price: movie.seatTypes && movie.seatTypes.length > 0 
+           ? Math.min(...movie.seatTypes.map(seat => seat.price))
+           : movie.price,
+    location: movie.location,
+    seatTypes: movie.seatTypes
   })) : [
     { title: 'Loading...', genre: 'Loading', rating: 'UA', image: '/placeholder-movie.jpg' }
   ];
@@ -310,7 +313,9 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                     <p style={{
                       fontSize: '12px',
                       color: isDark ? '#9ca3af' : '#6b7280'
-                    }}>{movie.category} | ₹{movie.price}</p>
+                    }}>{movie.category} | ₹{movie.seatTypes && movie.seatTypes.length > 0 
+                        ? Math.min(...movie.seatTypes.map(seat => seat.price))
+                        : movie.price}</p>
                   </div>
                 </div>
               ))}
@@ -375,7 +380,9 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                     <p style={{
                       fontSize: '12px',
                       color: isDark ? '#9ca3af' : '#6b7280'
-                    }}>{movie.category} | ₹{movie.price}</p>
+                    }}>{movie.category} | ₹{movie.seatTypes && movie.seatTypes.length > 0 
+                        ? Math.min(...movie.seatTypes.map(seat => seat.price))
+                        : movie.price}</p>
                   </div>
                 </div>
               ))}

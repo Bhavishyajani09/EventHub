@@ -240,7 +240,11 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
                   fontSize: '24px',
                   fontWeight: 'bold',
                   color: event.price === 'FREE' ? '#10b981' : (isDark ? '#f9fafb' : '#111827')
-                }}>{event.price}</span>
+                }}>
+                  {event.seatTypes && event.seatTypes.length > 0 
+                    ? `₹${Math.min(...event.seatTypes.map(seat => seat.price))}` 
+                    : (event.price === 0 ? 'FREE' : `₹${event.price}`)}
+                </span>
               </div>
 
               <button 

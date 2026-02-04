@@ -13,14 +13,39 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
   const isEvent = item?.type === 'event' || item?.category;
   const isMovie = !isEvent;
 
-  const seatTypes = {
-    general: { price: 180, color: '#1f2937', bgColor: '#f8fafc', border: '#e5e7eb' },
-    vip: { price: 350, color: '#92400e', bgColor: '#fef3c7', border: '#d97706' },
-    premium: { price: 500, color: '#581c87', bgColor: '#faf5ff', border: '#7c3aed' }
+  // Get seat types from database or use defaults
+  const getSeatTypes = () => {
+    if (item?.seatTypes && item.seatTypes.length > 0) {
+      // Use real data from database
+      const seatTypeMap = {};
+      item.seatTypes.forEach(seat => {
+        const seatName = seat.name.toLowerCase();
+        seatTypeMap[seatName] = {
+          price: seat.price,
+          available: seat.available,
+          quantity: seat.quantity,
+          color: seatName === 'general' ? '#1f2937' : seatName === 'vip' ? '#92400e' : '#581c87',
+          bgColor: seatName === 'general' ? '#f8fafc' : seatName === 'vip' ? '#fef3c7' : '#faf5ff',
+          border: seatName === 'general' ? '#e5e7eb' : seatName === 'vip' ? '#d97706' : '#7c3aed'
+        };
+      });
+      return seatTypeMap;
+    }
+    // Fallback to default prices if no seat types in database
+    return {
+      general: { price: 180, color: '#1f2937', bgColor: '#f8fafc', border: '#e5e7eb' },
+      vip: { price: 350, color: '#92400e', bgColor: '#fef3c7', border: '#d97706' },
+      premium: { price: 500, color: '#581c87', bgColor: '#faf5ff', border: '#7c3aed' }
+    };
   };
 
+  const seatTypes = getSeatTypes();
+
   const updateQuantity = (change) => {
-    setQuantity(Math.max(1, quantity + change));
+    const maxQuantity = selectedSeatType && seatTypes[selectedSeatType]?.available 
+      ? Math.min(10, seatTypes[selectedSeatType].available) 
+      : 10;
+    setQuantity(Math.max(1, Math.min(maxQuantity, quantity + change)));
   };
 
   const getTotalAmount = () => {
@@ -213,60 +238,65 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
             }}>Select Ticket Category</h4>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {Object.entries(seatTypes).map(([type, details]) => (
-                <div
-                  key={type}
-                  onClick={() => setSelectedSeatType(type)}
-                  style={{
-                    backgroundColor: selectedSeatType === type ? details.bgColor : (isDark ? '#374151' : '#ffffff'),
-                    border: selectedSeatType === type ? `2px solid ${details.border}` : `1px solid ${isDark ? '#4b5563' : '#e5e7eb'}`,
-                    borderRadius: '6px',
-                    padding: 'clamp(16px, 4vw, 20px) clamp(20px, 5vw, 24px)',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                  }}
-                >
-                  <div>
-                    <h5 style={{
-                      fontSize: 'clamp(14px, 3.5vw, 16px)',
-                      fontWeight: '600',
-                      color: selectedSeatType === type ? details.color : (isDark ? '#f9fafb' : '#111827'),
-                      textTransform: 'capitalize',
-                      marginBottom: '4px',
-                      letterSpacing: '0.025em'
-                    }}>{type}</h5>
-                    <p style={{
-                      fontSize: '14px',
-                      color: isDark ? '#9ca3af' : '#6b7280',
-                      margin: 0
-                    }}>₹{details.price} per ticket</p>
+              {Object.entries(seatTypes).map(([type, details]) => {
+                // Check if seats are available
+                const isAvailable = !details.available || details.available > 0;
+                return (
+                  <div
+                    key={type}
+                    onClick={() => isAvailable && setSelectedSeatType(type)}
+                    style={{
+                      backgroundColor: selectedSeatType === type ? details.bgColor : (isDark ? '#374151' : '#ffffff'),
+                      border: selectedSeatType === type ? `2px solid ${details.border}` : `1px solid ${isDark ? '#4b5563' : '#e5e7eb'}`,
+                      borderRadius: '6px',
+                      padding: 'clamp(16px, 4vw, 20px) clamp(20px, 5vw, 24px)',
+                      cursor: isAvailable ? 'pointer' : 'not-allowed',
+                      opacity: isAvailable ? 1 : 0.5,
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <div>
+                      <h5 style={{
+                        fontSize: 'clamp(14px, 3.5vw, 16px)',
+                        fontWeight: '600',
+                        color: selectedSeatType === type ? details.color : (isDark ? '#f9fafb' : '#111827'),
+                        textTransform: 'capitalize',
+                        marginBottom: '4px',
+                        letterSpacing: '0.025em'
+                      }}>{type}</h5>
+                      <p style={{
+                        fontSize: '14px',
+                        color: isDark ? '#9ca3af' : '#6b7280',
+                        margin: 0
+                      }}>₹{details.price} per ticket {details.available !== undefined && `(${details.available} available)`}</p>
+                    </div>
+                    
+                    <div style={{
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '50%',
+                      border: selectedSeatType === type ? `2px solid ${details.color}` : `2px solid ${isDark ? '#6b7280' : '#d1d5db'}`,
+                      backgroundColor: selectedSeatType === type ? details.color : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'all 0.2s ease'
+                    }}>
+                      {selectedSeatType === type && (
+                        <div style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          backgroundColor: 'white'
+                        }} />
+                      )}
+                    </div>
                   </div>
-                  
-                  <div style={{
-                    width: '20px',
-                    height: '20px',
-                    borderRadius: '50%',
-                    border: selectedSeatType === type ? `2px solid ${details.color}` : `2px solid ${isDark ? '#6b7280' : '#d1d5db'}`,
-                    backgroundColor: selectedSeatType === type ? details.color : 'transparent',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.2s ease'
-                  }}>
-                    {selectedSeatType === type && (
-                      <div style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        backgroundColor: 'white'
-                      }} />
-                    )}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             
             {selectedSeatType && (
