@@ -47,6 +47,10 @@ const organizerSchema = new mongoose.Schema({
   // Admin approval status
   isApproved: {
     type: Boolean,
+    default: true
+  },
+  isBlocked: {
+    type: Boolean,
     default: false
   }
 }, {

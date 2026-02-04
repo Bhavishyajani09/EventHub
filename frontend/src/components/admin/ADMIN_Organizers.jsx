@@ -18,8 +18,8 @@ const Organizers = ({ isDark }) => {
           id: org._id,
           name: org.name,
           email: org.email,
-          organization: org.name + ' Inc.', // Placeholder if org name not separate
-          status: org.isApproved ? 'approved' : 'pending', // Assuming only approved/pending logic for simplifies
+          organization: org.name + ' Inc.',
+          status: org.isBlocked ? 'Blocked' : 'Unblocked',
           requestDate: new Date(org.createdAt).toLocaleDateString(),
           initials: org.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2),
           bgColor: 'bg-purple-500'
@@ -37,23 +37,32 @@ const Organizers = ({ isDark }) => {
     fetchOrganizers();
   }, []);
 
-  const handleApproval = async (id, isApproved) => {
+  const filteredOrganizers = organizers.filter(org => {
+    const matchesSearch = org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      org.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === 'All Status' || org.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const handleBlockToggle = async (id) => {
+    console.log('Attempting to toggle block status for organizer:', id);
     try {
       const token = sessionStorage.getItem('token');
-      // Logic for approval toggling based on backend: 
-      // Backend toggles based on current state, so just calling it might be enough if UI reflects it.
-      // But we probably want explicit approve/reject.
-      // The current backend `toggleOrganizerApproval` just toggles.
-      // So calling it on a pending organizer approves it.
-      // Calling it on an approved organizer will reject (unapprove) it?
-      // Let's assume the button click intends to toggle.
-
-      await axios.put(`http://localhost:5000/api/admin/organizers/${id}/approve`, {}, {
+      const response = await axios.put(`http://localhost:5000/api/admin/organizers/${id}/block`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      fetchOrganizers();
+      console.log('Organizer Block/Unblock response:', response.data);
+
+      if (response.data.success) {
+        const newStatus = response.data.organizer.isBlocked ? 'Blocked' : 'Unblocked';
+        setOrganizers(prevOrgs => prevOrgs.map(org =>
+          org.id === id ? { ...org, status: newStatus } : org
+        ));
+        alert(`Organizer ${newStatus.toLowerCase()} successfully`);
+      }
     } catch (error) {
       console.error('Error updating organizer status:', error);
+      alert('Failed to update organizer status: ' + (error.response?.data?.message || error.message));
     }
   };
 
@@ -80,9 +89,8 @@ const Organizers = ({ isDark }) => {
             className={`appearance-none px-4 py-2 pr-8 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
           >
             <option value="All Status">All Status</option>
-            <option value="Pending">Pending</option>
-            <option value="Approved">Approved</option>
-            <option value="Rejected">Rejected</option>
+            <option value="Unblocked">Unblocked</option>
+            <option value="Blocked">Blocked</option>
           </select>
           <svg className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -105,7 +113,7 @@ const Organizers = ({ isDark }) => {
               </tr>
             </thead>
             <tbody className={`divide-y ${isDark ? 'divide-gray-700' : 'divide-gray-200'}`}>
-              {organizers.map((organizer) => (
+              {filteredOrganizers.map((organizer) => (
                 <tr key={organizer.id} className={`transition-colors ${isDark ? 'hover:bg-gray-700/50' : 'hover:bg-gray-50'}`}>
                   <td className="px-3 sm:px-6 py-4">
                     <div className="flex items-center">
@@ -121,11 +129,9 @@ const Organizers = ({ isDark }) => {
                   <td className={`px-3 sm:px-6 py-4 text-sm hidden sm:table-cell ${isDark ? 'text-gray-300' : 'text-gray-900'}`}>{organizer.email}</td>
                   <td className={`px-3 sm:px-6 py-4 text-sm hidden lg:table-cell ${isDark ? 'text-gray-300' : 'text-gray-900'}`}>{organizer.organization}</td>
                   <td className="px-3 sm:px-6 py-4">
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${organizer.status === 'approved'
+                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${organizer.status === 'Unblocked'
                       ? 'bg-green-100 text-green-800'
-                      : organizer.status === 'pending'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-red-100 text-red-800'
+                      : 'bg-red-100 text-red-800'
                       }`}>
                       {organizer.status}
                     </span>
@@ -133,24 +139,27 @@ const Organizers = ({ isDark }) => {
                   <td className={`px-3 sm:px-6 py-4 text-sm hidden md:table-cell ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{organizer.requestDate}</td>
                   <td className="px-3 sm:px-6 py-4">
                     <div className="flex items-center space-x-2">
-                      <button
-                        className="p-1 text-gray-400 hover:text-green-600"
-                        title="Approve"
-                        onClick={() => handleApproval(organizer.id, true)}
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </button>
-                      <button
-                        className="p-1 text-gray-400 hover:text-red-600"
-                        title="Reject"
-                        onClick={() => handleApproval(organizer.id, false)}
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
+                      {organizer.status === 'Blocked' ? (
+                        <button
+                          className="p-1 text-gray-400 hover:text-green-600"
+                          title="Unblock"
+                          onClick={() => handleBlockToggle(organizer.id)}
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </button>
+                      ) : (
+                        <button
+                          className="p-1 text-gray-400 hover:text-red-600"
+                          title="Block"
+                          onClick={() => handleBlockToggle(organizer.id)}
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                          </svg>
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>

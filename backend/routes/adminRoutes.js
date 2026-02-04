@@ -7,7 +7,7 @@ const {
   getAllUsers,
   toggleUserBlock,
   getAllOrganizers,
-  toggleOrganizerApproval,
+  toggleOrganizerBlock,
   getAllEvents,
   getDashboardStats,
   getAdminProfile,
@@ -28,7 +28,7 @@ router.put('/admin/users/:id/block', adminAuth, toggleUserBlock);
 
 // Organizer Management Routes
 router.get('/admin/organizers', adminAuth, getAllOrganizers);
-router.put('/admin/organizers/:id/approve', adminAuth, toggleOrganizerApproval);
+router.put('/admin/organizers/:id/block', adminAuth, toggleOrganizerBlock);
 
 // Event Management Routes
 router.get('/admin/events', adminAuth, getAllEvents);

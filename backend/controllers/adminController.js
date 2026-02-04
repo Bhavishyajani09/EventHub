@@ -75,29 +75,42 @@ const getAllUsers = async (req, res) => {
 const toggleUserBlock = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log('Toggling block for user ID:', id);
+    
+    // First find the user to get current status
     const user = await User.findById(id);
     
     if (!user) {
+      console.log('User not found:', id);
       return res.status(404).json({ message: 'User not found' });
     }
 
-    user.isBlocked = !user.isBlocked;
-    await user.save();
+    // specific toggle update using findByIdAndUpdate to avoid full validation of legacy docs
+    const updatedUser = await User.findByIdAndUpdate(
+      id, 
+      { isBlocked: !user.isBlocked },
+      { new: true } // Return updated doc
+    );
+
+    console.log('User block status updated:', updatedUser.isBlocked);
 
     res.json({
       success: true,
-      message: `User ${user.isBlocked ? 'blocked' : 'unblocked'} successfully`,
+      message: `User ${updatedUser.isBlocked ? 'blocked' : 'unblocked'} successfully`,
       user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        isBlocked: user.isBlocked
+        id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        isBlocked: updatedUser.isBlocked
       }
     });
   } catch (error) {
+    console.error('Error toggling user block:', error);
     res.status(500).json({ message: error.message });
   }
 };
+
+// ...
 
 // View organizers
 const getAllOrganizers = async (req, res) => {
@@ -113,30 +126,39 @@ const getAllOrganizers = async (req, res) => {
   }
 };
 
-// Approve/reject organizer
-const toggleOrganizerApproval = async (req, res) => {
+// Block/Unblock organizer
+const toggleOrganizerBlock = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log('Toggling block for organizer ID:', id);
     const organizer = await Organizer.findById(id);
     
     if (!organizer) {
+      console.log('Organizer not found:', id);
       return res.status(404).json({ message: 'Organizer not found' });
     }
 
-    organizer.isApproved = !organizer.isApproved;
-    await organizer.save();
+    const updatedOrganizer = await Organizer.findByIdAndUpdate(
+      id,
+      { isBlocked: !organizer.isBlocked },
+      { new: true }
+    );
+    
+    console.log('Organizer block status updated:', updatedOrganizer.isBlocked);
 
     res.json({
       success: true,
-      message: `Organizer ${organizer.isApproved ? 'approved' : 'rejected'} successfully`,
+      message: `Organizer ${updatedOrganizer.isBlocked ? 'blocked' : 'unblocked'} successfully`,
       organizer: {
-        id: organizer._id,
-        name: organizer.name,
-        email: organizer.email,
-        isApproved: organizer.isApproved
+        id: updatedOrganizer._id,
+        name: updatedOrganizer.name,
+        email: updatedOrganizer.email,
+        isBlocked: updatedOrganizer.isBlocked,
+        isApproved: updatedOrganizer.isApproved
       }
     });
   } catch (error) {
+    console.error('Error toggling organizer block:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -359,7 +381,7 @@ module.exports = {
   getAllUsers,
   toggleUserBlock,
   getAllOrganizers,
-  toggleOrganizerApproval,
+  toggleOrganizerBlock,
   getAllEvents,
   getDashboardStats,
   getAdminProfile,

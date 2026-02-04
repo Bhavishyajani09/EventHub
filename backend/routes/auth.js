@@ -98,6 +98,10 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
+    if (user.isBlocked) {
+      return res.status(403).json({ message: 'Your account has been blocked by the administrator.' });
+    }
+
     const token = generateToken(user._id);
 
     res.json({

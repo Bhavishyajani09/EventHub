@@ -118,6 +118,13 @@ const loginOrganizer = async (req, res) => {
       });
     }
 
+    if (organizer.isBlocked) {
+      return res.status(403).json({
+        success: false,
+        message: 'Your account has been blocked by the administrator.'
+      });
+    }
+
     // Generate JWT token
     const token = generateToken(organizer._id);
 

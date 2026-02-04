@@ -20,7 +20,7 @@ const AdminUserManagement = ({ isDark }) => {
           name: user.name,
           email: user.email,
           phone: user.phone || 'N/A',
-          status: user.isBlocked ? 'blocked' : 'active',
+          status: user.isBlocked ? 'Blocked' : 'Unblocked',
           registered: new Date(user.createdAt).toLocaleDateString(),
           avatar: user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
         }));
@@ -40,22 +40,29 @@ const AdminUserManagement = ({ isDark }) => {
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'All Status' || user.status === statusFilter.toLowerCase();
+    const matchesStatus = statusFilter === 'All Status' || user.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
-  const handleStatusChange = async (userId, newStatus) => {
+  const handleStatusChange = async (userId) => {
+    console.log('Attempting to toggle block status for user:', userId);
     try {
       const token = sessionStorage.getItem('token');
-      await axios.put(`http://localhost:5000/api/admin/users/${userId}/block`, {}, {
+      const response = await axios.put(`http://localhost:5000/api/admin/users/${userId}/block`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      console.log('Block/Unblock response:', response.data);
 
-      // Refresh users or update local state
-      fetchUsers();
+      if (response.data.success) {
+        const newStatus = response.data.user.isBlocked ? 'Blocked' : 'Unblocked';
+        setUsers(prevUsers => prevUsers.map(user =>
+          user.id === userId ? { ...user, status: newStatus } : user
+        ));
+        alert(`User ${newStatus.toLowerCase()} successfully`);
+      }
     } catch (error) {
       console.error('Error updating user status:', error);
-      alert('Failed to update user status');
+      alert('Failed to update user status: ' + (error.response?.data?.message || error.message));
     }
   };
 
@@ -87,7 +94,7 @@ const AdminUserManagement = ({ isDark }) => {
             className={`appearance-none px-3 py-2 pr-8 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200 text-gray-900'}`}
           >
             <option>All Status</option>
-            <option>Active</option>
+            <option>Unblocked</option>
             <option>Blocked</option>
           </select>
           <svg className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,7 +138,7 @@ const AdminUserManagement = ({ isDark }) => {
                     <td className={`px-3 sm:px-6 py-4 whitespace-nowrap text-sm hidden sm:table-cell ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{user.email}</td>
                     <td className={`px-3 sm:px-6 py-4 whitespace-nowrap text-sm hidden lg:table-cell ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{user.phone}</td>
                     <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.status === 'active'
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.status === 'Unblocked'
                         ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
                         }`}>
@@ -141,24 +148,27 @@ const AdminUserManagement = ({ isDark }) => {
                     <td className={`px-3 sm:px-6 py-4 whitespace-nowrap text-sm hidden md:table-cell ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{user.registered}</td>
                     <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-2">
-                        <button
-                          className="p-1 text-gray-400 hover:text-green-600"
-                          onClick={() => handleStatusChange(user.id, 'active')}
-                          title="Unblock User"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </button>
-                        <button
-                          className="p-1 text-gray-400 hover:text-red-600"
-                          onClick={() => handleStatusChange(user.id, 'blocked')}
-                          title="Block User"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
+                        {user.status === 'Blocked' ? (
+                          <button
+                            className="p-1 text-gray-400 hover:text-green-600"
+                            onClick={() => handleStatusChange(user.id)}
+                            title="Unblock User"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </button>
+                        ) : (
+                          <button
+                            className="p-1 text-gray-400 hover:text-red-600"
+                            onClick={() => handleStatusChange(user.id)}
+                            title="Block User"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
