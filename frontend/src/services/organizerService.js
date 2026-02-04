@@ -32,7 +32,7 @@ const organizerService = {
         throw new Error('No authentication token found');
       }
       
-      const response = await axios.get(`${API_BASE_URL}/api/events/organizer`, {
+      const response = await axios.get(`${API_BASE_URL}/api/events`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       return response.data;
