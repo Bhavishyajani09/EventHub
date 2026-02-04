@@ -75,9 +75,6 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
         }}>
           {/* Hero Section */}
           <div style={{
-            background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
             borderRadius: '24px',
             padding: 'clamp(60px, 10vw, 100px)',
             textAlign: 'center',
@@ -86,6 +83,18 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
             overflow: 'hidden',
             boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)'
           }}>
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'url("/HERO_PAGE.png")',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'blur(2px)',
+              zIndex: 0
+            }}></div>
             <div style={{
               position: 'absolute',
               top: 0,

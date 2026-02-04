@@ -32,7 +32,7 @@ const organizerService = {
         throw new Error('No authentication token found');
       }
       
-      const response = await axios.get(`${API_BASE_URL}/api/events`, {
+      const response = await axios.get(`${API_BASE_URL}/api/organizer/events`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       return response.data;
@@ -49,7 +49,7 @@ const organizerService = {
         throw new Error('No authentication token found');
       }
       
-      const response = await axios.post(`${API_BASE_URL}/api/events`, eventData, {
+      const response = await axios.post(`${API_BASE_URL}/api/organizer/events`, eventData, {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
@@ -69,7 +69,7 @@ const organizerService = {
         throw new Error('No authentication token found');
       }
       
-      const response = await axios.put(`${API_BASE_URL}/api/events/${eventId}`, eventData, {
+      const response = await axios.put(`${API_BASE_URL}/api/organizer/events/${eventId}`, eventData, {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
@@ -89,7 +89,7 @@ const organizerService = {
         throw new Error('No authentication token found');
       }
       
-      const response = await axios.get(`${API_BASE_URL}/api/events/${eventId}`, {
+      const response = await axios.get(`${API_BASE_URL}/api/organizer/events/${eventId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       return response.data;
@@ -100,21 +100,21 @@ const organizerService = {
   },
 
   deleteEvent: async (eventId) => {
-    const response = await axios.delete(`${API_BASE_URL}/api/events/${eventId}`, {
+    const response = await axios.delete(`${API_BASE_URL}/api/organizer/events/${eventId}`, {
       headers: { Authorization: `Bearer ${getAuthToken()}` }
     });
     return response.data;
   },
 
   publishEvent: async (eventId) => {
-    const response = await axios.put(`${API_BASE_URL}/api/events/${eventId}/publish`, {}, {
+    const response = await axios.put(`${API_BASE_URL}/api/organizer/events/${eventId}/publish`, {}, {
       headers: { Authorization: `Bearer ${getAuthToken()}` }
     });
     return response.data;
   },
 
   unpublishEvent: async (eventId) => {
-    const response = await axios.put(`${API_BASE_URL}/api/events/${eventId}/unpublish`, {}, {
+    const response = await axios.put(`${API_BASE_URL}/api/organizer/events/${eventId}/unpublish`, {}, {
       headers: { Authorization: `Bearer ${getAuthToken()}` }
     });
     return response.data;
