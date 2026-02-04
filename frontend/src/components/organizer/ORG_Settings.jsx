@@ -188,7 +188,7 @@ export default function Settings({ isDark }) {
               />
             </label>
             <p className="text-[10px] sm:text-xs text-gray-400 mt-2">
-              JPG, PNG. Max size 2MB
+              JPG, PNG. Max size 10MB
             </p>
           </div>
         </div>
