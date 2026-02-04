@@ -1,7 +1,7 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/database');
-require('dotenv').config();
 
 // Import routes
 const organizerRoutes = require('./routes/organizerRoutes');
@@ -36,7 +36,7 @@ app.use('/api', adminRoutes);
 
 // Health check route
 app.get('/', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'EventHub API is running!',
     version: '1.0.0',
     endpoints: {

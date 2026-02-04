@@ -1,23 +1,28 @@
 import React, { useState } from 'react';
+import { useAuth } from './context/AuthContext'; // Import useAuth
 import { Sun, Moon, User, LogOut, Settings, UserCircle } from 'lucide-react';
 
-const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, activePage = 'home', hideNavigation = false, searchOnly = false, pageTitle, onLogout, hideThemeToggle = false, hideProfileOption = false, enableDropdown = false }) => {
+const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick, onNavigate, activePage = 'home', hideNavigation = false, searchOnly = false, pageTitle, onLogout, hideThemeToggle = false, hideProfileOption = false, enableDropdown = false }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  
-  // Get profile data from localStorage
-  const getProfileData = () => {
-    const saved = localStorage.getItem("profileData");
-    if (saved && saved !== "undefined") {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        return null;
-      }
+
+  // Fallback to context user if prop not provided
+  const context = tryUseAuth();
+  const user = propUser || context?.user;
+
+  // Make useAuth optional so it doesn't break if used outside provider (though unlikely here)
+  function tryUseAuth() {
+    try {
+      return useAuth();
+    } catch (e) {
+      return null;
     }
-    return null;
-  };
-  
-  const profileData = getProfileData();
+  }
+
+  // Debug logging
+  // console.log('SharedNavbar user:', user);
+  // console.log('SharedNavbar photo:', user?.photo);
+
+
 
   return (
     <nav style={{
@@ -289,7 +294,7 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
                       width: '42px',
                       height: '42px',
                       borderRadius: '12px',
-                      background: profileData?.photoPreview ? 'transparent' : 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                      background: user?.photo ? 'transparent' : 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -298,9 +303,9 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
                       overflow: 'hidden'
                     }}
                   >
-                    {profileData?.photoPreview ? (
+                    {user?.photo ? (
                       <img
-                        src={profileData.photoPreview}
+                        src={user.photo}
                         alt="Profile"
                         style={{
                           width: '100%',
@@ -318,7 +323,7 @@ const Navbar = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigat
                         alignItems: 'center',
                         justifyContent: 'center'
                       }}>
-                        {user.name ? user.name.charAt(0).toUpperCase() : <User size={18} />}
+                        {user?.name ? user.name.charAt(0).toUpperCase() : <User size={18} />}
                       </span>
                     )}
                   </div>

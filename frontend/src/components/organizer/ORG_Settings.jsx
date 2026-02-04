@@ -1,25 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Settings({ isDark }) {
-  const [profile, setProfile] = useState(() => {
-    const saved = sessionStorage.getItem("profileData");
-    if (saved && saved !== "undefined") {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error("Error parsing profileData:", e);
-      }
-    }
-    return {
-      name: "John Doe",
-      email: "john.doe@email.com",
-      phone: "+1 (555) 123-4567",
-      experience: "5",
-      bio: "Experienced event organizer with 5+ years in the industry.",
-      photo: null,
-      photoPreview: null,
-    };
+  const { user, updateUser } = useAuth();
+  const [loading, setLoading] = useState(false);
+
+  const [profile, setProfile] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    experience: "0",
+    bio: "",
+    photo: null,
   });
+
+  useEffect(() => {
+    if (user) {
+      setProfile({
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        // If these fields are not in user object yet, keep defaults or empty
+        experience: user.experience || "5",
+        bio: user.bio || "",
+        photo: user.photo || null,
+      });
+    }
+  }, [user]);
 
   /* ================= HANDLERS ================= */
 
@@ -33,50 +40,96 @@ export default function Settings({ isDark }) {
     if (!file) return;
 
     try {
-      // Create FormData for Cloudinary upload
+      setLoading(true);
       const formData = new FormData();
       formData.append('image', file);
 
-      // Upload to backend which will handle Cloudinary
-      const response = await fetch('/api/upload', {
+      // 1. Upload to Cloudinary via Backend
+      const uploadRes = await fetch('http://localhost:5000/api/upload/image', {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+        },
         body: formData
+      });
+
+      if (!uploadRes.ok) {
+        const errorData = await uploadRes.json();
+        throw new Error(errorData.message || 'Image upload failed');
+      }
+
+      const uploadData = await uploadRes.json();
+      const imageUrl = uploadData.data.url;
+
+      // Update local state immediately for preview
+      setProfile(prev => ({ ...prev, photo: imageUrl }));
+
+      // 2. Update Profile in DB
+      const updateRes = await fetch('http://localhost:5000/api/organizer/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          photo: imageUrl
+        })
+      });
+
+      if (!updateRes.ok) {
+        const errorData = await updateRes.json();
+        throw new Error(errorData.message || 'Profile update failed');
+      }
+
+      const updateData = await updateRes.json();
+      console.log('Profile update response:', updateData);
+
+      // 3. Update Local State & Context
+      console.log('Updating user context with:', updateData.data.organizer);
+      updateUser(updateData.data.organizer);
+      alert("Profile photo updated successfully ✅");
+
+    } catch (error) {
+      console.error('Error updating photo:', error);
+      alert(`Failed to update photo: ${error.message} ❌`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/organizer/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          name: profile.name,
+          email: profile.email,
+          phone: profile.phone,
+          // Ensure we don't accidentally unset photo if it's there
+          // But usually we don't need to send it if we rely on partial updates.
+          // Let's NOT include it here to avoid race conditions with the independent upload handler.
+        })
       });
 
       if (response.ok) {
         const data = await response.json();
-        const cloudinaryUrl = data.imageUrl;
-
-        setProfile({
-          ...profile,
-          photo: file,
-          photoPreview: cloudinaryUrl,
-        });
+        updateUser(data.data.organizer);
+        alert("Profile updated successfully ✅");
       } else {
-        // Fallback to local preview if upload fails
-        const preview = URL.createObjectURL(file);
-        setProfile({
-          ...profile,
-          photo: file,
-          photoPreview: preview,
-        });
+        alert("Failed to update profile ❌");
       }
     } catch (error) {
-      console.error('Upload error:', error);
-      // Fallback to local preview
-      const preview = URL.createObjectURL(file);
-      setProfile({
-        ...profile,
-        photo: file,
-        photoPreview: preview,
-      });
+      console.error("Error updating profile:", error);
+      alert("Error updating profile ❌");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    sessionStorage.setItem("profileData", JSON.stringify(profile));
-    alert("Profile updated successfully ✅");
   };
 
   /* ================= UI ================= */
@@ -104,10 +157,10 @@ export default function Settings({ isDark }) {
 
         {/* Avatar */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-6">
-          <div className="mx-auto sm:mx-0 w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-indigo-100 overflow-hidden flex items-center justify-center">
-            {profile.photoPreview ? (
+          <div className="mx-auto sm:mx-0 w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-indigo-100 overflow-hidden flex items-center justify-center relative">
+            {profile.photo ? (
               <img
-                src={profile.photoPreview}
+                src={profile.photo}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
@@ -116,20 +169,26 @@ export default function Settings({ isDark }) {
                 {profile.name.charAt(0)}
               </span>
             )}
+            {loading && (
+              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+              </div>
+            )}
           </div>
 
           <div className="text-center sm:text-left">
-            <label className="inline-block px-4 py-2 border rounded-lg text-xs sm:text-sm cursor-pointer hover:bg-gray-50 transition">
-              Change Photo
+            <label className={`inline-block px-4 py-2 border rounded-lg text-xs sm:text-sm cursor-pointer transition ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'}`}>
+              {loading ? 'Uploading...' : 'Change Photo'}
               <input
                 type="file"
                 accept="image/*"
                 className="hidden"
                 onChange={handlePhotoChange}
+                disabled={loading}
               />
             </label>
             <p className="text-[10px] sm:text-xs text-gray-400 mt-2">
-              JPG, PNG. Max size 2MB
+              JPG, PNG. Max size 10MB
             </p>
           </div>
         </div>
@@ -190,9 +249,10 @@ export default function Settings({ isDark }) {
           <div className="pt-3 flex justify-center sm:justify-end">
             <button
               type="submit"
-              className="w-full sm:w-auto px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm"
+              disabled={loading}
+              className={`w-full sm:w-auto px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              Save Changes
+              {loading ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
         </form>

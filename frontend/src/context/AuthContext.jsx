@@ -85,11 +85,25 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'LOGOUT' });
   };
 
+  const updateUser = (updatedUser) => {
+    // Merge existing user with updates
+    const newUser = { ...state.user, ...updatedUser };
+    sessionStorage.setItem('user', JSON.stringify(newUser));
+    dispatch({
+      type: 'LOGIN_SUCCESS',
+      payload: {
+        token: state.token,
+        user: newUser
+      }
+    });
+  };
+
   return (
     <AuthContext.Provider value={{
       ...state,
       login,
-      logout
+      logout,
+      updateUser
     }}>
       {children}
     </AuthContext.Provider>
