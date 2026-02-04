@@ -3,14 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Users, Upload, ArrowLeft, Save } from 'lucide-react';
 import organizerService from '../../services/organizerService';
 
-const ORG_edit = () => {
+const ORG_edit = ({ isDark }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [imagePreview, setImagePreview] = useState('');
-  
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -25,7 +25,7 @@ const ORG_edit = () => {
   });
 
   const categories = [
-    'Concert', 'Conference', 'Workshop', 'Sports', 'Festival', 
+    'Concert', 'Conference', 'Workshop', 'Sports', 'Festival',
     'Exhibition', 'Networking', 'Seminar', 'Party', 'Other'
   ];
 
@@ -41,7 +41,7 @@ const ORG_edit = () => {
       if (response.success && response.event) {
         const event = response.event;
         const eventDate = event.date ? new Date(event.date).toISOString().split('T')[0] : '';
-        
+
         setFormData({
           title: event.title || '',
           description: event.description || '',
@@ -54,7 +54,7 @@ const ORG_edit = () => {
           image: null,
           isPublished: event.isPublished || false
         });
-        
+
         if (event.image) {
           setImagePreview(event.image);
         }
@@ -91,7 +91,7 @@ const ORG_edit = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.title || !formData.date || !formData.location) {
       setError('Please fill in all required fields');
       return;
@@ -100,7 +100,7 @@ const ORG_edit = () => {
     try {
       setSaving(true);
       setError('');
-      
+
       const updateData = new FormData();
       Object.keys(formData).forEach(key => {
         if (key === 'image' && formData[key]) {
@@ -111,7 +111,7 @@ const ORG_edit = () => {
       });
 
       const response = await organizerService.updateEvent(id, updateData);
-      
+
       if (response.success) {
         navigate('/events');
       } else {
@@ -143,8 +143,8 @@ const ORG_edit = () => {
           <ArrowLeft size={20} />
         </button>
         <div>
-          <h1 className="text-3xl font-bold">Edit Event</h1>
-          <p className="text-gray-500">Update your event details</p>
+          <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Edit Event</h1>
+          <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Update your event details</p>
         </div>
       </div>
 
@@ -155,7 +155,7 @@ const ORG_edit = () => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className={`rounded-lg shadow-md p-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
           {/* Image Upload */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -215,7 +215,7 @@ const ORG_edit = () => {
                 name="title"
                 value={formData.title}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
                 required
               />
             </div>
@@ -228,7 +228,7 @@ const ORG_edit = () => {
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
                 required
               >
                 <option value="">Select Category</option>
@@ -248,7 +248,7 @@ const ORG_edit = () => {
               value={formData.description}
               onChange={handleInputChange}
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
               required
             />
           </div>
@@ -265,7 +265,7 @@ const ORG_edit = () => {
                 name="date"
                 value={formData.date}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
                 required
               />
             </div>
@@ -279,7 +279,7 @@ const ORG_edit = () => {
                 name="time"
                 value={formData.time}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
               />
             </div>
           </div>
@@ -296,7 +296,7 @@ const ORG_edit = () => {
                 name="location"
                 value={formData.location}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
                 required
               />
             </div>
@@ -312,7 +312,7 @@ const ORG_edit = () => {
                 value={formData.capacity}
                 onChange={handleInputChange}
                 min="1"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
               />
             </div>
           </div>
@@ -329,7 +329,7 @@ const ORG_edit = () => {
               onChange={handleInputChange}
               min="0"
               step="0.01"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
             />
           </div>
 

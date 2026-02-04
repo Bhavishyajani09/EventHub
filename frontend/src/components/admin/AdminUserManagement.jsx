@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-
 import axios from 'axios';
 
-const AdminUserManagement = () => {
+const AdminUserManagement = ({ isDark }) => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
@@ -78,14 +77,14 @@ const AdminUserManagement = () => {
             placeholder="Search users..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-sm w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white shadow-sm"
+            className={`pl-10 pr-4 py-3 border rounded-lg text-sm w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm ${isDark ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900'}`}
           />
         </div>
         <div className="relative w-full sm:w-auto">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="appearance-none px-3 py-2 pr-8 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto"
+            className={`appearance-none px-3 py-2 pr-8 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200 text-gray-900'}`}
           >
             <option>All Status</option>
             <option>Active</option>
@@ -102,35 +101,35 @@ const AdminUserManagement = () => {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className={`rounded-lg shadow-sm border overflow-hidden ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[600px]">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="px-3 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">USER</th>
-                  <th className="px-3 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">EMAIL</th>
-                  <th className="px-3 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">PHONE</th>
-                  <th className="px-3 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">STATUS</th>
-                  <th className="px-3 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">REGISTERED</th>
-                  <th className="px-3 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ACTIONS</th>
+                <tr className={`border-b ${isDark ? 'bg-gray-700/50 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+                  <th className={`px-3 sm:px-6 py-4 text-left text-xs font-medium uppercase tracking-wider ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>USER</th>
+                  <th className={`px-3 sm:px-6 py-4 text-left text-xs font-medium uppercase tracking-wider hidden sm:table-cell ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>EMAIL</th>
+                  <th className={`px-3 sm:px-6 py-4 text-left text-xs font-medium uppercase tracking-wider hidden lg:table-cell ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>PHONE</th>
+                  <th className={`px-3 sm:px-6 py-4 text-left text-xs font-medium uppercase tracking-wider ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>STATUS</th>
+                  <th className={`px-3 sm:px-6 py-4 text-left text-xs font-medium uppercase tracking-wider hidden md:table-cell ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>REGISTERED</th>
+                  <th className={`px-3 sm:px-6 py-4 text-left text-xs font-medium uppercase tracking-wider ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>ACTIONS</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className={`divide-y ${isDark ? 'divide-gray-700 bg-gray-800' : 'divide-gray-200 bg-white'}`}>
                 {filteredUsers.map((user, index) => (
-                  <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={user.id} className={`transition-colors ${isDark ? 'hover:bg-gray-700/50' : 'hover:bg-gray-50'}`}>
                     <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-medium text-sm ${getAvatarColor(index)}`}>
                           {user.avatar}
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                          <div className="text-sm text-gray-500 sm:hidden">{user.email}</div>
+                          <div className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{user.name}</div>
+                          <div className={`text-sm sm:hidden ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{user.email}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">{user.email}</td>
-                    <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">{user.phone}</td>
+                    <td className={`px-3 sm:px-6 py-4 whitespace-nowrap text-sm hidden sm:table-cell ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{user.email}</td>
+                    <td className={`px-3 sm:px-6 py-4 whitespace-nowrap text-sm hidden lg:table-cell ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{user.phone}</td>
                     <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.status === 'active'
                         ? 'bg-green-100 text-green-800'
@@ -139,7 +138,7 @@ const AdminUserManagement = () => {
                         {user.status}
                       </span>
                     </td>
-                    <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">{user.registered}</td>
+                    <td className={`px-3 sm:px-6 py-4 whitespace-nowrap text-sm hidden md:table-cell ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{user.registered}</td>
                     <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-2">
                         <button
@@ -171,15 +170,15 @@ const AdminUserManagement = () => {
       )}
 
       <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
-        <div className="text-sm text-gray-700">
+        <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-700'}`}>
           Showing <span className="font-medium">1</span> to <span className="font-medium">5</span> of{' '}
           <span className="font-medium">8</span> results
         </div>
         <div className="flex space-x-2">
-          <button className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+          <button className={`px-4 py-2 text-sm font-medium border rounded-md transition-colors ${isDark ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'}`}>
             Previous
           </button>
-          <button className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+          <button className={`px-4 py-2 text-sm font-medium border rounded-md transition-colors ${isDark ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'}`}>
             Next
           </button>
         </div>

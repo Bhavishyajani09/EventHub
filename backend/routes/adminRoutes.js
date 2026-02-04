@@ -14,7 +14,8 @@ const {
   updateAdminProfile,
   changeAdminPassword,
   getPlatformSettings,
-  updatePlatformSettings
+  updatePlatformSettings,
+  getAllBookings
 } = require('../controllers/adminController');
 
 // Admin Authentication Routes
@@ -31,6 +32,9 @@ router.put('/admin/organizers/:id/approve', adminAuth, toggleOrganizerApproval);
 
 // Event Management Routes
 router.get('/admin/events', adminAuth, getAllEvents);
+
+// Booking Management Routes
+router.get('/admin/bookings', adminAuth, getAllBookings);
 
 // Dashboard Route
 router.get('/admin/dashboard', adminAuth, getDashboardStats);

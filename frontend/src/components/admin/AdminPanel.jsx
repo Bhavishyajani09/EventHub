@@ -10,7 +10,6 @@ import SharedNavbar from '../../SharedNavbar';
 
 const AdminPanel = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [isDark, setIsDark] = useState(false);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -34,8 +33,6 @@ const AdminPanel = ({ user, onLogout }) => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SharedNavbar
-        isDark={isDark}
-        setIsDark={setIsDark}
         user={user}
         hideNavigation={true}
         pageTitle="Admin Panel"

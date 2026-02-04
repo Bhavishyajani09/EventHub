@@ -3,7 +3,7 @@ import { Calendar, MapPin, Users, IndianRupee, Upload, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import organizerService from '../../services/organizerService';
 
-const CreateEvent = () => {
+const CreateEvent = ({ isDark }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
@@ -57,20 +57,20 @@ const CreateEvent = () => {
         ...prev,
         [type]: { ...prev[type], [field]: value }
       };
-      
+
       // Auto-calculate total capacity when quantities change
       if (field === 'quantity') {
-        const totalCapacity = 
+        const totalCapacity =
           (parseInt(updated.general.quantity) || 0) +
           (parseInt(updated.vip.quantity) || 0) +
           (parseInt(updated.premium.quantity) || 0);
-        
+
         setFormData(prevForm => ({
           ...prevForm,
           capacity: totalCapacity.toString()
         }));
       }
-      
+
       return updated;
     });
   };
@@ -83,16 +83,16 @@ const CreateEvent = () => {
 
     try {
       const eventFormData = new FormData();
-      
+
       // Calculate the lowest price from seat types
       const prices = [
         parseFloat(seatTypes.general.price) || 0,
         parseFloat(seatTypes.vip.price) || 0,
         parseFloat(seatTypes.premium.price) || 0
       ].filter(price => price > 0);
-      
+
       const lowestPrice = prices.length > 0 ? Math.min(...prices) : 0;
-      
+
       // Add form fields with category as 'event' (common default)
       Object.keys(formData).forEach(key => {
         if (key === 'category') {
@@ -102,7 +102,7 @@ const CreateEvent = () => {
           eventFormData.append(key, formData[key]);
         }
       });
-      
+
       // Add category flags for frontend filtering
       if (formData.category === 'movie') {
         eventFormData.append('isMovie', 'true');
@@ -111,7 +111,7 @@ const CreateEvent = () => {
       } else if (formData.category === 'sports') {
         eventFormData.append('isSports', 'true');
       }
-      
+
       // Add lowest price as base price
       eventFormData.append('price', lowestPrice.toString());
 
@@ -121,7 +121,7 @@ const CreateEvent = () => {
         { name: 'VIP', price: seatTypes.vip.price, quantity: seatTypes.vip.quantity },
         { name: 'Premium', price: seatTypes.premium.price, quantity: seatTypes.premium.quantity }
       ].filter(seat => seat.price && seat.quantity);
-      
+
       eventFormData.append('seatTypes', JSON.stringify(seatTypesArray));
 
       // Add image if selected
@@ -130,7 +130,7 @@ const CreateEvent = () => {
       }
 
       const response = await organizerService.createEvent(eventFormData);
-      
+
       if (response.success) {
         setSuccess('Event created successfully!');
         // Reset form
@@ -151,7 +151,7 @@ const CreateEvent = () => {
         });
         setImage(null);
         setImagePreview('');
-        
+
         // Navigate back to events after 2 seconds
         setTimeout(() => {
           navigate('/events');
@@ -168,12 +168,12 @@ const CreateEvent = () => {
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Create New Event</h1>
-        <p className="text-gray-500 mt-1">Fill in the details to create your event</p>
+        <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Create New Event</h1>
+        <p className={`mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Fill in the details to create your event</p>
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-6">
+      <form onSubmit={handleSubmit} className={`rounded-lg shadow-md p-6 space-y-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
         {/* Image Upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -182,9 +182,9 @@ const CreateEvent = () => {
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
             {imagePreview ? (
               <div className="relative">
-                <img 
-                  src={imagePreview} 
-                  alt="Preview" 
+                <img
+                  src={imagePreview}
+                  alt="Preview"
                   className="w-full h-48 object-contain rounded-lg bg-gray-50"
                 />
                 <button
@@ -228,7 +228,7 @@ const CreateEvent = () => {
               value={formData.title}
               onChange={handleInputChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
               placeholder="Enter event title"
             />
           </div>
@@ -242,7 +242,7 @@ const CreateEvent = () => {
               value={formData.category}
               onChange={handleInputChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
             >
               <option value="" disabled>Select category</option>
               <option value="concert">Concert</option>
@@ -263,7 +263,7 @@ const CreateEvent = () => {
             onChange={handleInputChange}
             required
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
             placeholder="Describe your event"
           />
         </div>
@@ -281,7 +281,7 @@ const CreateEvent = () => {
               value={formData.date}
               onChange={handleInputChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
             />
           </div>
 
@@ -295,7 +295,7 @@ const CreateEvent = () => {
               value={formData.time}
               onChange={handleInputChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
             />
           </div>
         </div>
@@ -312,7 +312,7 @@ const CreateEvent = () => {
             value={formData.location}
             onChange={handleInputChange}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
             placeholder="Event venue or address"
           />
         </div>
@@ -338,7 +338,7 @@ const CreateEvent = () => {
           <label className="block text-sm font-medium text-gray-700 mb-4">
             Seat Types & Pricing
           </label>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* General Seats */}
             <div className="border border-gray-200 rounded-lg p-4">

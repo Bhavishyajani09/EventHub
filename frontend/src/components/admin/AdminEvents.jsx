@@ -20,16 +20,8 @@ const AdminEvents = () => {
           location: event.location,
           date: new Date(event.date).toLocaleDateString() + ' at ' + new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           organizer: event.organizer?.name || 'Unknown',
-          status: event.isPublished ? 'approved' : 'pending', // Assuming isPublished true means active/approved. Or if we have explicit approval status.
-          // Note: The backend schema has `isPublished`. Does it have approval status?
-          // Looking at AdminController, events are fetched. The event model doesn't seem to have `isApproved` explicit field in the view I saw earlier.
-          // Wait, the user wanted "Real" events.
-          // The previous mock data had 'pending', 'approved', 'rejected'.
-          // Let's assume for now `isPublished` map to `approved`.
-          // If we need approval workflow for events, we might need to add `isApproved` field to Event model.
-          // For now, let's map based on `isPublished` or just default to 'approved' if we don't have that info.
-          // Actually, let's check the Event model again.
-          color: 'bg-gradient-to-br from-blue-500 to-blue-600', // Default color
+          status: event.isPublished ? 'approved' : 'pending',
+          color: 'bg-gradient-to-br from-blue-500 to-blue-600',
           image: event.image
         }));
         setEvents(mappedEvents);
@@ -44,9 +36,6 @@ const AdminEvents = () => {
   useEffect(() => {
     fetchEvents();
   }, []);
-
-  // Events from state instead of mock
-  // const events = [ ... ];
 
   const getStatusBadge = (status) => {
     const statusStyles = {
@@ -79,12 +68,13 @@ const AdminEvents = () => {
             <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
+
             <input
               type="text"
               placeholder="Search events..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent border-gray-300"
             />
           </div>
         </div>
@@ -92,7 +82,7 @@ const AdminEvents = () => {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent border-gray-300"
           >
             <option value="All Status">All Status</option>
             <option value="Pending">Pending</option>
@@ -110,14 +100,14 @@ const AdminEvents = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map((event) => (
-            <div key={event.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200">
+            <div key={event.id} className="rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition-shadow duration-200 bg-white border-gray-100">
               {/* Event Header with Color or Image */}
-              <div className={`${event.color} h-32 flex items-center justify-center relative overflow-hidden`}>
+              <div className={`${event.color} h-48 flex items-center justify-center relative overflow-hidden bg-gray-100`}>
                 {event.image ? (
                   <img
                     src={event.image}
                     alt={event.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 ) : (
                   <svg className="w-16 h-16 text-white opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -129,7 +119,7 @@ const AdminEvents = () => {
               {/* Event Content */}
               <div className="p-6">
                 <div className="flex items-start justify-between mb-3">
-                  <h3 className="font-semibold text-gray-900 text-lg leading-tight">{event.title}</h3>
+                  <h3 className="font-semibold text-lg leading-tight text-gray-900">{event.title}</h3>
                   {getStatusBadge(event.status)}
                 </div>
 
@@ -154,7 +144,7 @@ const AdminEvents = () => {
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-2">
-                  <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-2">
+                  <button className="flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />

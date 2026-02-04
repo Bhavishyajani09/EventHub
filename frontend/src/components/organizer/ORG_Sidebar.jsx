@@ -66,7 +66,7 @@ import {
   X
 } from "lucide-react";
 
-export default function Sidebar() {
+export default function Sidebar({ isDark }) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -92,9 +92,10 @@ export default function Sidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          bg-white border-r h-screen transition-all duration-300 z-40 group
+          border-r h-screen transition-all duration-300 z-40 group
           ${collapsed ? "w-16" : "w-64"} 
           ${mobileOpen ? "fixed" : "lg:relative lg:block hidden"}
+          ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}
           flex flex-col relative
         `}
       >
@@ -119,8 +120,8 @@ export default function Sidebar() {
                 className="w-9 h-9 rounded-lg"
               />
               <div>
-                <h2 className="text-lg font-bold text-gray-800">EventHub</h2>
-                <p className="text-xs text-gray-500 uppercase tracking-wide">Organizer</p>
+                <h2 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-800'}`}>EventHub</h2>
+                <p className={`text-xs uppercase tracking-wide ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Organizer</p>
               </div>
             </div>
           )}
@@ -141,6 +142,7 @@ export default function Sidebar() {
             active={location.pathname === "/dashboard" || location.pathname === "/"}
             collapsed={collapsed}
             onClick={() => setMobileOpen(false)}
+            isDark={isDark}
           />
           <SidebarItem
             to="/events"
@@ -149,6 +151,7 @@ export default function Sidebar() {
             active={location.pathname === "/events"}
             collapsed={collapsed}
             onClick={() => setMobileOpen(false)}
+            isDark={isDark}
           />
           <SidebarItem
             to="/create-event"
@@ -157,6 +160,7 @@ export default function Sidebar() {
             active={location.pathname === "/create-event"}
             collapsed={collapsed}
             onClick={() => setMobileOpen(false)}
+            isDark={isDark}
           />
           <SidebarItem
             to="/bookings"
@@ -165,6 +169,7 @@ export default function Sidebar() {
             active={location.pathname === "/bookings"}
             collapsed={collapsed}
             onClick={() => setMobileOpen(false)}
+            isDark={isDark}
           />
           <SidebarItem
             to="/reviews"
@@ -173,6 +178,7 @@ export default function Sidebar() {
             active={location.pathname === "/reviews"}
             collapsed={collapsed}
             onClick={() => setMobileOpen(false)}
+            isDark={isDark}
           />
           <SidebarItem
             to="/reports"
@@ -181,6 +187,7 @@ export default function Sidebar() {
             active={location.pathname === "/reports"}
             collapsed={collapsed}
             onClick={() => setMobileOpen(false)}
+            isDark={isDark}
           />
           <SidebarItem
             to="/settings"
@@ -189,6 +196,7 @@ export default function Sidebar() {
             active={location.pathname === "/settings"}
             collapsed={collapsed}
             onClick={() => setMobileOpen(false)}
+            isDark={isDark}
           />
         </nav>
       </aside>
@@ -197,15 +205,15 @@ export default function Sidebar() {
 }
 
 /* Sidebar Item */
-function SidebarItem({ to, icon, label, active, collapsed, onClick }) {
+function SidebarItem({ to, icon, label, active, collapsed, onClick, isDark }) {
   return (
     <Link
       to={to}
       onClick={onClick}
-      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-gray-100 transition-colors
+      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors
         ${active
-          ? "bg-indigo-100 text-indigo-600 font-medium"
-          : "text-gray-700"
+          ? `font-medium ${isDark ? 'bg-indigo-900/50 text-indigo-400' : 'bg-indigo-100 text-indigo-600'}`
+          : `${isDark ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'}`
         }`}
     >
       {icon}

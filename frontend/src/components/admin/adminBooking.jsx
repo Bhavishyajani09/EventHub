@@ -1,71 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import adminService from '../../services/adminService';
 
-const AdminBooking = () => {
+const AdminBooking = ({ isDark }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const bookings = [
-    {
-      id: 1,
-      bookingId: 'BK-001',
-      user: 'John Doe',
-      email: 'john@example.com',
-      event: 'Summer Music Festival 2026',
-      ticketType: 'VIP',
-      quantity: 2,
-      amount: '₹598',
-      date: '2026-01-20',
-      status: 'confirmed'
-    },
-    {
-      id: 2,
-      bookingId: 'BK-002',
-      user: 'Sarah Smith',
-      email: 'sarah@example.com',
-      event: 'Tech Conference 2026',
-      ticketType: 'Standard',
-      quantity: 1,
-      amount: '₹199',
-      date: '2026-01-21',
-      status: 'confirmed'
-    },
-    {
-      id: 3,
-      bookingId: 'BK-003',
-      user: 'Mike Johnson',
-      email: 'mike@example.com',
-      event: 'Comedy Night Live',
-      ticketType: 'General',
-      quantity: 3,
-      amount: '₹135',
-      date: '2026-01-22',
-      status: 'pending'
-    },
-    {
-      id: 4,
-      bookingId: 'BK-004',
-      user: 'Emily Brown',
-      email: 'emily@example.com',
-      event: 'Sports Championship Finals',
-      ticketType: 'Lower Bowl',
-      quantity: 2,
-      amount: '₹500',
-      date: '2026-01-19',
-      status: 'confirmed'
-    },
-    {
-      id: 5,
-      bookingId: 'BK-005',
-      user: 'David Wilson',
-      email: 'david@example.com',
-      event: 'Cultural Festival',
-      ticketType: 'Day Pass',
-      quantity: 4,
-      amount: '₹100',
-      date: '2026-01-18',
-      status: 'cancelled'
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
+  const fetchBookings = async () => {
+    try {
+      setLoading(true);
+      const response = await adminService.getAllBookings();
+      if (response.success) {
+        setBookings(response.bookings);
+      }
+    } catch (err) {
+      console.error('Failed to fetch bookings:', err);
+      setError('Failed to load bookings');
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   const getStatusBadge = (status) => {
     const statusStyles = {
@@ -75,18 +35,25 @@ const AdminBooking = () => {
     };
 
     return (
-      <span className={`px-2 py-1 rounded text-xs font-medium ${statusStyles[status]}`}>
+      <span className={`px-2 py-1 rounded text-xs font-medium ${statusStyles[status] || 'bg-gray-100 text-gray-800'}`}>
         {status}
       </span>
     );
   };
 
   const filteredBookings = bookings.filter(booking => {
-    const matchesSearch = booking.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         booking.event.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         booking.bookingId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         booking.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const userName = booking.user?.name || 'Unknown User';
+    const eventName = booking.event?.title || 'Unknown Event';
+    const bookingId = booking._id.slice(-6).toUpperCase();
+    const email = booking.user?.email || '';
+
+    const matchesSearch = userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      bookingId.includes(searchTerm.toUpperCase()) ||
+      email.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesStatus = statusFilter === 'All Status' || booking.status === statusFilter.toLowerCase();
+
     return matchesSearch && matchesStatus;
   });
 
@@ -94,27 +61,52 @@ const AdminBooking = () => {
   const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
   const pendingBookings = bookings.filter(b => b.status === 'pending').length;
   const cancelledBookings = bookings.filter(b => b.status === 'cancelled').length;
+
+  // Assuming amount is a number in the DB from the schema I saw earlier or consistent with previous numeric logic
+  // If stored as string with currency symbol, need parsing. Based on other files, it seems to be number often.
+  // The mock data had strings like '₹598'. The DB model usually stores numbers.
+  // I'll handle both just in case, but prioritize number.
   const totalRevenue = bookings
     .filter(b => b.status === 'confirmed')
-    .reduce((sum, b) => sum + parseInt(b.amount.replace('₹', '')), 0);
+    .reduce((sum, b) => {
+      const amount = b.totalAmount || b.amount || 0; // Check likely field names
+      return sum + Number(amount);
+    }, 0);
+
+  if (loading) {
+    return (
+      <div className={`flex items-center justify-center h-[calc(100vh-64px)] ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex-1 p-4 bg-gray-50 h-screen overflow-hidden">
+    <div className={`flex-1 p-4 h-[calc(100vh-64px)] overflow-hidden ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <strong className="font-bold">Error: </strong>
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
+
       {/* Statistics Cards */}
       <div className="grid grid-cols-4 gap-4 mb-4">
-        <div className="bg-white p-3 rounded-lg shadow-sm">
+        <div className={`p-3 rounded-lg shadow-sm ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="text-xs text-gray-500 mb-1">Total</div>
-          <div className="text-lg font-bold text-gray-900">{totalBookings}</div>
+          <div className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{totalBookings}</div>
         </div>
-        <div className="bg-white p-3 rounded-lg shadow-sm">
+        <div className={`p-3 rounded-lg shadow-sm ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="text-xs text-gray-500 mb-1">Confirmed</div>
           <div className="text-lg font-bold text-green-600">{confirmedBookings}</div>
         </div>
-        <div className="bg-white p-3 rounded-lg shadow-sm">
+        <div className={`p-3 rounded-lg shadow-sm ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="text-xs text-gray-500 mb-1">Pending</div>
           <div className="text-lg font-bold text-yellow-600">{pendingBookings}</div>
         </div>
-        <div className="bg-white p-3 rounded-lg shadow-sm">
+        <div className={`p-3 rounded-lg shadow-sm ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="text-xs text-gray-500 mb-1">Cancelled</div>
           <div className="text-lg font-bold text-red-600">{cancelledBookings}</div>
         </div>
@@ -129,14 +121,14 @@ const AdminBooking = () => {
           <input
             type="text"
             placeholder="Search bookings..."
-            className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64"
+            className={`pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64 ${isDark ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-400' : 'border-gray-200'}`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <div className="relative">
           <select
-            className="appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className={`appearance-none border rounded-lg px-3 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200'}`}
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -152,39 +144,47 @@ const AdminBooking = () => {
       </div>
 
       {/* Bookings Table */}
-      <div className="bg-white rounded-lg shadow-sm h-[calc(100vh-280px)]">
+      <div className={`rounded-lg shadow-sm h-[calc(100vh-280px)] ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
         <table className="w-full table-fixed">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className={`border-b ${isDark ? 'bg-gray-700/50 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
             <tr>
-              <th className="w-[10%] px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-              <th className="w-[20%] px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
-              <th className="w-[22%] px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event</th>
-              <th className="w-[13%] px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-              <th className="w-[8%] px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Qty</th>
-              <th className="w-[12%] px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-              <th className="w-[15%] px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-              <th className="w-[10%] px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+              <th className={`w-[10%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>ID</th>
+              <th className={`w-[20%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>User</th>
+              <th className={`w-[22%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Event</th>
+              <th className={`w-[13%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Type</th>
+              <th className={`w-[8%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Qty</th>
+              <th className={`w-[12%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Amount</th>
+              <th className={`w-[15%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Date</th>
+              <th className={`w-[10%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Status</th>
             </tr>
           </thead>
         </table>
         <div className="overflow-y-auto h-[calc(100%-48px)]">
           <table className="w-full table-fixed">
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredBookings.map((booking) => (
-                <tr key={booking.id} className="hover:bg-gray-50">
-                  <td className="w-[10%] px-4 py-3 text-sm font-medium text-gray-900 truncate">{booking.bookingId}</td>
-                  <td className="w-[20%] px-4 py-3">
-                    <div className="text-sm font-medium text-gray-900 truncate">{booking.user}</div>
-                    <div className="text-xs text-gray-500 truncate">{booking.email}</div>
+            <tbody className={`divide-y ${isDark ? 'divide-gray-700 bg-gray-800' : 'divide-gray-200 bg-white'}`}>
+              {filteredBookings.length > 0 ? (
+                filteredBookings.map((booking) => (
+                  <tr key={booking._id} className={`hover:bg-gray-50 ${isDark ? 'hover:bg-gray-700/50' : 'hover:bg-gray-50'}`}>
+                    <td className={`w-[10%] px-4 py-3 text-sm font-medium truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking._id.slice(-6).toUpperCase()}</td>
+                    <td className="w-[20%] px-4 py-3">
+                      <div className={`text-sm font-medium truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking.user?.name || 'Unknown'}</div>
+                      <div className={`text-xs truncate ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{booking.user?.email || 'N/A'}</div>
+                    </td>
+                    <td className={`w-[22%] px-4 py-3 text-sm truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking.event?.title || 'Unknown Event'}</td>
+                    <td className={`w-[13%] px-4 py-3 text-sm truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking.category || 'N/A'}</td>
+                    <td className={`w-[8%] px-4 py-3 text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking.tickets || 0}</td>
+                    <td className={`w-[12%] px-4 py-3 text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>₹{booking.totalAmount || booking.amount || 0}</td>
+                    <td className={`w-[15%] px-4 py-3 text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{new Date(booking.createdAt).toLocaleDateString()}</td>
+                    <td className="w-[10%] px-4 py-3">{getStatusBadge(booking.status)}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8" className={`px-4 py-8 text-center text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                    No bookings found matching your filters.
                   </td>
-                  <td className="w-[22%] px-4 py-3 text-sm text-gray-900 truncate">{booking.event}</td>
-                  <td className="w-[13%] px-4 py-3 text-sm text-gray-900 truncate">{booking.ticketType}</td>
-                  <td className="w-[8%] px-4 py-3 text-sm text-gray-900">{booking.quantity}</td>
-                  <td className="w-[12%] px-4 py-3 text-sm text-gray-900">{booking.amount}</td>
-                  <td className="w-[15%] px-4 py-3 text-sm text-gray-900">{booking.date}</td>
-                  <td className="w-[10%] px-4 py-3">{getStatusBadge(booking.status)}</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
