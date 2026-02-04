@@ -58,7 +58,8 @@ const registerOrganizer = async (req, res) => {
           name: organizer.name,
           email: organizer.email,
           phone: organizer.phone,
-          role: organizer.role
+          role: organizer.role,
+          photo: organizer.photo
         },
         token
       }
@@ -100,7 +101,7 @@ const loginOrganizer = async (req, res) => {
 
     // Find organizer by email (include password for comparison)
     const organizer = await Organizer.findOne({ email });
-    
+
     if (!organizer) {
       return res.status(401).json({
         success: false,
@@ -110,7 +111,7 @@ const loginOrganizer = async (req, res) => {
 
     // Check password using the comparePassword method
     const isPasswordValid = await organizer.comparePassword(password);
-    
+
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
@@ -130,7 +131,8 @@ const loginOrganizer = async (req, res) => {
           name: organizer.name,
           email: organizer.email,
           phone: organizer.phone,
-          role: organizer.role
+          role: organizer.role,
+          photo: organizer.photo
         },
         token
       }
@@ -152,9 +154,12 @@ const loginOrganizer = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
-    
+
     // Get organizer ID from authenticated request
     const organizerId = req.user.id;
+
+    // Debug logging
+    console.log('UpdateProfile Request Body:', req.body);
 
     // Build update object with only provided fields
     const updateData = {};
@@ -162,14 +167,20 @@ const updateProfile = async (req, res) => {
     if (email) updateData.email = email;
     if (phone) updateData.phone = phone;
     if (password) updateData.password = password; // Will be hashed by pre-save middleware
+    if (req.body.photo) {
+      console.log('Updating photo to:', req.body.photo);
+      updateData.photo = req.body.photo;
+    }
+
+    console.log('Final Update Data:', updateData);
 
     // Check if email is being updated and already exists
     if (email) {
-      const existingOrganizer = await Organizer.findOne({ 
-        email, 
+      const existingOrganizer = await Organizer.findOne({
+        email,
         _id: { $ne: organizerId } // Exclude current organizer
       });
-      
+
       if (existingOrganizer) {
         return res.status(400).json({
           success: false,
@@ -182,7 +193,7 @@ const updateProfile = async (req, res) => {
     const updatedOrganizer = await Organizer.findByIdAndUpdate(
       organizerId,
       updateData,
-      { 
+      {
         new: true, // Return updated document
         runValidators: true // Run schema validations
       }
@@ -197,7 +208,8 @@ const updateProfile = async (req, res) => {
           name: updatedOrganizer.name,
           email: updatedOrganizer.email,
           phone: updatedOrganizer.phone,
-          role: updatedOrganizer.role
+          role: updatedOrganizer.role,
+          photo: updatedOrganizer.photo
         }
       }
     });
@@ -235,7 +247,7 @@ const getEventBookings = async (req, res) => {
     }
 
     const bookings = await Booking.find({ event: id }).populate('event', 'title date');
-    
+
     res.json({
       success: true,
       data: { bookings }
@@ -262,7 +274,7 @@ const getEventAttendees = async (req, res) => {
 
     const attendees = await Booking.find({ event: id, status: 'confirmed' })
       .select('attendee tickets totalAmount createdAt');
-    
+
     res.json({
       success: true,
       data: { attendees }
@@ -283,13 +295,13 @@ const getDashboard = async (req, res) => {
 
     const totalEvents = await Event.countDocuments({ organizer: organizerId });
     const publishedEvents = await Event.countDocuments({ organizer: organizerId, isPublished: true });
-    
+
     // Get organizer's events first
     const organizerEvents = await Event.find({ organizer: organizerId }).select('_id');
     const eventIds = organizerEvents.map(event => event._id);
-    
+
     const totalBookings = eventIds.length > 0 ? await Booking.countDocuments({ event: { $in: eventIds } }) : 0;
-    
+
     let totalRevenue = 0;
     if (eventIds.length > 0) {
       const revenueResult = await Booking.aggregate([
