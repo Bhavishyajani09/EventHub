@@ -63,13 +63,23 @@ const organizerService = {
   },
 
   updateEvent: async (eventId, eventData) => {
-    const response = await axios.put(`${API_BASE_URL}/api/events/${eventId}`, eventData, {
-      headers: { 
-        Authorization: `Bearer ${getAuthToken()}`,
-        'Content-Type': 'multipart/form-data'
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        throw new Error('No authentication token found');
       }
-    });
-    return response.data;
+      
+      const response = await axios.put(`${API_BASE_URL}/api/events/${eventId}`, eventData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Update event error:', error.response?.data || error.message);
+      throw error;
+    }
   },
 
   getEventById: async (eventId) => {

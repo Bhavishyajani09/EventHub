@@ -92,23 +92,18 @@ const CreateEvent = ({ isDark }) => {
       ].filter(price => price > 0);
 
       const lowestPrice = prices.length > 0 ? Math.min(...prices) : 0;
-
-      // Add form fields with category as 'event' (common default)
+      
+      // Add form fields
       Object.keys(formData).forEach(key => {
-        if (key === 'category') {
-          // Try 'other' as default category
-          eventFormData.append(key, 'other');
-        } else {
-          eventFormData.append(key, formData[key]);
-        }
+        eventFormData.append(key, formData[key]);
       });
 
       // Add category flags for frontend filtering
-      if (formData.category === 'movie') {
+      if (formData.category === 'Movie') {
         eventFormData.append('isMovie', 'true');
-      } else if (formData.category === 'concert') {
+      } else if (formData.category === 'Music') {
         eventFormData.append('isConcert', 'true');
-      } else if (formData.category === 'sports') {
+      } else if (formData.category === 'Sports') {
         eventFormData.append('isSports', 'true');
       }
 
@@ -245,9 +240,12 @@ const CreateEvent = ({ isDark }) => {
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
             >
               <option value="" disabled>Select category</option>
-              <option value="concert">Concert</option>
-              <option value="sports">Sports</option>
-              <option value="movie">Movie</option>
+              <option value="Music">Music</option>
+              <option value="Comedy">Comedy</option>
+              <option value="Art">Art</option>
+              <option value="Sports">Sports</option>
+              <option value="Seasonal Event">Seasonal Event</option>
+              <option value="Movie">Movie</option>
             </select>
           </div>
         </div>

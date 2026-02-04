@@ -25,8 +25,7 @@ const ORG_edit = ({ isDark }) => {
   });
 
   const categories = [
-    'Concert', 'Conference', 'Workshop', 'Sports', 'Festival',
-    'Exhibition', 'Networking', 'Seminar', 'Party', 'Other'
+    'Music', 'Comedy', 'Art', 'Sports', 'Seasonal Event', 'Movie'
   ];
 
   useEffect(() => {
@@ -40,13 +39,15 @@ const ORG_edit = ({ isDark }) => {
       const response = await organizerService.getEventById(id);
       if (response.success && response.event) {
         const event = response.event;
-        const eventDate = event.date ? new Date(event.date).toISOString().split('T')[0] : '';
-
+        const eventDate = event.date ? new Date(event.date) : null;
+        const eventDateStr = eventDate ? eventDate.toISOString().split('T')[0] : '';
+        const eventTimeStr = eventDate ? eventDate.toTimeString().split(' ')[0].substring(0, 5) : '';
+        
         setFormData({
           title: event.title || '',
           description: event.description || '',
-          date: eventDate,
-          time: event.time || '',
+          date: eventDateStr,
+          time: eventTimeStr,
           location: event.location || '',
           capacity: event.capacity || '',
           price: event.price || '',
@@ -135,17 +136,44 @@ const ORG_edit = ({ isDark }) => {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <button
-          onClick={() => navigate('/events')}
-          className="p-2 hover:bg-gray-100 rounded-lg"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <div>
-          <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Edit Event</h1>
-          <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Update your event details</p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate('/events')}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h1 className="text-3xl font-bold">Edit Event</h1>
+            <p className="text-gray-500">Update your event details</p>
+          </div>
         </div>
+        
+        {/* Publish/Unpublish Button */}
+        <button
+          type="button"
+          onClick={async () => {
+            try {
+              const updateData = new FormData();
+              updateData.append('isPublished', !formData.isPublished);
+              
+              const response = await organizerService.updateEvent(id, updateData);
+              if (response.success) {
+                setFormData(prev => ({ ...prev, isPublished: !prev.isPublished }));
+              }
+            } catch (error) {
+              setError('Failed to update publish status');
+            }
+          }}
+          className={`px-6 py-2 rounded-lg flex items-center gap-2 ${
+            formData.isPublished 
+              ? 'bg-yellow-600 text-white hover:bg-yellow-700' 
+              : 'bg-green-600 text-white hover:bg-green-700'
+          }`}
+        >
+          {formData.isPublished ? 'Unpublish' : 'Publish'}
+        </button>
       </div>
 
       {error && (
@@ -359,6 +387,7 @@ const ORG_edit = ({ isDark }) => {
           >
             Cancel
           </button>
+          
           <button
             type="submit"
             disabled={saving}
