@@ -375,6 +375,49 @@ const updatePlatformSettings = async (req, res) => {
   }
 };
 
+// Approve event
+const approveEvent = async (req, res) => {
+  try {
+    const event = await Event.findByIdAndUpdate(
+      req.params.id,
+      { approvalStatus: 'approved' },
+      { new: true }
+    ).populate('organizer', 'name email');
+
+    if (!event) {
+      return res.status(404).json({ success: false, message: 'Event not found' });
+    }
+
+    res.json({ success: true, message: 'Event approved successfully', event });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Reject event
+const rejectEvent = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const event = await Event.findByIdAndUpdate(
+      req.params.id,
+      { 
+        approvalStatus: 'rejected',
+        rejectionReason: reason || 'No reason provided',
+        isPublished: false
+      },
+      { new: true }
+    ).populate('organizer', 'name email');
+
+    if (!event) {
+      return res.status(404).json({ success: false, message: 'Event not found' });
+    }
+
+    res.json({ success: true, message: 'Event rejected successfully', event });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   adminLogin,
   adminLogout,
@@ -389,5 +432,7 @@ module.exports = {
   changeAdminPassword,
   getPlatformSettings,
   updatePlatformSettings,
-  getAllBookings
+  getAllBookings,
+  approveEvent,
+  rejectEvent
 };

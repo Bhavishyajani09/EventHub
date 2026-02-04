@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, MapPin, Users, Edit, Trash2, Plus } from 'lucide-react';
+import { Calendar, MapPin, Users, Edit, Trash2, Plus, Eye, EyeOff, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import organizerService from '../../services/organizerService';
 
@@ -44,10 +44,26 @@ const MyEvents = ({ isDark }) => {
     }
   };
 
+  const handlePublishToggle = async (eventId, isPublished) => {
+    try {
+      if (isPublished) {
+        await organizerService.unpublishEvent(eventId);
+      } else {
+        await organizerService.publishEvent(eventId);
+      }
+      fetchEvents(); // Refresh events
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to update event status');
+    }
+  };
+
   const filteredEvents = events.filter(event => {
     if (filter === 'all') return true;
     if (filter === 'published') return event.isPublished;
     if (filter === 'draft') return !event.isPublished;
+    if (filter === 'pending') return event.approvalStatus === 'pending';
+    if (filter === 'approved') return event.approvalStatus === 'approved';
+    if (filter === 'rejected') return event.approvalStatus === 'rejected';
     return true;
   });
 
@@ -80,6 +96,9 @@ const MyEvents = ({ isDark }) => {
       <div className={`flex space-x-1 p-1 rounded-lg w-fit ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
         {[
           { key: 'all', label: 'All Events' },
+          { key: 'pending', label: 'Pending' },
+          { key: 'approved', label: 'Approved' },
+          { key: 'rejected', label: 'Rejected' },
           { key: 'published', label: 'Published' },
           { key: 'draft', label: 'Draft' }
         ].map(tab => (
@@ -125,6 +144,7 @@ const MyEvents = ({ isDark }) => {
               event={event}
               onDelete={handleDeleteEvent}
               onEdit={() => navigate(`/edit-event/${event._id}`)}
+              onPublishToggle={handlePublishToggle}
               isDark={isDark}
             />
           ))}
@@ -134,11 +154,32 @@ const MyEvents = ({ isDark }) => {
   );
 };
 
-const EventCard = ({ event, onDelete, onEdit, isDark }) => {
+const EventCard = ({ event, onDelete, onEdit, onPublishToggle, isDark }) => {
+  const getApprovalStatusBadge = () => {
+    const status = event.approvalStatus || 'pending';
+    const statusConfig = {
+      pending: { color: 'bg-yellow-100 text-yellow-800', icon: Clock, text: 'Pending' },
+      approved: { color: 'bg-green-100 text-green-800', icon: CheckCircle, text: 'Approved' },
+      rejected: { color: 'bg-red-100 text-red-800', icon: XCircle, text: 'Rejected' }
+    };
+    
+    const config = statusConfig[status];
+    const IconComponent = config.icon;
+    
+    return (
+      <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${config.color}`}>
+        <IconComponent size={12} />
+        {config.text}
+      </span>
+    );
+  };
+
+  const canPublish = event.approvalStatus === 'approved';
+
   return (
     <div className={`rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
       {/* Event Image */}
-      <div className={`h-48 relative flex items-center justify-center ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}>
+      <div className={`h-48 relative flex items-center justify-center bg-white`}>
         {event.image ? (
           <img
             src={event.image}
@@ -149,19 +190,25 @@ const EventCard = ({ event, onDelete, onEdit, isDark }) => {
         ) : (
           <Calendar className="h-12 w-12 text-gray-400" />
         )}
-        <div className="absolute top-2 right-2">
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${event.isPublished
-              ? 'bg-green-100 text-green-800'
-              : 'bg-yellow-100 text-yellow-800'
-            }`}>
-            {event.isPublished ? 'Published' : 'Draft'}
-          </span>
+        <div className="absolute top-2 right-2 flex flex-col gap-1">
+          {getApprovalStatusBadge()}
+          {event.isPublished && (
+            <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              Published
+            </span>
+          )}
         </div>
       </div>
 
       {/* Event Details */}
       <div className="p-4">
         <h3 className={`font-semibold text-lg mb-2 line-clamp-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>{event.title}</h3>
+
+        {event.approvalStatus === 'rejected' && event.rejectionReason && (
+          <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded text-sm text-red-700">
+            <strong>Rejection Reason:</strong> {event.rejectionReason}
+          </div>
+        )}
 
         <div className={`space-y-2 text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
           <div className="flex items-center gap-2">
@@ -186,6 +233,17 @@ const EventCard = ({ event, onDelete, onEdit, isDark }) => {
           </span>
 
           <div className="flex gap-2">
+            {canPublish && (
+              <button
+                onClick={() => onPublishToggle(event._id, event.isPublished)}
+                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${event.isPublished 
+                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
+              >
+                {event.isPublished ? 'Unpublish' : 'Publish'}
+              </button>
+            )}
             <button
               onClick={onEdit}
               className={`p-2 rounded ${isDark ? 'text-gray-400 hover:text-indigo-400 hover:bg-gray-700' : 'text-gray-600 hover:text-indigo-600 hover:bg-indigo-50'}`}

@@ -15,7 +15,9 @@ const {
   changeAdminPassword,
   getPlatformSettings,
   updatePlatformSettings,
-  getAllBookings
+  getAllBookings,
+  approveEvent,
+  rejectEvent
 } = require('../controllers/adminController');
 
 // Admin Authentication Routes
@@ -32,6 +34,8 @@ router.put('/admin/organizers/:id/block', adminAuth, toggleOrganizerBlock);
 
 // Event Management Routes
 router.get('/admin/events', adminAuth, getAllEvents);
+router.put('/admin/events/:id/approve', adminAuth, approveEvent);
+router.put('/admin/events/:id/reject', adminAuth, rejectEvent);
 
 // Booking Management Routes
 router.get('/admin/bookings', adminAuth, getAllBookings);

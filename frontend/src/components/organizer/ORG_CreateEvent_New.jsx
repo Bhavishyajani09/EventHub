@@ -442,20 +442,6 @@ const CreateEvent = ({ isDark }) => {
           </div>
         </div>
 
-        {/* Publish Option */}
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            name="isPublished"
-            checked={formData.isPublished}
-            onChange={handleInputChange}
-            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-          />
-          <label className="ml-2 block text-sm text-gray-900">
-            Publish event immediately
-          </label>
-        </div>
-
         {/* Messages */}
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-md p-4">

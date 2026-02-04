@@ -106,6 +106,20 @@ const organizerService = {
     return response.data;
   },
 
+  publishEvent: async (eventId) => {
+    const response = await axios.put(`${API_BASE_URL}/api/events/${eventId}/publish`, {}, {
+      headers: { Authorization: `Bearer ${getAuthToken()}` }
+    });
+    return response.data;
+  },
+
+  unpublishEvent: async (eventId) => {
+    const response = await axios.put(`${API_BASE_URL}/api/events/${eventId}/unpublish`, {}, {
+      headers: { Authorization: `Bearer ${getAuthToken()}` }
+    });
+    return response.data;
+  },
+
   // Bookings
   getEventBookings: async (eventId) => {
     const response = await axios.get(`${API_BASE_URL}/api/organizer/events/${eventId}/bookings`, {

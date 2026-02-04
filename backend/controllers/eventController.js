@@ -226,18 +226,27 @@ exports.addTicketTypes = async (req, res) => {
   }
 };
 
-// Publish event
+// Publish event (only if approved)
 exports.publishEvent = async (req, res) => {
   try {
-    const event = await Event.findOneAndUpdate(
-      { _id: req.params.id, organizer: req.organizer._id },
-      { isPublished: true },
-      { new: true }
-    );
+    const event = await Event.findOne({ 
+      _id: req.params.id, 
+      organizer: req.user.id 
+    });
 
     if (!event) {
       return res.status(404).json({ success: false, message: 'Event not found' });
     }
+
+    if (event.approvalStatus !== 'approved') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Event must be approved before publishing' 
+      });
+    }
+
+    event.isPublished = true;
+    await event.save();
 
     res.json({ success: true, message: 'Event published successfully' });
   } catch (error) {
@@ -249,7 +258,7 @@ exports.publishEvent = async (req, res) => {
 exports.unpublishEvent = async (req, res) => {
   try {
     const event = await Event.findOneAndUpdate(
-      { _id: req.params.id, organizer: req.organizer._id },
+      { _id: req.params.id, organizer: req.user.id },
       { isPublished: false },
       { new: true }
     );

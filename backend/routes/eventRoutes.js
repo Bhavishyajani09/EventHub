@@ -19,4 +19,8 @@ router.put('/:id', auth, upload.single('image'), eventController.updateEvent);
 // Delete event
 router.delete('/:id', auth, eventController.deleteEvent);
 
+// Publish/Unpublish event
+router.put('/:id/publish', auth, eventController.publishEvent);
+router.put('/:id/unpublish', auth, eventController.unpublishEvent);
+
 module.exports = router;

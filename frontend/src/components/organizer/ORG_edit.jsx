@@ -149,31 +149,6 @@ const ORG_edit = ({ isDark }) => {
             <p className="text-gray-500">Update your event details</p>
           </div>
         </div>
-        
-        {/* Publish/Unpublish Button */}
-        <button
-          type="button"
-          onClick={async () => {
-            try {
-              const updateData = new FormData();
-              updateData.append('isPublished', !formData.isPublished);
-              
-              const response = await organizerService.updateEvent(id, updateData);
-              if (response.success) {
-                setFormData(prev => ({ ...prev, isPublished: !prev.isPublished }));
-              }
-            } catch (error) {
-              setError('Failed to update publish status');
-            }
-          }}
-          className={`px-6 py-2 rounded-lg flex items-center gap-2 ${
-            formData.isPublished 
-              ? 'bg-yellow-600 text-white hover:bg-yellow-700' 
-              : 'bg-green-600 text-white hover:bg-green-700'
-          }`}
-        >
-          {formData.isPublished ? 'Unpublish' : 'Publish'}
-        </button>
       </div>
 
       {error && (
@@ -359,22 +334,6 @@ const ORG_edit = ({ isDark }) => {
               step="0.01"
               className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
             />
-          </div>
-
-          {/* Publish Status */}
-          <div className="mt-6">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                name="isPublished"
-                checked={formData.isPublished}
-                onChange={handleInputChange}
-                className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              />
-              <span className="ml-2 text-sm text-gray-700">
-                Publish this event (make it visible to users)
-              </span>
-            </label>
           </div>
         </div>
 
