@@ -16,7 +16,6 @@ import {
 
 const AdminLayout = ({ children, user, onLogout }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isDark, setIsDark] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -30,16 +29,14 @@ const AdminLayout = ({ children, user, onLogout }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       <SharedNavbar
-        isDark={isDark}
-        setIsDark={setIsDark}
         user={user}
         hideNavigation={true}
         pageTitle="Admin Panel"
-        hideThemeToggle={true}
         hideProfileOption={true}
         enableDropdown={true}
+        hideThemeToggle={true}
         onNavigate={(path) => {
           if (path === 'home') navigate('/dashboard');
           if (path === 'settings') navigate('/settings');
@@ -51,7 +48,7 @@ const AdminLayout = ({ children, user, onLogout }) => {
       <div className="flex" style={{ minHeight: 'calc(100vh - 70px)' }}>
         {/* Mobile Menu Button */}
         <button
-          className="lg:hidden fixed top-24 left-4 z-50 p-2 bg-blue-600 text-white rounded-md shadow-lg"
+          className="lg:hidden fixed top-24 left-4 z-50 p-2 rounded-md shadow-lg bg-blue-600 text-white"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -67,8 +64,9 @@ const AdminLayout = ({ children, user, onLogout }) => {
 
         {/* Sidebar */}
         <div className={`
-          bg-white shadow-lg transition-all duration-300 z-40 fixed left-0 top-16
+          shadow-lg transition-all duration-300 z-40 fixed left-0 top-16
           ${mobileMenuOpen ? 'block' : 'lg:block hidden'}
+          bg-white
           w-64
         `} style={{ height: 'calc(100vh - 64px)' }}>
           {/* Navigation */}
@@ -81,9 +79,9 @@ const AdminLayout = ({ children, user, onLogout }) => {
                   key={item.id}
                   to={item.path}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`w-full flex items-center px-8 py-4 text-left hover:bg-blue-50 transition-all duration-200 group ${isActive
-                    ? 'bg-blue-50 text-blue-600 border-r-3 border-blue-600 font-medium'
-                    : 'text-gray-700 hover:text-blue-600'
+                  className={`w-full flex items-center px-8 py-4 text-left transition-all duration-200 group ${isActive
+                    ? 'border-r-3 font-medium bg-blue-50 text-blue-600 border-blue-600'
+                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                     }`}
                 >
                   <Icon size={22} className={`${isActive ? 'text-blue-600' : 'text-gray-500 group-hover:text-blue-600'} transition-colors duration-200`} />

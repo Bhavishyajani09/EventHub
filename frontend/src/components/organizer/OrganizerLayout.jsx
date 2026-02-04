@@ -4,20 +4,17 @@ import Sidebar from './ORG_Sidebar';
 import SharedNavbar from '../../SharedNavbar';
 
 const OrganizerLayout = ({ children, user, onLogout }) => {
-  const [isDark, setIsDark] = useState(false);
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       <SharedNavbar
-        isDark={isDark}
-        setIsDark={setIsDark}
         user={user}
         hideNavigation={true}
         pageTitle="Organizer Panel"
-        hideThemeToggle={true}
         hideProfileOption={true}
         enableDropdown={true}
+        hideThemeToggle={true}
         onNavigate={(path) => {
           if (path === 'home') navigate('/dashboard');
           if (path === 'settings') navigate('/settings');

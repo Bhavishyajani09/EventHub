@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const Organizers = () => {
+const Organizers = ({ isDark }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
   const [organizers, setOrganizers] = useState([]);
@@ -70,14 +70,14 @@ const Organizers = () => {
             placeholder="Search organizers..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className={`pl-10 pr-4 py-2 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isDark ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900'}`}
           />
         </div>
         <div className="relative w-full sm:w-auto">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="appearance-none px-4 py-2 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white w-full sm:w-auto"
+            className={`appearance-none px-4 py-2 pr-8 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
           >
             <option value="All Status">All Status</option>
             <option value="Pending">Pending</option>
@@ -91,35 +91,35 @@ const Organizers = () => {
       </div>
 
       {/* Organizers Table */}
-      <div className="bg-white rounded-lg shadow-sm border">
+      <div className={`rounded-lg shadow-sm border transition-colors duration-200 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[700px]">
-            <thead className="bg-gray-50 border-b">
+            <thead className={`border-b ${isDark ? 'bg-gray-700/50 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
               <tr>
-                <th className="px-3 sm:px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">ORGANIZER</th>
-                <th className="px-3 sm:px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">EMAIL</th>
-                <th className="px-3 sm:px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">ORGANIZATION</th>
-                <th className="px-3 sm:px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">STATUS</th>
-                <th className="px-3 sm:px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">REQUEST DATE</th>
-                <th className="px-3 sm:px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">ACTIONS</th>
+                <th className={`px-3 sm:px-6 py-4 text-left text-sm font-medium uppercase tracking-wider ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>ORGANIZER</th>
+                <th className={`px-3 sm:px-6 py-4 text-left text-sm font-medium uppercase tracking-wider hidden sm:table-cell ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>EMAIL</th>
+                <th className={`px-3 sm:px-6 py-4 text-left text-sm font-medium uppercase tracking-wider hidden lg:table-cell ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>ORGANIZATION</th>
+                <th className={`px-3 sm:px-6 py-4 text-left text-sm font-medium uppercase tracking-wider ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>STATUS</th>
+                <th className={`px-3 sm:px-6 py-4 text-left text-sm font-medium uppercase tracking-wider hidden md:table-cell ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>REQUEST DATE</th>
+                <th className={`px-3 sm:px-6 py-4 text-left text-sm font-medium uppercase tracking-wider ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>ACTIONS</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className={`divide-y ${isDark ? 'divide-gray-700' : 'divide-gray-200'}`}>
               {organizers.map((organizer) => (
-                <tr key={organizer.id} className="hover:bg-gray-50">
+                <tr key={organizer.id} className={`transition-colors ${isDark ? 'hover:bg-gray-700/50' : 'hover:bg-gray-50'}`}>
                   <td className="px-3 sm:px-6 py-4">
                     <div className="flex items-center">
                       <div className={`w-10 h-10 ${organizer.bgColor} rounded-full flex items-center justify-center text-white font-medium text-sm`}>
                         {organizer.initials}
                       </div>
                       <div className="ml-3">
-                        <div className="text-sm font-medium text-gray-900">{organizer.name}</div>
-                        <div className="text-sm text-gray-500 sm:hidden">{organizer.email}</div>
+                        <div className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{organizer.name}</div>
+                        <div className={`text-sm sm:hidden ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{organizer.email}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-3 sm:px-6 py-4 text-sm text-gray-900 hidden sm:table-cell">{organizer.email}</td>
-                  <td className="px-3 sm:px-6 py-4 text-sm text-gray-900 hidden lg:table-cell">{organizer.organization}</td>
+                  <td className={`px-3 sm:px-6 py-4 text-sm hidden sm:table-cell ${isDark ? 'text-gray-300' : 'text-gray-900'}`}>{organizer.email}</td>
+                  <td className={`px-3 sm:px-6 py-4 text-sm hidden lg:table-cell ${isDark ? 'text-gray-300' : 'text-gray-900'}`}>{organizer.organization}</td>
                   <td className="px-3 sm:px-6 py-4">
                     <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${organizer.status === 'approved'
                       ? 'bg-green-100 text-green-800'
@@ -130,7 +130,7 @@ const Organizers = () => {
                       {organizer.status}
                     </span>
                   </td>
-                  <td className="px-3 sm:px-6 py-4 text-sm text-gray-500 hidden md:table-cell">{organizer.requestDate}</td>
+                  <td className={`px-3 sm:px-6 py-4 text-sm hidden md:table-cell ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{organizer.requestDate}</td>
                   <td className="px-3 sm:px-6 py-4">
                     <div className="flex items-center space-x-2">
                       <button

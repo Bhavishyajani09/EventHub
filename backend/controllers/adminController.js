@@ -11,6 +11,18 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
+// Calculate monthly growth percentage
+const calculateGrowth = async (Model) => {
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const currentCount = await Model.countDocuments();
+  const previousCount = await Model.countDocuments({ createdAt: { $lt: thirtyDaysAgo } });
+
+  if (previousCount === 0) return currentCount > 0 ? 100 : 0;
+  return Math.round(((currentCount - previousCount) / previousCount) * 100);
+};
+
 // Admin login
 const adminLogin = async (req, res) => {
   try {
@@ -146,6 +158,24 @@ const getAllEvents = async (req, res) => {
   }
 };
 
+// View all bookings
+const getAllBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find({})
+      .populate('user', 'name email')
+      .populate('event', 'title date')
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      count: bookings.length,
+      bookings
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Admin dashboard stats
 const getDashboardStats = async (req, res) => {
   try {
@@ -156,7 +186,12 @@ const getDashboardStats = async (req, res) => {
       totalBookings,
       pendingOrganizers,
       blockedUsers,
-      recentEvents
+      recentEvents,
+      categoryStats,
+      usersGrowth,
+      organizersGrowth,
+      eventsGrowth,
+      bookingsGrowth
     ] = await Promise.all([
       User.countDocuments(),
       Organizer.countDocuments(),
@@ -164,7 +199,20 @@ const getDashboardStats = async (req, res) => {
       Booking.countDocuments(),
       Organizer.countDocuments({ isApproved: false }),
       User.countDocuments({ isBlocked: true }),
-      Event.find({}).populate('organizer', 'name email').sort({ createdAt: -1 }).limit(5)
+      Event.find({}).populate('organizer', 'name email').sort({ createdAt: -1 }).limit(5),
+      Event.aggregate([
+        {
+          $group: {
+            _id: '$category',
+            count: { $sum: 1 }
+          }
+        },
+        { $sort: { count: -1 } }
+      ]),
+      calculateGrowth(User),
+      calculateGrowth(Organizer),
+      calculateGrowth(Event),
+      calculateGrowth(Booking)
     ]);
 
     res.json({
@@ -175,9 +223,14 @@ const getDashboardStats = async (req, res) => {
         totalEvents,
         totalBookings,
         pendingOrganizers,
-        blockedUsers
+        blockedUsers,
+        usersGrowth,
+        organizersGrowth,
+        eventsGrowth,
+        bookingsGrowth
       },
-      recentEvents
+      recentEvents,
+      categoryStats
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -313,5 +366,6 @@ module.exports = {
   updateAdminProfile,
   changeAdminPassword,
   getPlatformSettings,
-  updatePlatformSettings
+  updatePlatformSettings,
+  getAllBookings
 };

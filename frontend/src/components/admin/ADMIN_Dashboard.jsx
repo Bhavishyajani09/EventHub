@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Users, UserCheck, Calendar, BookOpen, TrendingUp } from 'lucide-react';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
+const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#0088FE', '#00C49F', '#FFBB28'];
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [statsData, setStatsData] = useState({
     totalUsers: 0,
     totalOrganizers: 0,
     totalEvents: 0,
-    totalBookings: 0
+    totalBookings: 0,
+    categoryStats: [],
+    usersGrowth: 0,
+    organizersGrowth: 0,
+    eventsGrowth: 0,
+    bookingsGrowth: 0
   });
   const [recentEvents, setRecentEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,7 +30,10 @@ const Dashboard = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (response.data.success) {
-          setStatsData(response.data.stats);
+          setStatsData({
+            ...response.data.stats,
+            categoryStats: response.data.categoryStats || []
+          });
           setRecentEvents(response.data.recentEvents);
         }
       } catch (error) {
@@ -37,34 +50,38 @@ const Dashboard = () => {
     {
       title: 'Total Users',
       value: statsData.totalUsers,
-      change: '+12.5%', // Mock change for now
+      change: `+${statsData.usersGrowth}%`,
       icon: Users,
       color: 'bg-blue-500',
-      bgColor: 'bg-blue-50'
+      bgColor: 'bg-blue-50',
+      path: '/users'
     },
     {
       title: 'Total Organizers',
       value: statsData.totalOrganizers,
-      change: '+8.2%', // Mock change for now
+      change: `+${statsData.organizersGrowth}%`,
       icon: UserCheck,
       color: 'bg-purple-500',
-      bgColor: 'bg-purple-50'
+      bgColor: 'bg-purple-50',
+      path: '/organizers'
     },
     {
       title: 'Total Events',
       value: statsData.totalEvents,
-      change: '+23.1%', // Mock change for now
+      change: `+${statsData.eventsGrowth}%`,
       icon: Calendar,
       color: 'bg-green-500',
-      bgColor: 'bg-green-50'
+      bgColor: 'bg-green-50',
+      path: '/events'
     },
     {
       title: 'Total Bookings',
       value: statsData.totalBookings,
-      change: '+15.3%', // Mock change for now
+      change: `+${statsData.bookingsGrowth}%`,
       icon: BookOpen,
       color: 'bg-orange-500',
-      bgColor: 'bg-orange-50'
+      bgColor: 'bg-orange-50',
+      path: '/bookings'
     }
   ];
 
@@ -83,11 +100,15 @@ const Dashboard = () => {
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div key={index} className="bg-white rounded-lg shadow-sm p-6 border">
+            <div
+              key={index}
+              className="rounded-lg shadow-sm p-6 border cursor-pointer hover:shadow-md transition-shadow transition-colors duration-200 bg-white border-gray-200"
+              onClick={() => navigate(stat.path)}
+            >
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{stat.value}</p>
+                  <p className="text-3xl font-bold mt-2 text-gray-900">{stat.value}</p>
                   <div className="flex items-center mt-2">
                     <TrendingUp size={16} className="text-green-500 mr-1" />
                     <span className="text-sm text-green-600 font-medium">{stat.change}</span>
@@ -104,48 +125,65 @@ const Dashboard = () => {
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Events by Category - Keeping as mock for now or removing if cleaner
-            Let's keep it but maybe it's less relevant without real data.
-            I'll keep it as a placeholder for future implementation.
-         */}
-        <div className="bg-white rounded-lg shadow-sm p-6 border">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Events by Category</h3>
-          <div className="space-y-4">
-            {[
-              { category: 'Technology', count: 425, color: 'bg-purple-500' },
-              { category: 'Music', count: 280, color: 'bg-blue-500' },
-              { category: 'Business', count: 245, color: 'bg-green-500' },
-              { category: 'Art & Culture', count: 180, color: 'bg-orange-500' },
-              { category: 'Sports', count: 154, color: 'bg-red-500' }
-            ].map((item, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className={`w-3 h-3 ${item.color} rounded-full mr-3`}></div>
-                  <span className="text-sm text-gray-700">{item.category}</span>
-                </div>
-                <span className="text-sm font-medium text-gray-900">{item.count}</span>
-              </div>
-            ))}
-          </div>
+        {/* Events by Category */}
+        <div className="rounded-lg shadow-sm p-6 border transition-colors duration-200 bg-white border-gray-200">
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">Events by Category</h3>
+          {statsData.categoryStats && statsData.categoryStats.length > 0 ? (
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={statsData.categoryStats}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="count"
+                    nameKey="_id"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {statsData.categoryStats.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#ffffff',
+                      borderColor: '#e5e7eb',
+                      borderRadius: '0.5rem',
+                      color: '#1f2937'
+                    }}
+                    itemStyle={{ color: '#1f2937' }}
+                  />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+              <p>No events found</p>
+            </div>
+          )}
         </div>
 
-        {/* Recent Events (Replacing Platform Revenue) */}
-        <div className="bg-white rounded-lg shadow-sm border">
-          <div className="p-6 border-b">
+        {/* Recent Events */}
+        <div className="rounded-lg shadow-sm border transition-colors duration-200 bg-white border-gray-200">
+          <div className="p-6 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-800">Recent Events</h3>
           </div>
           <div className="p-6">
             <div className="space-y-4">
               {recentEvents.length > 0 ? (
                 recentEvents.map((event, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-gray-50">
                     <div>
                       <h4 className="font-medium text-gray-900">{event.title}</h4>
                       <p className="text-sm text-gray-600">by {event.organizer?.name || 'Unknown'}</p>
                     </div>
                     <div className="text-right">
                       <p className="font-semibold text-green-600">{new Date(event.date).toLocaleDateString()}</p>
-                      <p className="text-sm text-gray-600">{event.location}</p>
+                      <p className={`text-sm text-gray-600`}>{event.location}</p>
                     </div>
                   </div>
                 ))
@@ -159,5 +197,4 @@ const Dashboard = () => {
     </div>
   );
 };
-
 export default Dashboard;
