@@ -58,11 +58,13 @@ const MyEvents = ({ isDark }) => {
   };
 
   const filteredEvents = events.filter(event => {
+    const isExpired = new Date(event.date) < new Date();
     if (filter === 'all') return true;
-    if (filter === 'published') return event.isPublished;
-    if (filter === 'draft') return !event.isPublished;
-    if (filter === 'pending') return event.approvalStatus === 'pending';
-    if (filter === 'approved') return event.approvalStatus === 'approved';
+    if (filter === 'published') return event.isPublished && !isExpired;
+    if (filter === 'draft') return !event.isPublished && !isExpired;
+    if (filter === 'expired') return isExpired;
+    if (filter === 'pending') return event.approvalStatus === 'pending' && !isExpired;
+    if (filter === 'approved') return event.approvalStatus === 'approved' && !isExpired;
     if (filter === 'rejected') return event.approvalStatus === 'rejected';
     return true;
   });
@@ -100,14 +102,15 @@ const MyEvents = ({ isDark }) => {
           { key: 'approved', label: 'Approved' },
           { key: 'rejected', label: 'Rejected' },
           { key: 'published', label: 'Published' },
-          { key: 'draft', label: 'Draft' }
+          { key: 'draft', label: 'Draft' },
+          { key: 'expired', label: 'Expired' }
         ].map(tab => (
           <button
             key={tab.key}
             onClick={() => setFilter(tab.key)}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${filter === tab.key
-                ? `shadow-sm ${isDark ? 'bg-gray-700 text-white' : 'bg-white text-indigo-600'}`
-                : `${isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-900'}`
+              ? `shadow-sm ${isDark ? 'bg-gray-700 text-white' : 'bg-white text-indigo-600'}`
+              : `${isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-900'}`
               }`}
           >
             {tab.label}
@@ -162,10 +165,10 @@ const EventCard = ({ event, onDelete, onEdit, onPublishToggle, isDark }) => {
       approved: { color: 'bg-green-100 text-green-800', icon: CheckCircle, text: 'Approved' },
       rejected: { color: 'bg-red-100 text-red-800', icon: XCircle, text: 'Rejected' }
     };
-    
+
     const config = statusConfig[status];
     const IconComponent = config.icon;
-    
+
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${config.color}`}>
         <IconComponent size={12} />
@@ -174,10 +177,18 @@ const EventCard = ({ event, onDelete, onEdit, onPublishToggle, isDark }) => {
     );
   };
 
-  const canPublish = event.approvalStatus === 'approved';
+  const isExpired = new Date(event.date) < new Date();
+  const canPublish = event.approvalStatus === 'approved' && !isExpired;
 
   return (
-    <div className={`rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+    <div className={`rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow relative ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+      {isExpired && (
+        <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center backdrop-blur-[2px]">
+          <span className="bg-red-600 text-white px-4 py-2 rounded-full font-bold transform -rotate-12 border-2 border-white shadow-lg">
+            EXPIRED
+          </span>
+        </div>
+      )}
       {/* Event Image */}
       <div className={`h-48 relative flex items-center justify-center bg-white`}>
         {event.image ? (
@@ -236,10 +247,10 @@ const EventCard = ({ event, onDelete, onEdit, onPublishToggle, isDark }) => {
             {canPublish && (
               <button
                 onClick={() => onPublishToggle(event._id, event.isPublished)}
-                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${event.isPublished 
+                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${event.isPublished
                   ? 'bg-blue-600 text-white hover:bg-blue-700'
                   : 'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
+                  }`}
               >
                 {event.isPublished ? 'Unpublish' : 'Publish'}
               </button>

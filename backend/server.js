@@ -7,6 +7,7 @@ const connectDB = require('./config/database');
 const organizerRoutes = require('./routes/organizerRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const startExpiryTask = require('./utils/expiryTask');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -51,4 +52,6 @@ app.get('/', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  // Start background task to unpublish expired events
+  startExpiryTask();
 });

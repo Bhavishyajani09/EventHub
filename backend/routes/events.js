@@ -13,18 +13,18 @@ router.get('/organizer', auth, async (req, res) => {
     console.log('Getting events for organizer:', req.user.id);
     const events = await Event.find({ organizer: req.user.id })
       .sort({ createdAt: -1 });
-    
+
     console.log('Found events:', events.length);
-    
+
     res.json({
       success: true,
       events
     });
   } catch (error) {
     console.error('Get organizer events error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Failed to fetch events' 
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch events'
     });
   }
 });
@@ -34,9 +34,10 @@ router.get('/organizer', auth, async (req, res) => {
 // @access  Public
 router.get('/', async (req, res) => {
   try {
-    const events = await Event.find({ 
+    const events = await Event.find({
       isPublished: true,
-      approvalStatus: 'approved'
+      approvalStatus: 'approved',
+      date: { $gte: new Date() }
     })
       .populate('organizer', 'name email')
       .sort({ date: 1 });
@@ -56,10 +57,11 @@ router.get('/', async (req, res) => {
 // @access  Public
 router.get('/movies', async (req, res) => {
   try {
-    const events = await Event.find({ 
+    const events = await Event.find({
       category: 'Movie',
       isPublished: true,
-      approvalStatus: 'approved'
+      approvalStatus: 'approved',
+      date: { $gte: new Date() }
     })
       .populate('organizer', 'name email')
       .sort({ date: 1 });
@@ -79,10 +81,11 @@ router.get('/movies', async (req, res) => {
 // @access  Public
 router.get('/non-movies', async (req, res) => {
   try {
-    const events = await Event.find({ 
+    const events = await Event.find({
       category: { $ne: 'Movie' },
       isPublished: true,
-      approvalStatus: 'approved'
+      approvalStatus: 'approved',
+      date: { $gte: new Date() }
     })
       .populate('organizer', 'name email')
       .sort({ date: 1 });
@@ -103,14 +106,14 @@ router.get('/non-movies', async (req, res) => {
 router.get('/city/:city', async (req, res) => {
   try {
     const { city } = req.params;
-    
+
     if (!city || city.trim() === '') {
       return res.status(400).json({ message: 'City parameter is required' });
     }
 
-    const events = await Event.find({ 
-      city: city.trim().toLowerCase(), 
-      status: 'active' 
+    const events = await Event.find({
+      city: city.trim().toLowerCase(),
+      status: 'active'
     })
       .populate('organizer', 'name email')
       .sort({ date: 1 });
@@ -132,14 +135,14 @@ router.get('/city/:city', async (req, res) => {
 router.get('/category/:category', async (req, res) => {
   try {
     const { category } = req.params;
-    
+
     if (!category || category.trim() === '') {
       return res.status(400).json({ message: 'Category parameter is required' });
     }
 
-    const events = await Event.find({ 
-      category: category.trim().toLowerCase(), 
-      status: 'active' 
+    const events = await Event.find({
+      category: category.trim().toLowerCase(),
+      status: 'active'
     })
       .populate('organizer', 'name email')
       .sort({ date: 1 });
@@ -252,8 +255,8 @@ router.get('/:eventId/reviews', async (req, res) => {
       .populate('user', 'name')
       .sort({ createdAt: -1 });
 
-    const avgRating = reviews.length > 0 
-      ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
+    const avgRating = reviews.length > 0
+      ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
       : 0;
 
     res.json({
