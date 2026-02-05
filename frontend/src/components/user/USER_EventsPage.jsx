@@ -75,11 +75,11 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
   }, [heroEvents.length]);
 
   const exploreEvents = [
-    { name: 'MUSIC', icon: Music, color: '#f59e0b' },
-    { name: 'COMEDY', icon: Laugh, color: '#ef4444' },
-    { name: 'SPORTS', icon: Zap, color: '#10b981' },
-    { name: 'ART EXHIBITIONS', icon: Palette, color: '#8b5cf6' },
-    { name: 'SEASONAL EVENTS', icon: Calendar, color: '#f97316' }
+    { name: 'MUSIC', label: 'MUSIC', icon: Music, color: '#f59e0b' },
+    { name: 'COMEDY', label: 'COMEDY', icon: Laugh, color: '#ef4444' },
+    { name: 'SPORTS', label: 'SPORTS', icon: Zap, color: '#10b981' },
+    { name: 'ART', label: 'ART EXHIBITIONS', icon: Palette, color: '#8b5cf6' },
+    { name: 'SEASONAL EVENT', label: 'SEASONAL EVENTS', icon: Calendar, color: '#f97316' }
   ];
 
   const allEvents = events.map(event => ({
@@ -128,7 +128,19 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
 
   const filterEvents = (category) => {
     setSelectedCategory(category);
-    // Logic moved to effect above
+
+    // Smooth scroll to all events section
+    const element = document.getElementById('all-events-section');
+    if (element) {
+      const offset = 100; // Offset for navbar
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
   };
 
   return (
@@ -355,22 +367,38 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           marginBottom: '40px'
         }}>
           {exploreEvents.map((event, index) => (
-            <div key={index} style={{
-              backgroundColor: isDark ? '#1f2937' : 'white',
-              borderRadius: '12px',
-              padding: '20px',
-              textAlign: 'center',
-              cursor: 'pointer',
-              transition: 'transform 0.2s',
-              boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
-              height: '100px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            <div
+              key={index}
+              onClick={() => filterEvents(event.name)}
+              style={{
+                backgroundColor: isDark ? '#1f2937' : 'white',
+                borderRadius: '12px',
+                padding: '20px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                boxShadow: selectedCategory === event.name
+                  ? (isDark ? '0 0 15px rgba(139, 92, 246, 0.5)' : '0 0 15px rgba(139, 92, 246, 0.3)')
+                  : (isDark ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)'),
+                height: '100px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                border: selectedCategory === event.name ? '2px solid #8b5cf6' : '2px solid transparent'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                if (selectedCategory !== event.name) {
+                  e.currentTarget.style.boxShadow = isDark ? '0 4px 12px rgba(0, 0, 0, 0.4)' : '0 4px 12px rgba(0, 0, 0, 0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                if (selectedCategory !== event.name) {
+                  e.currentTarget.style.boxShadow = isDark ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)';
+                }
+              }}
             >
               <div style={{
                 fontSize: '32px',
@@ -384,9 +412,9 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
               <h4 style={{
                 fontSize: '12px',
                 fontWeight: '600',
-                color: isDark ? '#f9fafb' : '#111827',
+                color: selectedCategory === event.name ? '#8b5cf6' : (isDark ? '#f9fafb' : '#111827'),
                 margin: 0
-              }}>{event.name}</h4>
+              }}>{event.label}</h4>
             </div>
           ))}
         </div>
@@ -443,12 +471,14 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
         </div>
 
         {/* All Events */}
-        <h2 style={{
-          fontSize: '24px',
-          fontWeight: 'bold',
-          color: isDark ? '#f9fafb' : '#111827',
-          marginBottom: '20px'
-        }}>All Events</h2>
+        <h2
+          id="all-events-section"
+          style={{
+            fontSize: '24px',
+            fontWeight: 'bold',
+            color: isDark ? '#f9fafb' : '#111827',
+            marginBottom: '20px'
+          }}>All Events</h2>
 
         {/* Filter Buttons */}
         <div style={{
@@ -483,10 +513,11 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                 border: 'none',
                 borderRadius: '20px',
                 fontSize: '14px',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                transition: 'all 0.2s'
               }}
             >
-              {event.name}
+              {event.label}
             </button>
           ))}
         </div>
