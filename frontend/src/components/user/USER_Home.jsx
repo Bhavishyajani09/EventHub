@@ -197,85 +197,87 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
 
               <div style={{
                 display: 'flex',
-                maxWidth: '650px',
+                maxWidth: '700px',
                 margin: '0 auto',
                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                borderRadius: '16px',
-                padding: '6px',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
-                gap: '6px',
-                flexWrap: 'wrap',
+                borderRadius: '100px',
+                padding: '8px',
+                boxShadow: '0 20px 50px rgba(0, 0, 0, 0.15)',
+                gap: '8px',
+                alignItems: 'center',
                 backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.2)'
-              }}>
+                border: '1px solid rgba(255, 255, 255, 0.4)',
+                transform: 'translateZ(0)', // Force GPU acceleration
+                transition: 'all 0.3s ease'
+              }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 25px 60px rgba(0, 0, 0, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 20px 50px rgba(0, 0, 0, 0.15)';
+                }}
+              >
                 <div style={{
+                  paddingLeft: '24px',
                   display: 'flex',
                   alignItems: 'center',
-                  flex: 1,
-                  minWidth: '300px',
-                  gap: '8px',
-                  padding: '14px 12px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                  borderRadius: '12px'
+                  color: '#6366f1'
                 }}>
-                  <svg style={{ width: '20px', height: '20px', color: '#9ca3af' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  <input
-                    type="text"
-                    placeholder="Search here"
-                    value={heroSearch}
-                    onChange={(e) => setHeroSearch(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && onSearch) {
-                        onSearch(heroSearch);
-                      }
-                    }}
-                    style={{
-                      border: 'none',
-                      outline: 'none',
-                      fontSize: '16px',
-                      flex: 1,
-                      color: '#374151',
-                      backgroundColor: 'transparent'
-                    }}
-                  />
+                  <Search size={22} />
                 </div>
+
+                <input
+                  type="text"
+                  placeholder="Search for movies, events, or artists..."
+                  value={heroSearch}
+                  onChange={(e) => setHeroSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && onSearch) {
+                      onSearch(heroSearch);
+                    }
+                  }}
+                  style={{
+                    flex: 1,
+                    border: 'none',
+                    outline: 'none',
+                    fontSize: '18px',
+                    color: '#1f2937',
+                    backgroundColor: 'transparent',
+                    padding: '16px 12px',
+                    width: '100%'
+                  }}
+                />
+
                 <button style={{
-                  background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+                  background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%)',
                   backgroundSize: '200% 200%',
                   animation: 'gradientMove 3s ease infinite',
                   color: 'white',
                   border: 'none',
-                  borderRadius: '12px',
-                  padding: '14px 24px',
+                  borderRadius: '50px',
+                  padding: '16px 36px',
                   fontSize: '16px',
                   fontWeight: '600',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   whiteSpace: 'nowrap',
-                  boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)'
+                  boxShadow: '0 4px 15px rgba(99, 102, 241, 0.4)'
                 }}
                   onClick={() => {
                     if (onSearch) onSearch(heroSearch);
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.transform = 'translateY(-2px)';
-                    e.target.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.6)';
+                    e.target.style.transform = 'scale(1.05)';
+                    e.target.style.boxShadow = '0 8px 25px rgba(99, 102, 241, 0.5)';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.transform = 'translateY(0)';
-                    e.target.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
+                    e.target.style.transform = 'scale(1)';
+                    e.target.style.boxShadow = '0 4px 15px rgba(99, 102, 241, 0.4)';
                   }}
                 >
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}>
-                    <Search size={18} />
-                    Explore Events
-                  </div>
+                  Explore
                 </button>
               </div>
             </div>
@@ -665,6 +667,10 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
           box-sizing: border-box;
           margin: 0;
           padding: 0;
+        }
+        input:focus {
+          outline: none !important;
+          box-shadow: none !important;
         }
         body {
           margin: 0;
