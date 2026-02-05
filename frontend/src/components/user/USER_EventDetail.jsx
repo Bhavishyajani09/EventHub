@@ -20,7 +20,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
           color: isDark ? '#f9fafb' : '#111827'
         }}>
           <h2>Event not found</h2>
-          <button 
+          <button
             onClick={() => onNavigate('events')}
             style={{
               padding: '12px 24px',
@@ -39,6 +39,34 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
     );
   }
 
+  const getDisplayDate = () => {
+    if (event.fullDate) return event.fullDate;
+    if (event.date) {
+      return new Date(event.date).toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+    return 'Date TBA';
+  };
+
+  const getDisplayTime = () => {
+    if (event.time) return event.time;
+    if (event.date) {
+      return new Date(event.date).toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+    return 'Time TBA';
+  };
+
+  const displayVenue = event.venue || event.location || 'Venue TBA';
+  const displayDate = getDisplayDate();
+  const displayTime = getDisplayTime();
+
   return (
     <div style={{
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
@@ -51,7 +79,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
       position: 'relative'
     }}>
       {/* Navbar */}
-      <SharedNavbar 
+      <SharedNavbar
         isDark={isDark}
         setIsDark={setIsDark}
         user={user}
@@ -72,7 +100,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
         overflowX: 'hidden'
       }}>
         {/* Back Button */}
-        <button 
+        <button
           onClick={onBack}
           style={{
             background: '#f3f4f6',
@@ -127,13 +155,13 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
                 <Music size={16} /> {event.category}
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <MapPin size={16} /> {event.venue}
+                <MapPin size={16} /> {displayVenue}
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Calendar size={16} /> {event.fullDate}
+                <Calendar size={16} /> {displayDate}
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Clock size={16} /> {event.time}
+                <Clock size={16} /> {displayTime}
               </span>
             </div>
 
@@ -209,7 +237,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
                   <span style={{
                     color: isDark ? '#d1d5db' : '#4b5563',
                     fontSize: '14px'
-                  }}>{event.fullDate}, {event.time}</span>
+                  }}>{displayDate}, {displayTime}</span>
                 </div>
 
                 <div style={{
@@ -222,7 +250,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
                   <span style={{
                     color: isDark ? '#d1d5db' : '#4b5563',
                     fontSize: '14px'
-                  }}>{event.venue}</span>
+                  }}>{displayVenue}</span>
                 </div>
               </div>
 
@@ -241,37 +269,37 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
                   fontWeight: 'bold',
                   color: event.price === 'FREE' ? '#10b981' : (isDark ? '#f9fafb' : '#111827')
                 }}>
-                  {event.seatTypes && event.seatTypes.length > 0 
-                    ? `₹${Math.min(...event.seatTypes.map(seat => seat.price))}` 
+                  {event.seatTypes && event.seatTypes.length > 0
+                    ? `₹${Math.min(...event.seatTypes.map(seat => seat.price))}`
                     : (event.price === 0 ? 'FREE' : `₹${event.price}`)}
                 </span>
               </div>
 
-              <button 
+              <button
                 onClick={() => onBookTickets && onBookTickets(event)}
                 style={{
-                width: '100%',
-                padding: '12px',
-                background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
-                backgroundSize: '200% 200%',
-                animation: 'gradientMove 3s ease infinite',
-                color: 'white',
-                boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '8px',
-                fontSize: '16px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
-              }}
+                  width: '100%',
+                  padding: '12px',
+                  background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+                  backgroundSize: '200% 200%',
+                  animation: 'gradientMove 3s ease infinite',
+                  color: 'white',
+                  boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                }}
               >
                 BOOK TICKETS
               </button>
@@ -293,7 +321,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
             color: isDark ? '#f9fafb' : '#111827',
             marginBottom: '20px'
           }}>Event Information</h3>
-          
+
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -318,7 +346,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
                 }}>{event.category}</p>
               </div>
             </div>
-            
+
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -375,7 +403,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
             color: isDark ? '#f9fafb' : '#111827',
             marginBottom: '16px'
           }}>Venue</h3>
-          
+
           <div style={{
             display: 'flex',
             alignItems: 'flex-start',
@@ -388,14 +416,14 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
                 fontWeight: '600',
                 color: isDark ? '#f9fafb' : '#111827',
                 marginBottom: '8px'
-              }}>{event.venue}</h4>
+              }}>{displayVenue}</h4>
               <p style={{
                 fontSize: '14px',
                 color: isDark ? '#9ca3af' : '#6b7280',
                 lineHeight: '1.5',
                 marginBottom: '12px'
               }}>
-                {event.venue}, Indore, Madhya Pradesh 452001<br/>
+                {displayVenue}, Indore, Madhya Pradesh 452001<br />
                 A premier venue for live events and entertainment with state-of-the-art facilities and excellent acoustics.
               </p>
               <div style={{
@@ -426,7 +454,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
           marginBottom: '20px',
           boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
         }}>
-          <div 
+          <div
             onClick={() => setIsTermsOpen(!isTermsOpen)}
             style={{
               display: 'flex',
@@ -442,7 +470,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
               color: isDark ? '#f9fafb' : '#111827',
               margin: 0
             }}>Terms & Conditions</h3>
-            <ChevronDown 
+            <ChevronDown
               size={20}
               style={{
                 color: isDark ? '#9ca3af' : '#6b7280',
@@ -451,7 +479,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
               }}
             />
           </div>
-          
+
           {isTermsOpen && (
             <ul style={{
               listStyle: 'none',
