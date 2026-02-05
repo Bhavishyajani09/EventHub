@@ -165,24 +165,17 @@ const updateProfile = async (req, res) => {
     // Get organizer ID from authenticated request
     const organizerId = req.user.id;
 
-    // Debug logging
-    console.log('UpdateProfile Request Body:', req.body);
-
-    // Build update object with only provided fields
-    const updateData = {};
-    if (name) updateData.name = name;
-    if (email) updateData.email = email;
-    if (phone) updateData.phone = phone;
-    if (password) updateData.password = password; // Will be hashed by pre-save middleware
-    if (req.body.photo) {
-      console.log('Updating photo to:', req.body.photo);
-      updateData.photo = req.body.photo;
+    // Find organizer
+    const organizer = await Organizer.findById(organizerId);
+    if (!organizer) {
+      return res.status(404).json({
+        success: false,
+        message: 'Organizer not found'
+      });
     }
 
-    console.log('Final Update Data:', updateData);
-
     // Check if email is being updated and already exists
-    if (email) {
+    if (email && email !== organizer.email) {
       const existingOrganizer = await Organizer.findOne({
         email,
         _id: { $ne: organizerId } // Exclude current organizer
@@ -196,27 +189,28 @@ const updateProfile = async (req, res) => {
       }
     }
 
-    // Update organizer profile
-    const updatedOrganizer = await Organizer.findByIdAndUpdate(
-      organizerId,
-      updateData,
-      {
-        new: true, // Return updated document
-        runValidators: true // Run schema validations
-      }
-    ).select('-password'); // Exclude password from response
+    // Update fields
+    if (name) organizer.name = name;
+    if (email) organizer.email = email;
+    if (phone) organizer.phone = phone;
+    if (password) organizer.password = password; // Will be hashed by pre-save middleware
+    if (req.body.photo) {
+      organizer.photo = req.body.photo;
+    }
+
+    await organizer.save();
 
     res.json({
       success: true,
       message: 'Profile updated successfully',
       data: {
         organizer: {
-          id: updatedOrganizer._id,
-          name: updatedOrganizer.name,
-          email: updatedOrganizer.email,
-          phone: updatedOrganizer.phone,
-          role: updatedOrganizer.role,
-          photo: updatedOrganizer.photo
+          id: organizer._id,
+          name: organizer.name,
+          email: organizer.email,
+          phone: organizer.phone,
+          role: organizer.role,
+          photo: organizer.photo
         }
       }
     });

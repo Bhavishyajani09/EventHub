@@ -17,6 +17,21 @@ const authService = {
     return response.data;
   },
 
+  updateUserProfile: async (data, token) => {
+    const response = await axios.put(`${API_BASE_URL}/auth/user/profile`, data, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  changeUserPassword: async (currentPassword, newPassword, token) => {
+    const response = await axios.post(`${API_BASE_URL}/auth/user/reset-password`, 
+      { currentPassword, newPassword },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  },
+
   // Organizer authentication
   organizerLogin: async (email, password) => {
     const response = await axios.post(`${API_BASE_URL}/api/auth/organizer/login`, {
