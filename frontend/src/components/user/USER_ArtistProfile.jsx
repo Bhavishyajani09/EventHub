@@ -187,7 +187,7 @@ const ArtistProfile = ({ artist: initialArtist, isDark, setIsDark, user, onAuthO
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
             gap: '20px'
           }}>
             {loading ? (
@@ -207,41 +207,82 @@ const ArtistProfile = ({ artist: initialArtist, isDark, setIsDark, user, onAuthO
                     backgroundColor: isDark ? '#1f2937' : 'white',
                     borderRadius: '12px',
                     overflow: 'hidden',
-                    boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
                     cursor: 'pointer',
                     transition: 'transform 0.2s',
-                    position: 'relative'
+                    display: 'flex',
+                    flexDirection: 'column'
                   }}
                   onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
                   onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                 >
                   <div style={{
-                    height: '200px',
+                    height: 'clamp(200px, 30vw, 280px)',
                     backgroundImage: `url(${event.image || '/placeholder-event.jpg'})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
+                    backgroundSize: 'contain',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                    backgroundColor: '#f9fafb',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%'
                   }} />
 
-                  <div style={{ padding: '16px' }}>
+                  <div style={{
+                    padding: 'clamp(12px, 3vw, 16px)',
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}>
                     <h3 style={{
-                      fontSize: '16px',
+                      fontSize: 'clamp(14px, 3vw, 16px)',
                       fontWeight: '600',
                       color: isDark ? '#f9fafb' : '#111827',
-                      marginBottom: '8px',
-                      lineHeight: '1.3'
+                      marginBottom: '4px'
                     }}>{event.title}</h3>
 
                     <p style={{
-                      fontSize: '14px',
+                      fontSize: 'clamp(12px, 2.5vw, 14px)',
                       color: isDark ? '#9ca3af' : '#6b7280',
-                      marginBottom: '4px'
+                      marginBottom: '12px'
                     }}>{event.location}</p>
 
                     <p style={{
                       fontSize: '12px',
                       color: '#6366f1',
-                      fontWeight: '500'
+                      fontWeight: '500',
+                      marginBottom: '12px'
                     }}>{new Date(event.date).toLocaleDateString()}</p>
+
+                    <button
+                      style={{
+                        width: '100%',
+                        padding: '8px 16px',
+                        background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+                        backgroundSize: '200% 200%',
+                        animation: 'gradientMove 3s ease infinite',
+                        color: 'white',
+                        boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        marginTop: 'auto'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.transform = 'translateY(-2px)';
+                        e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = 'translateY(0)';
+                        e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                      }}
+                    >
+                      Book Tickets
+                    </button>
                   </div>
                 </div>
               ))
