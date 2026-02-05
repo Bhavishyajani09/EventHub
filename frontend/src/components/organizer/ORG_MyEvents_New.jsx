@@ -206,7 +206,7 @@ const EventCard = ({ event, onDelete, onEdit, onPublishToggle, isDark }) => {
           <img
             src={event.image}
             alt={event.title}
-            className="w-full h-full object-contain"
+            className="w-full h-full object-cover"
             style={{ objectPosition: 'center' }}
           />
         ) : (

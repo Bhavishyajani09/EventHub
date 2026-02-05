@@ -216,7 +216,7 @@ const ORG_edit = ({ isDark }) => {
                     <img
                       src={imagePreview}
                       alt="Preview"
-                      className="w-full h-48 object-contain rounded-lg bg-gray-50"
+                      className="w-full h-48 object-cover rounded-lg bg-gray-50"
                       style={{ objectPosition: 'center' }}
                     />
                     <button

@@ -3,6 +3,7 @@ import axios from 'axios';
 import eventService from '../../services/eventService';
 import toast from 'react-hot-toast';
 import { BookingCardSkeleton } from '../common/Skeleton';
+import { Calendar, MapPin, Clock, Ticket } from 'lucide-react';
 
 const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
   const [activeTab, setActiveTab] = useState('Events');
@@ -287,7 +288,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                       style={{
                         height: '100%',
                         width: '100%',
-                        objectFit: 'contain', // Ensure full image is visible
+                        objectFit: 'cover', // Ensure full image is visible
                         display: 'block'
                       }}
                     />
@@ -342,11 +343,11 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                     gap: '4px'
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span>📅</span>
+                      <Calendar size={14} style={{ color: '#8b5cf6' }} />
                       <span>{new Date(booking.event?.date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })} at {new Date(booking.event?.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span>📍</span>
+                      <MapPin size={14} style={{ color: '#8b5cf6' }} />
                       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{booking.event?.location || booking.event?.venue}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>

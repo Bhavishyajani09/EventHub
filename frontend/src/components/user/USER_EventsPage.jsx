@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Music, Laugh, Zap, Palette, Calendar, Clock } from 'lucide-react';
+import { Music, Laugh, Zap, Palette, Calendar, Clock, MapPin } from 'lucide-react';
 import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
 import eventService from '../../services/eventService';
@@ -586,7 +586,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                 <div style={{
                   height: '220px',
                   backgroundImage: `url(${event.image})`,
-                  backgroundSize: 'contain',
+                  backgroundSize: 'cover',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center',
                   backgroundColor: '#f9fafb',
@@ -631,7 +631,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                       alignItems: 'center',
                       gap: '6px'
                     }}>
-                      <span style={{ opacity: 0.7 }}>📍</span> {event.venue}
+                      <MapPin size={14} style={{ color: '#667eea', opacity: 0.8 }} /> {event.venue}
                     </p>
                   </div>
 

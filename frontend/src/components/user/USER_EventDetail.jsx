@@ -137,7 +137,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
           <div>
             <div style={{
               backgroundImage: `url(${event.image})`,
-              backgroundSize: 'contain',
+              backgroundSize: 'cover',
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
               borderRadius: '12px',
