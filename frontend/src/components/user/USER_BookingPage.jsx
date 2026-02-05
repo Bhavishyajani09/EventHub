@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
 import USER_PaymentModal from './USER_PaymentModal';
@@ -31,19 +32,30 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
       });
       return seatTypeMap;
     }
-    // Fallback to default prices if no seat types in database
+    // If no seat types in database, use the event's base price
+    if (item?.price) {
+      return {
+        standard: {
+          price: item.price,
+          color: '#8b5cf6',
+          bgColor: '#f3f4f6',
+          border: '#8b5cf6',
+          available: item.capacity // Use total capacity
+        }
+      };
+    }
+
+    // Fallback only if absolutely no data available (shouldn't happen with valid events)
     return {
-      general: { price: 180, color: '#1f2937', bgColor: '#f8fafc', border: '#e5e7eb' },
-      vip: { price: 350, color: '#92400e', bgColor: '#fef3c7', border: '#d97706' },
-      premium: { price: 500, color: '#581c87', bgColor: '#faf5ff', border: '#7c3aed' }
+      standard: { price: 200, color: '#1f2937', bgColor: '#f8fafc', border: '#e5e7eb' }
     };
   };
 
   const seatTypes = getSeatTypes();
 
   const updateQuantity = (change) => {
-    const maxQuantity = selectedSeatType && seatTypes[selectedSeatType]?.available 
-      ? Math.min(10, seatTypes[selectedSeatType].available) 
+    const maxQuantity = selectedSeatType && seatTypes[selectedSeatType]?.available
+      ? Math.min(10, seatTypes[selectedSeatType].available)
       : 10;
     setQuantity(Math.max(1, Math.min(maxQuantity, quantity + change)));
   };
@@ -66,35 +78,69 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
       alert('Please select a seat type');
       return;
     }
-    
+
     if (!user) {
       onAuthOpen();
       return;
     }
-    
+
     setShowPaymentModal(true);
   };
 
-  const handlePayment = (paymentData) => {
+  const handlePayment = async (paymentData) => {
     setIsProcessingPayment(true);
     setShowPaymentModal(false);
-    
-    // Simulate payment processing
-    setTimeout(() => {
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please login to continue');
+        onAuthOpen();
+        setIsProcessingPayment(false);
+        return;
+      }
+
+      const bookingData = {
+        eventId: item._id,
+        ticketType: selectedSeatType,
+        quantity: quantity,
+        totalAmount: getFinalAmount(),
+        paymentId: paymentData?.paymentId || 'PAY-' + Date.now()
+      };
+
+      const response = await axios.post(
+        'http://localhost:5000/api/bookings/create',
+        bookingData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (response.data.success) {
+        setIsProcessingPayment(false);
+        setShowBookingSuccess(true);
+
+        setTimeout(() => {
+          setShowBookingSuccess(false);
+          // Check if parent passed a specific navigate function or handle it
+          if (onNavigate) {
+            onNavigate('bookings');
+          }
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Booking failed:', error);
       setIsProcessingPayment(false);
-      setShowBookingSuccess(true);
-      
-      setTimeout(() => {
-        setShowBookingSuccess(false);
-        onNavigate('home');
-      }, 3000);
-    }, 2000);
+      alert(error.response?.data?.message || 'Booking failed. Please try again.');
+    }
   };
-  
+
   useEffect(() => {
     document.title = 'Review your booking - Complete your booking';
   }, []);
-  
+
   if (!item) {
     return (
       <div style={{
@@ -110,7 +156,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
           color: isDark ? '#f9fafb' : '#111827'
         }}>
           <h2>Item not found</h2>
-          <button 
+          <button
             onClick={() => onNavigate('home')}
             style={{
               padding: '12px 24px',
@@ -138,7 +184,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
       margin: 0,
       padding: 0
     }}>
-      <SharedNavbar 
+      <SharedNavbar
         isDark={isDark}
         setIsDark={setIsDark}
         user={user}
@@ -159,7 +205,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
       }}>
         {/* Back Button */}
         <div style={{ gridColumn: '1 / -1' }}>
-          <button 
+          <button
             onClick={onBack}
             style={{
               background: '#f3f4f6',
@@ -236,7 +282,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
               textAlign: 'center',
               letterSpacing: '0.025em'
             }}>Select Ticket Category</h4>
-            
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {Object.entries(seatTypes).map(([type, details]) => {
                 // Check if seats are available
@@ -273,7 +319,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
                         margin: 0
                       }}>₹{details.price} per ticket {details.available !== undefined && `(${details.available} available)`}</p>
                     </div>
-                    
+
                     <div style={{
                       width: '20px',
                       height: '20px',
@@ -298,7 +344,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
                 );
               })}
             </div>
-            
+
             {selectedSeatType && (
               <div style={{
                 marginTop: '24px',
@@ -319,7 +365,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
                     color: isDark ? '#f9fafb' : '#111827',
                     textTransform: 'capitalize'
                   }}>Quantity</span>
-                  
+
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -345,7 +391,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
                         fontWeight: '500'
                       }}
                     >−</button>
-                    
+
                     <span style={{
                       fontSize: '16px',
                       fontWeight: '600',
@@ -353,7 +399,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
                       minWidth: '24px',
                       textAlign: 'center'
                     }}>{quantity}</span>
-                    
+
                     <button
                       onClick={() => updateQuantity(1)}
                       style={{
@@ -372,7 +418,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
                     >+</button>
                   </div>
                 </div>
-                
+
                 <div style={{
                   padding: '12px 16px',
                   backgroundColor: isDark ? '#1f2937' : 'white',
@@ -423,7 +469,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
               fontSize: '14px',
               marginBottom: '8px'
             }}>Screen 4</p>
-            
+
             <div style={{
               padding: '12px',
               backgroundColor: isDark ? '#374151' : '#f3f4f6',
@@ -479,7 +525,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
                       fontWeight: '500'
                     }}>₹{getTotalAmount()}</span>
                   </div>
-                  
+
                   <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -497,13 +543,13 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
                       fontWeight: '500'
                     }}>₹{getBookingCharges()}</span>
                   </div>
-                  
+
                   <hr style={{
                     border: 'none',
                     borderTop: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
                     margin: '20px 0'
                   }} />
-                  
+
                   <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -583,7 +629,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
               </div>
             ) : null}
 
-            <button 
+            <button
               style={{
                 width: '100%',
                 padding: '16px',
@@ -614,7 +660,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
       </div>
 
       {/* Payment Modal */}
-      <USER_PaymentModal 
+      <USER_PaymentModal
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
         totalAmount={getFinalAmount()}
@@ -717,7 +763,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
 
       {/* Footer */}
       <SharedFooter isDark={isDark} onNavigate={onNavigate} />
-      
+
       {/* Gradient Animation Styles */}
       <style>{`
         @keyframes gradientMove {

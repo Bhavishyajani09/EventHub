@@ -34,13 +34,14 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
   }, []);
 
   const heroMovies = movies.length > 0 ? movies.slice(0, 4).map(movie => ({
+    ...movie, // Include all original properties like _id, capacity
     title: movie.title,
     genre: movie.category,
     rating: 'UA',
     image: movie.image || '/placeholder-movie.jpg',
-    price: movie.seatTypes && movie.seatTypes.length > 0 
-           ? Math.min(...movie.seatTypes.map(seat => seat.price))
-           : movie.price,
+    price: movie.seatTypes && movie.seatTypes.length > 0
+      ? Math.min(...movie.seatTypes.map(seat => seat.price))
+      : movie.price,
     location: movie.location,
     seatTypes: movie.seatTypes
   })) : [
@@ -73,8 +74,8 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
   const theatreMovies = movies.slice(4);
 
   const toggleFilter = (filterId) => {
-    setSelectedFilters(prev => 
-      prev.includes(filterId) 
+    setSelectedFilters(prev =>
+      prev.includes(filterId)
         ? prev.filter(id => id !== filterId)
         : [...prev, filterId]
     );
@@ -97,7 +98,7 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
       overflowX: 'hidden'
     }}>
       {/* Navbar */}
-      <SharedNavbar 
+      <SharedNavbar
         isDark={isDark}
         setIsDark={setIsDark}
         user={user}
@@ -190,25 +191,25 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
               lineHeight: '1.6',
               textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
             }}>{heroMovies[currentHeroIndex].rating} | {heroMovies[currentHeroIndex].genre}</p>
-            <button 
+            <button
               onClick={() => {
                 if (onBookTickets) {
                   onBookTickets(heroMovies[currentHeroIndex]);
                 }
               }}
               style={{
-              padding: '12px 24px',
-              backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              color: '#000',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = 'white'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'}
+                padding: '12px 24px',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                color: '#000',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = 'white'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'}
             >
               Book now
             </button>
@@ -256,7 +257,7 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
             color: isDark ? '#f9fafb' : '#111827',
             marginBottom: '24px'
           }}>This Week's Releases</h2>
-          
+
           {loading ? (
             <div style={{ textAlign: 'center', padding: '40px' }}>
               <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>Loading movies...</p>
@@ -277,18 +278,18 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
               marginBottom: '32px'
             }}>
               {weeklyMovies.map((movie, index) => (
-                <div key={index} 
+                <div key={index}
                   onClick={() => handleMovieClick(movie)}
                   style={{
-                  backgroundColor: isDark ? '#1f2937' : 'white',
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                    backgroundColor: isDark ? '#1f2937' : 'white',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                 >
                   <div style={{
                     height: '220px',
@@ -313,9 +314,9 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                     <p style={{
                       fontSize: '12px',
                       color: isDark ? '#9ca3af' : '#6b7280'
-                    }}>{movie.category} | ₹{movie.seatTypes && movie.seatTypes.length > 0 
-                        ? Math.min(...movie.seatTypes.map(seat => seat.price))
-                        : movie.price}</p>
+                    }}>{movie.category} | ₹{movie.seatTypes && movie.seatTypes.length > 0
+                      ? Math.min(...movie.seatTypes.map(seat => seat.price))
+                      : movie.price}</p>
                   </div>
                 </div>
               ))}
@@ -344,18 +345,18 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
               gap: '20px'
             }}>
               {theatreMovies.map((movie, index) => (
-                <div key={index} 
+                <div key={index}
                   onClick={() => handleMovieClick(movie)}
                   style={{
-                  backgroundColor: isDark ? '#1f2937' : 'white',
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                    backgroundColor: isDark ? '#1f2937' : 'white',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                 >
                   <div style={{
                     height: '220px',
@@ -380,9 +381,9 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                     <p style={{
                       fontSize: '12px',
                       color: isDark ? '#9ca3af' : '#6b7280'
-                    }}>{movie.category} | ₹{movie.seatTypes && movie.seatTypes.length > 0 
-                        ? Math.min(...movie.seatTypes.map(seat => seat.price))
-                        : movie.price}</p>
+                    }}>{movie.category} | ₹{movie.seatTypes && movie.seatTypes.length > 0
+                      ? Math.min(...movie.seatTypes.map(seat => seat.price))
+                      : movie.price}</p>
                   </div>
                 </div>
               ))}
