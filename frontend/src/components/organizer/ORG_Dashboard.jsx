@@ -3,7 +3,7 @@ import { BarChart3, Ticket, Calendar, IndianRupee } from "lucide-react";
 import organizerService from "../../services/organizerService";
 import { useAuth } from "../../context/AuthContext";
 
-const Dashboard = ({ isDark }) => {
+const Dashboard = ({ isDark, onNavigate }) => {
   const { user } = useAuth();
   const [stats, setStats] = useState({
     totalEvents: 0,
@@ -82,6 +82,7 @@ const Dashboard = ({ isDark }) => {
           icon={<Calendar size={24} />}
           bgColor="bg-blue-600 text-white"
           isDark={isDark}
+          onClick={() => onNavigate && onNavigate('myEvents')}
         />
 
         <StatCard
@@ -90,6 +91,7 @@ const Dashboard = ({ isDark }) => {
           icon={<Ticket size={24} />}
           bgColor="bg-green-600 text-white"
           isDark={isDark}
+          onClick={() => onNavigate && onNavigate('myEvents')}
         />
 
         <StatCard
@@ -98,6 +100,7 @@ const Dashboard = ({ isDark }) => {
           icon={<BarChart3 size={24} />}
           bgColor="bg-purple-600 text-white"
           isDark={isDark}
+          onClick={() => onNavigate && onNavigate('bookings')}
         />
 
         <StatCard
@@ -106,15 +109,19 @@ const Dashboard = ({ isDark }) => {
           icon={<IndianRupee size={24} />}
           bgColor="bg-red-600 text-white"
           isDark={isDark}
+          onClick={() => onNavigate && onNavigate('reports')}
         />
       </div>
     </div>
   );
 };
 
-function StatCard({ title, value, icon, bgColor, isDark }) {
+function StatCard({ title, value, icon, bgColor, isDark, onClick }) {
   return (
-    <div className={`group border rounded-xl p-4 sm:p-5 flex flex-col gap-2 transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-xl ${isDark ? 'bg-gray-800 border-gray-700 hover:border-gray-600' : 'bg-white border-gray-200 hover:border-indigo-200'}`}>
+    <div
+      onClick={onClick}
+      className={`group border rounded-xl p-4 sm:p-5 flex flex-col gap-2 transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-xl cursor-pointer ${isDark ? 'bg-gray-800 border-gray-700 hover:border-gray-600' : 'bg-white border-gray-200 hover:border-indigo-200'}`}
+    >
       <div className="flex justify-between items-start">
         <h2 className={`text-sm font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{title}</h2>
         <div className={`p-2 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 ${bgColor}`}>

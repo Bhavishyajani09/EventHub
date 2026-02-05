@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import OrganizerLayout from './OrganizerLayout';
 import Dashboard from './ORG_Dashboard';
@@ -13,17 +13,34 @@ import Settings from './ORG_Settings';
 
 function OrganizerAppRouter() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [isDark, setIsDark] = useState(false);
 
   const handleLogout = () => {
     logout();
     window.history.pushState({}, '', '/');
   };
 
+  const handleNavigate = (page) => {
+    const routes = {
+      'dashboard': '/dashboard',
+      'myEvents': '/events',
+      'createEvent': '/create-event',
+      'bookings': '/bookings',
+      'reviews': '/reviews',
+      'reports': '/reports',
+      'settings': '/settings'
+    };
+
+    const route = routes[page] || '/dashboard';
+    navigate(route);
+  };
+
   return (
     <OrganizerLayout user={user} onLogout={handleLogout}>
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard isDark={isDark} onNavigate={handleNavigate} />} />
         <Route path="/events" element={<MyEvents />} />
         <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/edit-event/:id" element={<EditEvent />} />
