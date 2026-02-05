@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Music, Laugh, Zap, Palette, Calendar, Clock, MapPin } from 'lucide-react';
 import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
@@ -102,7 +103,17 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
     _id: event._id
   }));
 
-  const [selectedCategory, setSelectedCategory] = useState('All Events');
+  const location = useLocation();
+  const [selectedCategory, setSelectedCategory] = useState(location.state?.category || 'All Events');
+
+  // Update category if passed via navigation state (e.g. from Footer)
+  useEffect(() => {
+    if (location.state?.category) {
+      setSelectedCategory(location.state.category);
+      // clear state to avoid sticking to it on refresh if desired, but keeping it is fine
+      // actually, better to just listen to it.
+    }
+  }, [location.state]);
   const [filteredEvents, setFilteredEvents] = useState([]);
 
   // Update filtered events when allEvents or searchQuery changes

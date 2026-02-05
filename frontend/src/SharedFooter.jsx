@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
-const SharedFooter = ({ isDark, onNavigate }) => {
+const SharedFooter = ({ isDark }) => {
+  const navigate = useNavigate();
   return (
     <footer style={{
       backgroundColor: isDark ? '#0f172a' : '#1f2937',
@@ -55,14 +57,14 @@ const SharedFooter = ({ isDark, onNavigate }) => {
               padding: 0,
               margin: 0
             }}>
-              {['Events', 'Movies', 'About Us', 'Contact'].map((link, index) => (
+              {['Events', 'Movies'].map((link, index) => (
                 <li key={index} style={{ marginBottom: '8px' }}>
                   <a href="#" onClick={(e) => {
                     e.preventDefault();
-                    if (link === 'Movies' && onNavigate) {
-                      onNavigate('movies');
-                    } else if (link === 'Events' && onNavigate) {
-                      onNavigate('events');
+                    if (link === 'Movies') {
+                      navigate('/movies');
+                    } else if (link === 'Events') {
+                      navigate('/events');
                     }
                   }} style={{
                     color: '#d1d5db',
@@ -71,8 +73,8 @@ const SharedFooter = ({ isDark, onNavigate }) => {
                     transition: 'color 0.2s',
                     cursor: 'pointer'
                   }}
-                  onMouseEnter={(e) => e.target.style.color = 'white'}
-                  onMouseLeave={(e) => e.target.style.color = '#d1d5db'}
+                    onMouseEnter={(e) => e.target.style.color = 'white'}
+                    onMouseLeave={(e) => e.target.style.color = '#d1d5db'}
                   >{link}</a>
                 </li>
               ))}
@@ -92,17 +94,30 @@ const SharedFooter = ({ isDark, onNavigate }) => {
               padding: 0,
               margin: 0
             }}>
-              {['Music Events', 'Tech Summits', 'Workshops', 'Sports', 'Comedy Shows'].map((category, index) => (
+              {[
+                { name: 'Music Events', value: 'MUSIC' },
+                { name: 'Tech Summits', value: 'TECH' }, // Keeping Tech as placeholder if real data not known, but wait. User page said MUSIC, COMEDY, SPORTS, ART, SEASONAL.
+                // Re-reading user events page: MUSIC, COMEDY, SPORTS, ART, SEASONAL EVENT.
+                // Let's use those.
+                { name: 'Comedy Shows', value: 'COMEDY' },
+                { name: 'Sports', value: 'SPORTS' },
+                { name: 'Art Exhibitions', value: 'ART' },
+                { name: 'Seasonal Events', value: 'SEASONAL EVENT' }
+              ].filter(c => c.value !== 'TECH').map((category, index) => (
                 <li key={index} style={{ marginBottom: '8px' }}>
-                  <a href="#" style={{
+                  <a href="#" onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/events', { state: { category: category.value } });
+                  }} style={{
                     color: '#d1d5db',
                     textDecoration: 'none',
                     fontSize: '14px',
-                    transition: 'color 0.2s'
+                    transition: 'color 0.2s',
+                    cursor: 'pointer'
                   }}
-                  onMouseEnter={(e) => e.target.style.color = 'white'}
-                  onMouseLeave={(e) => e.target.style.color = '#d1d5db'}
-                  >{category}</a>
+                    onMouseEnter={(e) => e.target.style.color = 'white'}
+                    onMouseLeave={(e) => e.target.style.color = '#d1d5db'}
+                  >{category.name}</a>
                 </li>
               ))}
             </ul>
@@ -153,8 +168,8 @@ const SharedFooter = ({ isDark, onNavigate }) => {
                 fontSize: '14px',
                 transition: 'color 0.2s'
               }}
-              onMouseEnter={(e) => e.target.style.color = '#d1d5db'}
-              onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
+                onMouseEnter={(e) => e.target.style.color = '#d1d5db'}
+                onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
               >{link}</a>
             ))}
           </div>
