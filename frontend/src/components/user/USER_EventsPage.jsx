@@ -51,14 +51,8 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
   }, []);
 
   const heroEvents = events.length > 0 ? events.slice(0, 5).map(event => ({
-    title: event.title,
-    location: event.location,
-    price: event.price === 0 ? 'FREE CONCERT' :
-      (event.seatTypes && event.seatTypes.length > 0
-        ? `₹${Math.min(...event.seatTypes.map(seat => seat.price))} ONWARDS`
-        : `₹${event.price} ONWARDS`),
+    ...event,
     image: event.image || '/placeholder-artist.jpg',
-    _id: event._id,
     type: 'event'
   })) : [
     {
