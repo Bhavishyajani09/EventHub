@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, User, Users } from 'lucide-react';
 import { useAuth } from './context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import authService from './services/authService';
 
 const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
@@ -16,8 +18,9 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
     role: 'user'
   });
   const [errors, setErrors] = useState({});
-  
+
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -26,27 +29,27 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (currentScreen === 'register' && !formData.fullName.trim()) {
       newErrors.fullName = 'Full name is required';
     }
-    
+
     if (currentScreen === 'register' && !formData.phone.trim()) {
       newErrors.phone = 'Phone number is required';
     }
-    
+
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!validateEmail(formData.email)) {
       newErrors.email = 'Please enter a valid email';
     }
-    
+
     if (currentScreen !== 'forgot' && !formData.password) {
       newErrors.password = 'Password is required';
     } else if (currentScreen !== 'forgot' && formData.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -54,12 +57,12 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
-    
+
     // Clear message when user starts typing
     if (message.text) {
       setMessage({ text: '', type: '' });
@@ -68,15 +71,15 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsLoading(true);
     setMessage({ text: '', type: '' });
-    
+
     try {
       let response;
-      
+
       if (currentScreen === 'login') {
         switch (formData.role) {
           case 'user':
@@ -91,11 +94,11 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
           default:
             throw new Error('Invalid user type');
         }
-        
+
         if (response.success) {
           login(response.token, response.user);
           setMessage({ text: 'Login successful!', type: 'success' });
-          
+
           setTimeout(() => {
             onAuthSuccess(response.user);
             onClose();
@@ -112,7 +115,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
           password: formData.password,
           role: formData.role
         };
-        
+
         switch (formData.role) {
           case 'user':
             response = await authService.userRegister(userData);
@@ -123,11 +126,11 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
           default:
             throw new Error('Admin registration not allowed');
         }
-        
+
         if (response.success) {
           login(response.token, response.user);
           setMessage({ text: 'Registration successful!', type: 'success' });
-          
+
           setTimeout(() => {
             onAuthSuccess(response.user);
             onClose();
@@ -137,7 +140,16 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
           setMessage({ text: response.message || 'Registration failed', type: 'error' });
         }
       } else if (currentScreen === 'forgot') {
-        setMessage({ text: 'Reset link sent to your email', type: 'success' });
+        const response = await axios.post('http://localhost:5000/api/auth/forgot-password', { email: formData.email });
+        if (response.data.success) {
+          setMessage({ text: response.data.message, type: 'success' });
+          setTimeout(() => {
+            onClose();
+            navigate(`/reset-password?email=${formData.email}`);
+          }, 2000);
+        } else {
+          setMessage({ text: response.data.message || 'Something went wrong', type: 'error' });
+        }
       }
     } catch (error) {
       if (error.response?.data?.message) {
@@ -187,7 +199,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
       padding: '20px',
       animation: 'fadeIn 0.3s ease-out'
     }}
-    onClick={handleClose}
+      onClick={handleClose}
     >
       <div style={{
         backgroundColor: 'white',
@@ -200,7 +212,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
         animation: 'slideUp 0.3s ease-out',
         maxHeight: '90vh'
       }}
-      onClick={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
@@ -285,7 +297,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
             }}>
               <button
                 type="button"
-                onClick={() => setFormData({...formData, role: 'user'})}
+                onClick={() => setFormData({ ...formData, role: 'user' })}
                 style={{
                   flex: 1,
                   padding: '16px 12px',
@@ -308,7 +320,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
               </button>
               <button
                 type="button"
-                onClick={() => setFormData({...formData, role: 'organizer'})}
+                onClick={() => setFormData({ ...formData, role: 'organizer' })}
                 style={{
                   flex: 1,
                   padding: '16px 12px',
@@ -332,7 +344,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
               {currentScreen === 'login' && (
                 <button
                   type="button"
-                  onClick={() => setFormData({...formData, role: 'admin'})}
+                  onClick={() => setFormData({ ...formData, role: 'admin' })}
                   style={{
                     flex: 1,
                     padding: '16px 12px',
@@ -572,8 +584,8 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
           >
             {isLoading ? 'Please wait...' : (
               currentScreen === 'login' ? 'Sign In' :
-              currentScreen === 'register' ? 'Create Account' :
-              'Send Reset Link'
+                currentScreen === 'register' ? 'Create Account' :
+                  'Send Reset Link'
             )}
           </button>
         </form>

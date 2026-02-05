@@ -11,7 +11,7 @@ const LoginForm = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -29,7 +29,7 @@ const LoginForm = () => {
 
     try {
       let response;
-      
+
       switch (formData.userType) {
         case 'user':
           response = await authService.userLogin(formData.email, formData.password);
@@ -43,7 +43,7 @@ const LoginForm = () => {
 
       if (response.success) {
         login(response.token, response.user);
-        
+
         // Redirect based on role
         switch (response.user.role) {
           case 'user':
@@ -111,6 +111,18 @@ const LoginForm = () => {
                 className="relative block w-full px-3 py-2 border border-gray-300 rounded-b-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="Password"
               />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-end">
+            <div className="text-sm">
+              <button
+                type="button"
+                onClick={() => navigate('/forgot-password')}
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+              >
+                Forgot your password?
+              </button>
             </div>
           </div>
 
