@@ -351,7 +351,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{booking.event?.location || booking.event?.venue}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span>🎟️</span>
+                      <Ticket size={14} style={{ color: '#8b5cf6' }} />
                       <span>{booking.tickets} Ticket(s) • {booking.ticketType}</span>
                     </div>
                   </div>

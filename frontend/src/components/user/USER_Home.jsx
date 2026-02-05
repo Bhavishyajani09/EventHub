@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Search } from 'lucide-react';
+import { Sparkles, Search, MapPin } from 'lucide-react';
 import AuthModal from '../../AuthModal';
 import USER_ProfilePanel from './USER_ProfilePanel';
 import SharedNavbar from '../../SharedNavbar';
@@ -348,8 +348,11 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                       <p style={{
                         fontSize: 'clamp(12px, 2.5vw, 14px)',
                         color: isDark ? '#9ca3af' : '#6b7280',
-                        marginBottom: '12px'
-                      }}>{movie.category} | {movie.location}</p>
+                        marginBottom: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}>{movie.category} | <MapPin size={12} /> {movie.location}</p>
                       <button
                         onClick={(e) => handleBookTickets(movie, e)}
                         style={{
@@ -453,8 +456,11 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                       <p style={{
                         fontSize: 'clamp(12px, 2.5vw, 14px)',
                         color: isDark ? '#9ca3af' : '#6b7280',
-                        marginBottom: '12px'
-                      }}>{event.category} | {event.location}</p>
+                        marginBottom: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}>{event.category} | <MapPin size={12} /> {event.location}</p>
                       <button
                         onClick={(e) => handleBookTickets({ ...event, type: 'event' }, e)}
                         style={{
