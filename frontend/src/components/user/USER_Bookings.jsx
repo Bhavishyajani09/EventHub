@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import eventService from '../../services/eventService';
 
 const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
   const [activeTab, setActiveTab] = useState('Events');
@@ -52,6 +53,31 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
       console.error('Error fetching bookings:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCancelBooking = async (bookingId, eventDate) => {
+    // Check if event is in the past
+    if (new Date(eventDate) < new Date()) {
+      alert("Cannot cancel past events.");
+      return;
+    }
+
+    if (!window.confirm('Are you sure you want to cancel this booking? Cancellation charges may apply if less than 24 hours before event.')) {
+      return;
+    }
+
+    try {
+      const result = await eventService.cancelBooking(bookingId);
+      if (result.success) {
+        alert(result.message);
+        fetchBookings(); // Refresh list
+      } else {
+        alert(result.message || result.error || 'Failed to cancel booking');
+      }
+    } catch (error) {
+      console.error('Cancellation error:', error);
+      alert('An error occurred while cancelling the booking. Please try again.');
     }
   };
 
@@ -222,35 +248,172 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
             {activeBookings.map((booking) => (
               <div key={booking._id} style={{
                 backgroundColor: isDark ? '#1f2937' : 'white',
-                borderRadius: '12px',
-                padding: '20px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                border: isDark ? '1px solid #374151' : '1px solid #e5e7eb'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                  <span style={{
-                    backgroundColor: booking.status === 'confirmed' ? '#dcfce7' : '#fee2e2',
-                    color: booking.status === 'confirmed' ? '#166534' : '#991b1b',
-                    padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '600'
+                borderRadius: '16px',
+                overflow: 'hidden',
+                boxShadow: isDark ? '0 10px 15px -3px rgba(0, 0, 0, 0.5)' : '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                border: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = isDark ? '0 20px 25px -5px rgba(0, 0, 0, 0.5)' : '0 20px 25px -5px rgba(0, 0, 0, 0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = isDark ? '0 10px 15px -3px rgba(0, 0, 0, 0.5)' : '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
+                }}
+              >
+                {/* Image Section if available */}
+                {booking.event?.image && (
+                  <div style={{
+                    height: '120px',
+                    width: '100%',
+                    backgroundColor: isDark ? '#111827' : '#f3f4f6', // distinct background
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'relative',
+                    borderBottom: isDark ? '1px solid #374151' : '1px solid #e5e7eb'
                   }}>
-                    {booking.status.toUpperCase()}
-                  </span>
-                  <span style={{ fontSize: '12px', color: isDark ? '#9ca3af' : '#6b7280' }}>
-                    {new Date(booking.createdAt).toLocaleDateString()}
-                  </span>
+                    <img
+                      src={booking.event.image}
+                      alt={booking.event.title}
+                      style={{
+                        height: '100%',
+                        width: '100%',
+                        objectFit: 'contain', // Ensure full image is visible
+                        display: 'block'
+                      }}
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      top: '8px',
+                      right: '8px',
+                      backgroundColor: booking.status === 'confirmed' ? '#dcfce7' : (booking.status === 'cancelled' ? '#fee2e2' : '#fef9c3'),
+                      color: booking.status === 'confirmed' ? '#166534' : (booking.status === 'cancelled' ? '#991b1b' : '#854d0e'),
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                      fontSize: '10px',
+                      fontWeight: 'bold',
+                      textTransform: 'uppercase',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                      zIndex: 10
+                    }}>
+                      {booking.status}
+                    </div>
+                  </div>
+                )}
+
+                <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  {!booking.event?.image && (
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
+                      <span style={{
+                        backgroundColor: booking.status === 'confirmed' ? '#dcfce7' : (booking.status === 'cancelled' ? '#fee2e2' : '#fef9c3'),
+                        color: booking.status === 'confirmed' ? '#166534' : (booking.status === 'cancelled' ? '#991b1b' : '#854d0e'),
+                        padding: '4px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase'
+                      }}>
+                        {booking.status}
+                      </span>
+                    </div>
+                  )}
+
+                  <h3 style={{
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    marginBottom: '8px',
+                    color: isDark ? '#f9fafb' : '#111827',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }} title={booking.event?.title}>{booking.event?.title}</h3>
+
+                  <div style={{
+                    fontSize: '13px',
+                    color: isDark ? '#9ca3af' : '#6b7280',
+                    marginBottom: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '4px'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>📅</span>
+                      <span>{new Date(booking.event?.date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })} at {new Date(booking.event?.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>📍</span>
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{booking.event?.location || booking.event?.venue}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>🎟️</span>
+                      <span>{booking.tickets} Ticket(s) • {booking.ticketType}</span>
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: 'auto' }}>
+                    <div style={{
+                      borderTop: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
+                      paddingTop: '16px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '16px'
+                    }}>
+                      <div>
+                        <span style={{ fontSize: '12px', color: isDark ? '#9ca3af' : '#6b7280', display: 'block' }}>Total Paid</span>
+                        <span style={{ fontSize: '18px', fontWeight: 'bold', color: isDark ? '#f9fafb' : '#111827' }}>₹{booking.totalAmount}</span>
+                      </div>
+                    </div>
+
+                    {booking.status !== 'cancelled' ? (
+                      <button
+                        onClick={() => handleCancelBooking(booking._id, booking.event?.date)}
+                        style={{
+                          width: '100%',
+                          padding: '10px 16px',
+                          backgroundColor: 'transparent',
+                          color: '#ef4444',
+                          border: '1px solid #ef4444',
+                          borderRadius: '8px',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.backgroundColor = '#ef4444';
+                          e.target.style.color = 'white';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.backgroundColor = 'transparent';
+                          e.target.style.color = '#ef4444';
+                        }}
+                      >
+                        Cancel Booking
+                      </button>
+                    ) : (
+                      <div style={{
+                        width: '100%',
+                        padding: '10px',
+                        backgroundColor: isDark ? '#374151' : '#f3f4f6',
+                        color: isDark ? '#9ca3af' : '#6b7280',
+                        borderRadius: '8px',
+                        fontSize: '13px',
+                        fontWeight: '500',
+                        textAlign: 'center',
+                        border: isDark ? '1px solid #4b5563' : '1px solid #d1d5db'
+                      }}>
+                        Booking Cancelled
+                      </div>
+                    )}
+                    <div style={{ marginTop: '12px', fontSize: '10px', color: '#9ca3af', textAlign: 'center' }}>ID: {booking.bookingId}</div>
+                  </div>
                 </div>
-                <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>{booking.event?.title}</h3>
-                <p style={{ fontSize: '14px', color: isDark ? '#d1d5db' : '#4b5563', marginBottom: '4px' }}>
-                  {new Date(booking.event?.date).toLocaleString()}
-                </p>
-                <p style={{ fontSize: '14px', color: isDark ? '#d1d5db' : '#4b5563', marginBottom: '12px' }}>
-                  {booking.event?.location} | {booking.tickets} Ticket(s) ({booking.ticketType})
-                </p>
-                <div style={{ borderTop: isDark ? '1px solid #374151' : '1px solid #e5e7eb', paddingTop: '12px', marginTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '14px', color: isDark ? '#9ca3af' : '#6b7280' }}>Total Amount</span>
-                  <span style={{ fontSize: '16px', fontWeight: 'bold' }}>₹{booking.totalAmount}</span>
-                </div>
-                <div style={{ marginTop: '12px', fontSize: '10px', color: '#9ca3af' }}>Booking ID: {booking.bookingId}</div>
               </div>
             ))}
           </div>

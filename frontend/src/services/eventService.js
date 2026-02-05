@@ -47,6 +47,25 @@ const eventService = {
       console.error('Error fetching event:', error);
       return { success: false, message: 'Failed to fetch event' };
     }
+  },
+  
+  // Cancel booking
+  cancelBooking: async (bookingId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/bookings/cancel/${bookingId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      return { success: false, message: 'Failed to cancel booking' };
+    }
   }
 };
 
