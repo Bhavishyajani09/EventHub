@@ -3,29 +3,97 @@ import { User, Mail, Phone, MapPin, Calendar, Edit2, Save, X } from 'lucide-reac
 
 const Settings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  // Profile Form State
   const [formData, setFormData] = useState({
-    name: user?.name || 'Test User',
-    email: user?.email || 'test@example.com',
-    phone: user?.phone || '+1 234 567 8900',
-    location: user?.location || 'New York, USA',
-    joinDate: user?.joinDate || '2024-01-15'
+    name: user?.name || '',
+    email: user?.email || '',
+    phone: user?.phone || ''
   });
 
-  const handleSave = () => {
-    setIsEditing(false);
-    // Here you would typically save to backend
+  // Password Form State
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+
+  // Load user data when user prop changes
+  React.useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || ''
+      });
+    }
+  }, [user]);
+
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+      const token = sessionStorage.getItem('token');
+      // Import dynamically or assume it's passed/available. 
+      // For now assuming we import authService at top or use simple fetch if import is tricky with this tool.
+      // Better to use the authService we just updated.
+      // I will add the import at the top in a separate tool call if needed, but here I'll assume it's imported.
+      // Wait, I can't assume. I need to add the import.
+      // I will use imports in the top of the file in the previous step or this one. 
+      // Actually I should have added the import first. I'll add it in this replacement or separate one.
+      // I'll add it here by replacing the whole file structure or just this part.
+      // Let's assuming I will add the import in a bit. For now:
+
+      const { default: authService } = await import('../../services/authService');
+
+      await authService.updateUserProfile(formData, token);
+      alert('Profile updated successfully');
+      setIsEditing(false);
+      // Ideally trigger a user reload in context, but for now this updates the local state view
+    } catch (error) {
+      console.error(error);
+      alert('Failed to update profile: ' + (error.response?.data?.message || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePasswordChange = async () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      alert("New passwords don't match");
+      return;
+    }
+    if (!passwordData.currentPassword || !passwordData.newPassword) {
+      alert("Please fill in all password fields");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const token = sessionStorage.getItem('token');
+      const { default: authService } = await import('../../services/authService');
+
+      await authService.changeUserPassword(passwordData.currentPassword, passwordData.newPassword, token);
+
+      alert('Password changed successfully');
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (error) {
+      console.error(error);
+      alert('Failed to change password: ' + (error.response?.data?.message || error.message));
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    // Reset form data
-    setFormData({
-      name: user?.name || 'Test User',
-      email: user?.email || 'test@example.com',
-      phone: user?.phone || '+1 234 567 8900',
-      location: user?.location || 'New York, USA',
-      joinDate: user?.joinDate || '2024-01-15'
-    });
+    if (user) {
+      setFormData({
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || ''
+      });
+    }
   };
 
   return (
@@ -66,11 +134,11 @@ const Settings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
             }}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="m15 18-6-6 6-6"/>
+              <path d="m15 18-6-6 6-6" />
             </svg>
           </button>
-          
-          <div 
+
+          <div
             onClick={() => onNavigate('home')}
             style={{
               display: 'flex',
@@ -79,9 +147,9 @@ const Settings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
               cursor: 'pointer'
             }}
           >
-            <img 
-              src="/new_icon_favicon.png" 
-              alt="EventHub Logo" 
+            <img
+              src="/new_icon_favicon.png"
+              alt="EventHub Logo"
               style={{
                 width: '60px',
                 height: '54px'
@@ -115,7 +183,7 @@ const Settings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
           Settings
         </h1>
 
-        <div 
+        <div
           onClick={onProfileClick}
           style={{
             width: '40px',
@@ -219,6 +287,7 @@ const Settings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button
                   onClick={handleSave}
+                  disabled={loading}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -229,14 +298,16 @@ const Settings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                     border: 'none',
                     borderRadius: '8px',
                     fontSize: '14px',
-                    cursor: 'pointer'
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    opacity: loading ? 0.7 : 1
                   }}
                 >
                   <Save size={16} />
-                  Save
+                  {loading ? 'Saving...' : 'Save'}
                 </button>
                 <button
                   onClick={handleCancel}
+                  disabled={loading}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -247,7 +318,8 @@ const Settings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                     border: 'none',
                     borderRadius: '8px',
                     fontSize: '14px',
-                    cursor: 'pointer'
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    opacity: loading ? 0.7 : 1
                   }}
                 >
                   <X size={16} />
@@ -265,9 +337,7 @@ const Settings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
             {[
               { icon: User, label: 'Full Name', key: 'name', value: formData.name },
               { icon: Mail, label: 'Email Address', key: 'email', value: formData.email },
-              { icon: Phone, label: 'Phone Number', key: 'phone', value: formData.phone },
-              { icon: MapPin, label: 'Location', key: 'location', value: formData.location },
-              { icon: Calendar, label: 'Member Since', key: 'joinDate', value: formData.joinDate, readonly: true }
+              { icon: Phone, label: 'Phone Number', key: 'phone', value: formData.phone }
             ].map((field) => (
               <div key={field.key} style={{
                 display: 'flex',
@@ -290,7 +360,7 @@ const Settings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                   }}>
                     {field.label}
                   </label>
-                  {isEditing && !field.readonly ? (
+                  {isEditing ? (
                     <input
                       type={field.key === 'email' ? 'email' : field.key === 'phone' ? 'tel' : 'text'}
                       value={field.value}
@@ -320,6 +390,163 @@ const Settings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
             ))}
           </div>
         </div>
+
+        {/* Change Password Card */}
+        <div style={{
+          backgroundColor: isDark ? '#1f2937' : 'white',
+          borderRadius: '16px',
+          padding: '32px',
+          boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '20px',
+            marginBottom: '32px'
+          }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              borderRadius: '50%',
+              backgroundColor: '#ec4899',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white'
+            }}>
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+            <div>
+              <h2 style={{
+                fontSize: '24px',
+                fontWeight: '600',
+                color: isDark ? '#f9fafb' : '#111827',
+                margin: '0 0 4px 0'
+              }}>
+                Change Password
+              </h2>
+              <p style={{
+                fontSize: '16px',
+                color: isDark ? '#9ca3af' : '#6b7280',
+                margin: 0
+              }}>
+                Update your account password
+              </p>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gap: '24px' }}>
+            <div>
+              <label style={{
+                display: 'block',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: isDark ? '#e5e7eb' : '#374151',
+                marginBottom: '8px'
+              }}>
+                Current Password
+              </label>
+              <input
+                type="password"
+                value={passwordData.currentPassword}
+                onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                placeholder="Enter current password"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: `1px solid ${isDark ? '#4b5563' : '#d1d5db'}`,
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  backgroundColor: isDark ? '#374151' : 'white',
+                  color: isDark ? '#f9fafb' : '#111827',
+                  outline: 'none'
+                }}
+              />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: isDark ? '#e5e7eb' : '#374151',
+                  marginBottom: '8px'
+                }}>
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  value={passwordData.newPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                  placeholder="Enter new password"
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    border: `1px solid ${isDark ? '#4b5563' : '#d1d5db'}`,
+                    borderRadius: '8px',
+                    fontSize: '16px',
+                    backgroundColor: isDark ? '#374151' : 'white',
+                    color: isDark ? '#f9fafb' : '#111827',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: isDark ? '#e5e7eb' : '#374151',
+                  marginBottom: '8px'
+                }}>
+                  Confirm New Password
+                </label>
+                <input
+                  type="password"
+                  value={passwordData.confirmPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                  placeholder="Confirm new password"
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    border: `1px solid ${isDark ? '#4b5563' : '#d1d5db'}`,
+                    borderRadius: '8px',
+                    fontSize: '16px',
+                    backgroundColor: isDark ? '#374151' : 'white',
+                    color: isDark ? '#f9fafb' : '#111827',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+              <button
+                onClick={handlePasswordChange}
+                disabled={loading}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: '#2563eb',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: loading ? 0.7 : 1,
+                  transition: 'background-color 0.2s'
+                }}
+              >
+                {loading ? 'Updating...' : 'Change Password'}
+              </button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );
