@@ -3,6 +3,7 @@ import { Film } from 'lucide-react';
 import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
 import eventService from '../../services/eventService';
+import { EventCardSkeleton } from '../common/Skeleton';
 
 const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick, onBookTickets, searchQuery, onSearch }) => {
   const [selectedFilters, setSelectedFilters] = useState([]);
@@ -277,8 +278,13 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           }}>This Week's Releases</h2>
 
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '40px' }}>
-              <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>Loading movies...</p>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '20px',
+              marginBottom: '32px'
+            }}>
+              {Array(4).fill(0).map((_, i) => <EventCardSkeleton key={i} isDark={isDark} />)}
             </div>
           ) : error ? (
             <div style={{ textAlign: 'center', padding: '40px' }}>
@@ -352,7 +358,15 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           }}>Only in Theatres</h2>
 
           {/* Movies Grid */}
-          {theatreMovies.length === 0 ? (
+          {loading ? (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '20px'
+            }}>
+              {Array(4).fill(0).map((_, i) => <EventCardSkeleton key={i} isDark={isDark} />)}
+            </div>
+          ) : theatreMovies.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '40px' }}>
               <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>No theatre movies available</p>
             </div>

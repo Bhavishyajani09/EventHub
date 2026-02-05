@@ -3,6 +3,7 @@ import axios from 'axios';
 import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
 import USER_PaymentModal from './USER_PaymentModal';
+import toast from 'react-hot-toast';
 
 const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBack }) => {
   const [selectedSeatType, setSelectedSeatType] = useState(null);
@@ -75,7 +76,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
 
   const handleBooking = () => {
     if (!selectedSeatType) {
-      alert('Please select a seat type');
+      toast.error('Please select a seat type');
       return;
     }
 
@@ -92,9 +93,9 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
     setShowPaymentModal(false);
 
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       if (!token) {
-        alert('Please login to continue');
+        toast.error('Please login to continue');
         onAuthOpen();
         setIsProcessingPayment(false);
         return;
@@ -133,7 +134,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
     } catch (error) {
       console.error('Booking failed:', error);
       setIsProcessingPayment(false);
-      alert(error.response?.data?.message || 'Booking failed. Please try again.');
+      toast.error(error.response?.data?.message || 'Booking failed. Please try again.');
     }
   };
 

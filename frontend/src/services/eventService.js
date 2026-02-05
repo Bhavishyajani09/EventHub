@@ -48,11 +48,11 @@ const eventService = {
       return { success: false, message: 'Failed to fetch event' };
     }
   },
-  
+
   // Cancel booking
   cancelBooking: async (bookingId) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       const response = await fetch(`${API_BASE_URL}/bookings/cancel/${bookingId}`, {
         method: 'POST',
         headers: {

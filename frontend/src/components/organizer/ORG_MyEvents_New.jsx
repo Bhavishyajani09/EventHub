@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, MapPin, Users, Edit, Trash2, Plus, Eye, EyeOff, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Calendar, MapPin, Users, Edit, Trash2, Plus, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import organizerService from '../../services/organizerService';
+import toast from 'react-hot-toast';
+import { EventCardSkeleton } from '../common/Skeleton';
 
 const MyEvents = ({ isDark }) => {
   const navigate = useNavigate();
@@ -38,8 +40,9 @@ const MyEvents = ({ isDark }) => {
       try {
         await organizerService.deleteEvent(eventId);
         setEvents(events.filter(event => event._id !== eventId));
+        toast.success('Event deleted successfully');
       } catch (error) {
-        alert('Failed to delete event');
+        toast.error('Failed to delete event');
       }
     }
   };
@@ -48,12 +51,14 @@ const MyEvents = ({ isDark }) => {
     try {
       if (isPublished) {
         await organizerService.unpublishEvent(eventId);
+        toast.success('Event unpublished');
       } else {
         await organizerService.publishEvent(eventId);
+        toast.success('Event published');
       }
       fetchEvents(); // Refresh events
     } catch (error) {
-      alert(error.response?.data?.message || 'Failed to update event status');
+      toast.error(error.response?.data?.message || 'Failed to update event status');
     }
   };
 
@@ -71,8 +76,14 @@ const MyEvents = ({ isDark }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center mb-8">
+          <div className="h-10 w-48 bg-gray-200 rounded animate-pulse" />
+          <div className="h-10 w-32 bg-indigo-200 rounded animate-pulse" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array(6).fill(0).map((_, i) => <EventCardSkeleton key={i} isDark={isDark} />)}
+        </div>
       </div>
     );
   }

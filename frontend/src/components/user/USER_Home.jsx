@@ -7,6 +7,7 @@ import SharedFooter from '../../SharedFooter';
 import USER_MovieDetail from './USER_MovieDetail';
 import eventService from '../../services/eventService';
 import artistService from '../../services/artistService';
+import { EventCardSkeleton, ArtistSkeleton } from '../common/Skeleton';
 
 const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick, onBookTickets, onArtistClick, onSearch }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -294,9 +295,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
             marginBottom: 'clamp(32px, 6vw, 48px)'
           }}>
             {loading ? (
-              <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
-                <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>Loading movies...</p>
-              </div>
+              Array(4).fill(0).map((_, i) => <EventCardSkeleton key={i} isDark={isDark} />)
             ) : movies.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
                 <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>No movies available</p>
@@ -401,9 +400,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
             marginBottom: 'clamp(32px, 6vw, 48px)'
           }}>
             {loading ? (
-              <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
-                <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>Loading events...</p>
-              </div>
+              Array(4).fill(0).map((_, i) => <EventCardSkeleton key={i} isDark={isDark} />)
             ) : events.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
                 <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>No events available</p>
@@ -508,9 +505,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
             marginBottom: 'clamp(32px, 6vw, 48px)'
           }}>
             {loading ? (
-              <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
-                <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>Loading artists...</p>
-              </div>
+              Array(5).fill(0).map((_, i) => <ArtistSkeleton key={i} isDark={isDark} />)
             ) : artists.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
                 <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>No artists found in your district</p>
