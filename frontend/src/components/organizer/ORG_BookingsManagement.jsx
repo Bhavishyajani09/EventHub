@@ -133,19 +133,19 @@ export default function BookingsManagement() {
 
 
   /* 🔍 SEARCH + FILTER (TABLE ONLY) */
- const filteredBookings = bookings.filter((b) => {
-  const text = search.toLowerCase().trim();
+  const filteredBookings = bookings.filter((b) => {
+    const text = search.toLowerCase().trim();
 
-  const matchesSearch =
-    b.id.toLowerCase().includes(text) ||
-    b.name.toLowerCase().includes(text) ||
-    b.event.toLowerCase().includes(text);
+    const matchesSearch =
+      b.id.toLowerCase().includes(text) ||
+      b.name.toLowerCase().includes(text) ||
+      b.event.toLowerCase().includes(text);
 
-  const matchesStatus =
-    statusFilter === "All" || b.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "All" || b.status === statusFilter;
 
-  return matchesSearch && matchesStatus;
-});
+    return matchesSearch && matchesStatus;
+  });
 
 
   /* 📊 STATS (FIXED – SEARCH SE EFFECT NAHI) */
@@ -160,7 +160,7 @@ export default function BookingsManagement() {
   ).length;
 
 
-   const totalRevenue = bookings
+  const totalRevenue = bookings
     .filter((b) => b.status === "Confirmed" && b.payment === "Paid")
     .reduce((sum, b) => sum + Number(b.amount), 0);
 
@@ -192,15 +192,15 @@ export default function BookingsManagement() {
   };
 
 
-// 👀 View Modal
-const handleViewModal = (booking) => {
-  setSelectedBooking(booking);
-  setShowModal(true);
-};
+  // 👀 View Modal
+  const handleViewModal = (booking) => {
+    setSelectedBooking(booking);
+    setShowModal(true);
+  };
 
-/* 📥 DOWNLOAD TXT */
-const handleDownload = (booking) => {
-  const data = `
+  /* 📥 DOWNLOAD TXT */
+  const handleDownload = (booking) => {
+    const data = `
 Booking ID: ${booking.id}
 Name: ${booking.name}
 Email: ${booking.email}
@@ -209,25 +209,25 @@ Tickets: ${booking.tickets}
 Status: ${booking.status}
   `;
 
-  const blob = new Blob([data], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
+    const blob = new Blob([data], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
 
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `${booking.id}.txt`;
-  link.click();
-};
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${booking.id}.txt`;
+    link.click();
+  };
 
- /* ❌ CANCEL */
+  /* ❌ CANCEL */
   const handleCancel = (b) => {
     if (window.confirm(`Cancel booking ${b.id}?`)) {
       alert(`Booking ${b.id} cancelled`);
     }
   };
 
-// 📥 Download Ticket
-const downloadTicket = () => {
-  const ticketContent = `
+  // 📥 Download Ticket
+  const downloadTicket = () => {
+    const ticketContent = `
 Booking ID: ${selectedBooking.id}
 Name: ${selectedBooking.name}
 Email: ${selectedBooking.email}
@@ -238,21 +238,21 @@ Amount: $${selectedBooking.amount}
 Payment Status: ${selectedBooking.payment}
   `;
 
-  const blob = new Blob([ticketContent], {
-    type: "text/plain;charset=utf-8;",
-  });
+    const blob = new Blob([ticketContent], {
+      type: "text/plain;charset=utf-8;",
+    });
 
-  const url = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
 
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `${selectedBooking.id}-ticket.txt`;
-  document.body.appendChild(link);
-  link.click();
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${selectedBooking.id}-ticket.txt`;
+    document.body.appendChild(link);
+    link.click();
 
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-};
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
 
 
@@ -270,82 +270,81 @@ Payment Status: ${selectedBooking.payment}
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-            { label: "Total Bookings", value: totalBookings },
-            { label: "Confirmed", value: confirmedBookings },
-            { label: "Cancelled", value: cancelledBookings },
-            { label: "Revenue", value: `$${totalRevenue}` },
-          ].map((item, i) => (
-            <div key={i} className="bg-white rounded-xl shadow p-7">
-              <p className="text-sm text-gray-500">{item.label}</p>
-          
-              <p
-                className={`text-2xl font-semibold mt-2 ${
-                  item.label === "Confirmed"
-                    ? "text-green-600"
-                    : item.label === "Cancelled"
-                    ? "text-red-600"
-                    : "text-black"
+          { label: "Total Bookings", value: totalBookings },
+          { label: "Confirmed", value: confirmedBookings },
+          { label: "Cancelled", value: cancelledBookings },
+          { label: "Revenue", value: `₹${totalRevenue}` },
+        ].map((item, i) => (
+          <div key={i} className="bg-white rounded-xl shadow p-7">
+            <p className="text-sm text-gray-500">{item.label}</p>
+
+            <p
+              className={`text-2xl font-semibold mt-2 ${item.label === "Confirmed"
+                ? "text-green-600"
+                : item.label === "Cancelled"
+                  ? "text-red-600"
+                  : "text-black"
                 }`}
-              >
-                {item.value}
-              </p>
-            </div>
-          ))}
+            >
+              {item.value}
+            </p>
+          </div>
+        ))}
 
       </div>
 
-       {/* 🔍 FILTERS */}
-      <div className="bg-white p-4 rounded-xl shadow space-y-4"> 
-         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-           <div className="flex flex-col">
-               <h2 className="font-semibold text-lg">All Bookings</h2>
-               <p className="text-sm text-gray-500">
-                 View and manage ticket bookings
-               </p>
-             </div>     
+      {/* 🔍 FILTERS */}
+      <div className="bg-white p-4 rounded-xl shadow space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex flex-col">
+            <h2 className="font-semibold text-lg">All Bookings</h2>
+            <p className="text-sm text-gray-500">
+              View and manage ticket bookings
+            </p>
+          </div>
 
-        <button
-          onClick={exportCSV}
-          className="flex items-center gap-2 px-4 py-2 border rounded-lg text-sm hover:bg-gray-50"
-        >
-          <Download size={16} />
-          Export CSV
-        </button>
-        </div>
-
-      <div className="p-4 flex gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search booking, user, event..."
-            className="w-full pl-10 pr-4 py-2 border rounded-lg"
-          />
-        </div>
-
-        <div className="relative">
-  
-          {/* 🔽 Filter Icon */}
-          <Filter
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-          />
-        
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="border rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
+          <button
+            onClick={exportCSV}
+            className="flex items-center gap-2 px-4 py-2 border rounded-lg text-sm hover:bg-gray-50"
           >
-            <option value="All">All Status</option>
-            <option value="Confirmed">Confirmed</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
-        
+            <Download size={16} />
+            Export CSV
+          </button>
         </div>
 
+        <div className="p-4 flex gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search booking, user, event..."
+              className="w-full pl-10 pr-4 py-2 border rounded-lg"
+            />
+          </div>
+
+          <div className="relative">
+
+            {/* 🔽 Filter Icon */}
+            <Filter
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+            />
+
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="border rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
+            >
+              <option value="All">All Status</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+
+          </div>
+
+        </div>
       </div>
-    </div>
 
       {/* Table */}
       <div className="bg-white rounded-xl shadow overflow-x-auto">
@@ -410,7 +409,7 @@ Payment Status: ${selectedBooking.payment}
 
 
 
-            <tbody>
+          <tbody>
             {filteredBookings.length > 0 ? (
               filteredBookings.map((item) => (
                 <tr key={item.id} className="border-b">
@@ -426,11 +425,10 @@ Payment Status: ${selectedBooking.payment}
                   <td>${item.amount}</td>
                   <td>
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        item.payment === "Refunded"
-                          ? "bg-gray-100 text-gray-700"
-                          : "bg-green-100 text-green-600"
-                      }`}
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${item.payment === "Refunded"
+                        ? "bg-gray-100 text-gray-700"
+                        : "bg-green-100 text-green-600"
+                        }`}
                     >
                       {item.payment}
                     </span>
@@ -438,11 +436,10 @@ Payment Status: ${selectedBooking.payment}
 
                   <td>
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        item.status === "Confirmed"
-                          ? "bg-green-100 text-green-600"
-                          : "bg-red-100 text-red-600"
-                      }`}
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${item.status === "Confirmed"
+                        ? "bg-green-100 text-green-600"
+                        : "bg-red-100 text-red-600"
+                        }`}
                     >
                       {item.status}
                     </span>
@@ -453,41 +450,41 @@ Payment Status: ${selectedBooking.payment}
                   </button>
                 </td> */}
 
-              <td className="p-3">
-                <div className="flex items-center gap-2">
-                  
-                  {/* 👁 View */}
-                  <button
-                    onClick={() => handleViewModal(item)}
-                    className="p-2 rounded hover:bg-gray-100 text-blue-600"
-                    title="View"
-                  >
-                    <Eye size={16} />
-                  </button>
-              
-                  {/* ⬇ Download */}
-                  <button
-                    onClick={() => handleDownload(item)}
-                    className="p-2 rounded hover:bg-gray-100 text-green-600"
-                    title="Download"
-                  >
-                    <Download size={16} />
-                  </button>
-              
-                  {/* ❌ Cancel */}
-                  <button
-                    onClick={() => handleCancel(item)}
-                    className="p-2 rounded hover:bg-gray-100 text-red-600"
-                    title="Cancel"
-                  >
-                    <X size={16} />
-                  </button>
-              
-                </div>
-              </td>
+                  <td className="p-3">
+                    <div className="flex items-center gap-2">
+
+                      {/* 👁 View */}
+                      <button
+                        onClick={() => handleViewModal(item)}
+                        className="p-2 rounded hover:bg-gray-100 text-blue-600"
+                        title="View"
+                      >
+                        <Eye size={16} />
+                      </button>
+
+                      {/* ⬇ Download */}
+                      <button
+                        onClick={() => handleDownload(item)}
+                        className="p-2 rounded hover:bg-gray-100 text-green-600"
+                        title="Download"
+                      >
+                        <Download size={16} />
+                      </button>
+
+                      {/* ❌ Cancel */}
+                      <button
+                        onClick={() => handleCancel(item)}
+                        className="p-2 rounded hover:bg-gray-100 text-red-600"
+                        title="Cancel"
+                      >
+                        <X size={16} />
+                      </button>
+
+                    </div>
+                  </td>
 
 
-                
+
                 </tr>
               ))
             ) : (
@@ -501,111 +498,111 @@ Payment Status: ${selectedBooking.payment}
 
 
         </table>
-    
-      
-      {/* 👁 MODAL */}
-      {showModal && selectedBooking && (
-  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-    
-    <div className="bg-white w-full max-w-xl rounded-xl shadow-lg p-6 relative">
-      
-      {/* ❌ Close */}
-      <button
-        onClick={() => setShowModal(false)}
-        className="absolute top-4 right-4 text-gray-500 hover:text-black"
-      >
-        <X size={20} />
-      </button>
 
-      {/* Header */}
-      <h2 className="text-xl font-semibold">Booking Details</h2>
-      <p className="text-sm text-gray-500 mb-6">
-        Full information about this booking
-      </p>
 
-      {/* Booking Info */}
-      <div className="grid grid-cols-2 gap-4 text-sm">
+        {/* 👁 MODAL */}
+        {showModal && selectedBooking && (
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
 
-        <div>
-          <p className="font-semibold ">Booking ID</p>
-          <p className="text-gray-500">{selectedBooking.id}</p>
-        </div>
+            <div className="bg-white w-full max-w-xl rounded-xl shadow-lg p-6 relative">
 
-        <div>
-          <p className="font-semibold">Booking Date</p>
-          <p className="text-gray-500">{selectedBooking.date}</p>
-        </div>
+              {/* ❌ Close */}
+              <button
+                onClick={() => setShowModal(false)}
+                className="absolute top-4 right-4 text-gray-500 hover:text-black"
+              >
+                <X size={20} />
+              </button>
 
-        <div className="col-span-2 mt-3">
-          <h3 className="font-semibold">Customer Information</h3>
-        </div>
+              {/* Header */}
+              <h2 className="text-xl font-semibold">Booking Details</h2>
+              <p className="text-sm text-gray-500 mb-6">
+                Full information about this booking
+              </p>
 
-        <div>
-          <p className="font-semibold">Name</p>
-          <p className="text-gray-500">{selectedBooking.name}</p>
-        </div>
+              {/* Booking Info */}
+              <div className="grid grid-cols-2 gap-4 text-sm">
 
-        <div>
-          <p className="font-semibold">Email</p>
-          <p className=" text-gray-500">{selectedBooking.email}</p>
-        </div>
+                <div>
+                  <p className="font-semibold ">Booking ID</p>
+                  <p className="text-gray-500">{selectedBooking.id}</p>
+                </div>
 
-        <div className="col-span-2 mt-3">
-          <h3 className="font-semibold text-gray-500">Event Information</h3>
-        </div>
+                <div>
+                  <p className="font-semibold">Booking Date</p>
+                  <p className="text-gray-500">{selectedBooking.date}</p>
+                </div>
 
-        <div>
-          <p className="font-semibold">Event Name</p>
-          <p className=" text-gray-500">{selectedBooking.event}</p>
-        </div>
+                <div className="col-span-2 mt-3">
+                  <h3 className="font-semibold">Customer Information</h3>
+                </div>
 
-        <div>
-          <p className="font-semibold">Ticket Category</p>
-          <p className=" text-gray-500">{selectedBooking.category}</p>
-        </div>
+                <div>
+                  <p className="font-semibold">Name</p>
+                  <p className="text-gray-500">{selectedBooking.name}</p>
+                </div>
 
-        <div>
-          <p className="font-semibold">Tickets</p>
-          <p className="font-medium text-gray-500">{selectedBooking.tickets}</p>
-        </div>
+                <div>
+                  <p className="font-semibold">Email</p>
+                  <p className=" text-gray-500">{selectedBooking.email}</p>
+                </div>
 
-        <div className="col-span-2 mt-3">
-          <h3 className="font-semibold ">Payment Information</h3>
-        </div>
+                <div className="col-span-2 mt-3">
+                  <h3 className="font-semibold text-gray-500">Event Information</h3>
+                </div>
 
-        <div>
-          <p className="font-semibold">Amount</p>
-          <p className=" text-gray-500">{selectedBooking.amount}</p>
-        </div>
+                <div>
+                  <p className="font-semibold">Event Name</p>
+                  <p className=" text-gray-500">{selectedBooking.event}</p>
+                </div>
 
-        <div>
-          <p className="font-semibold">Payment Status</p>
-          <p className="mt-2">
-            <span
-           className="font-medium text-green-600 bg-green-100 px-3 py-1 rounded-full">
-            {selectedBooking.payment}
-            </span>
-          </p>
-        </div>
+                <div>
+                  <p className="font-semibold">Ticket Category</p>
+                  <p className=" text-gray-500">{selectedBooking.category}</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">Tickets</p>
+                  <p className="font-medium text-gray-500">{selectedBooking.tickets}</p>
+                </div>
+
+                <div className="col-span-2 mt-3">
+                  <h3 className="font-semibold ">Payment Information</h3>
+                </div>
+
+                <div>
+                  <p className="font-semibold">Amount</p>
+                  <p className=" text-gray-500">{selectedBooking.amount}</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">Payment Status</p>
+                  <p className="mt-2">
+                    <span
+                      className="font-medium text-green-600 bg-green-100 px-3 py-1 rounded-full">
+                      Amount: ₹{selectedBooking.amount}
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              {/* Download Ticket */}
+              <button
+                onClick={downloadTicket}
+                className="mt-6 w-full flex items-center justify-center gap-2 bg-black text-white py-2 rounded-lg hover:bg-gray-800"
+              >
+                <Download size={16} />
+                Download Ticket
+              </button>
+
+            </div>
+          </div>
+        )}
+
       </div>
-
-      {/* Download Ticket */}
-      <button
-        onClick={downloadTicket}
-        className="mt-6 w-full flex items-center justify-center gap-2 bg-black text-white py-2 rounded-lg hover:bg-gray-800"
-      >
-        <Download size={16} />
-        Download Ticket
-      </button>
-
-    </div>
-  </div>
-)}
-
-      </div>
     </div>
 
-    
+
   );
 }
 
@@ -630,7 +627,7 @@ function Stat({ label, value, green, red }) {
 
 
 
-    
+
 
 
 

@@ -431,7 +431,7 @@ const ORG_edit = ({ isDark }) => {
                 image={tempImage}
                 crop={crop}
                 zoom={zoom}
-                aspect={1}
+                aspect={4 / 3}
                 onCropChange={setCrop}
                 onCropComplete={onCropComplete}
                 onZoomChange={setZoom}

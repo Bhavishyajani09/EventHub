@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, User, Mail, Phone, DollarSign, Filter } from 'lucide-react';
+import { Calendar, User, Mail, Phone, IndianRupee, Filter } from 'lucide-react';
 import organizerService from '../../services/organizerService';
 
 const BookingsManagement = ({ isDark }) => {
@@ -99,9 +99,9 @@ const BookingsManagement = ({ isDark }) => {
           <div className="flex items-center justify-between">
             <div>
               <p className={`text-sm font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Total Revenue</p>
-              <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats.totalRevenue ? `$${stats.totalRevenue.toLocaleString()}` : '$0'}</p>
+              <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats.totalRevenue ? `₹${stats.totalRevenue.toLocaleString()}` : '₹0'}</p>
             </div>
-            <DollarSign className="h-8 w-8 text-green-600" />
+            <IndianRupee className="h-8 w-8 text-green-600" />
           </div>
         </div>
 
@@ -142,8 +142,8 @@ const BookingsManagement = ({ isDark }) => {
             key={tab.key}
             onClick={() => setFilter(tab.key)}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${filter === tab.key
-                ? `shadow-sm ${isDark ? 'bg-gray-700 text-white' : 'bg-white text-indigo-600'}`
-                : `${isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-900'}`
+              ? `shadow-sm ${isDark ? 'bg-gray-700 text-white' : 'bg-white text-indigo-600'}`
+              : `${isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-900'}`
               }`}
           >
             {tab.label}
@@ -233,7 +233,7 @@ const BookingsManagement = ({ isDark }) => {
                       {booking.tickets || 1}
                     </td>
                     <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      ${booking.totalAmount?.toFixed(2) || '0.00'}
+                      ₹{booking.totalAmount?.toFixed(2) || '0.00'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(booking.status)}`}>

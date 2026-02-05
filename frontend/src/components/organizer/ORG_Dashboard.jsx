@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BarChart3, Ticket, Calendar, DollarSign } from "lucide-react";
+import { BarChart3, Ticket, Calendar, IndianRupee } from "lucide-react";
 import organizerService from "../../services/organizerService";
 import { useAuth } from "../../context/AuthContext";
 
@@ -102,8 +102,8 @@ const Dashboard = ({ isDark }) => {
 
         <StatCard
           title="Total Revenue"
-          value={`$${stats.totalRevenue.toLocaleString()}`}
-          icon={<DollarSign size={24} />}
+          value={`₹${stats.totalRevenue.toLocaleString()}`}
+          icon={<IndianRupee size={24} />}
           bgColor="bg-red-600 text-white"
           isDark={isDark}
         />
