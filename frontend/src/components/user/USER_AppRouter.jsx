@@ -20,6 +20,8 @@ import PrivacyPolicy from './USER_PrivacyPolicy';
 import ContactSupport from './USER_ContactSupport';
 
 import Register from '../../Register';
+import ForgotPassword from '../ForgotPassword';
+import ResetPassword from '../ResetPassword';
 
 // Wrapper components to handle location state
 const MovieDetailWrapper = (props) => {
@@ -217,6 +219,8 @@ function AppRouter() {
           />
         } />
         <Route path="/register" element={<Register onAuthOpen={() => setIsAuthModalOpen(true)} />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/movies" element={
           <MoviesPage
             {...pageProps}
