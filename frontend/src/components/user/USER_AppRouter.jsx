@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Home from './USER_Home';
 import MoviesPage from './USER_MoviesPage';
@@ -20,82 +21,80 @@ import ContactSupport from './USER_ContactSupport';
 
 import Register from '../../Register';
 
+// Wrapper components to handle location state
+const MovieDetailWrapper = (props) => {
+  const location = useLocation();
+  const movie = location.state?.movie || props.selectedMovie;
+
+  if (!movie) return <Navigate to="/movies" replace />;
+
+  return <MovieDetail {...props} movie={movie} />;
+};
+
+const EventDetailWrapper = (props) => {
+  const location = useLocation();
+  const event = location.state?.event || props.selectedEvent;
+
+  if (!event) return <Navigate to="/events" replace />;
+
+  return <EventDetail {...props} event={event} />;
+};
+
+const BookingPageWrapper = (props) => {
+  const location = useLocation();
+  const item = location.state?.item || props.item;
+
+  if (!item) return <Navigate to="/" replace />;
+
+  return <BookingPage {...props} item={item} />;
+};
+
+const EventSeatSelectionWrapper = (props) => {
+  const location = useLocation();
+  const event = location.state?.event || props.event;
+
+  if (!event) return <Navigate to="/" replace />;
+
+  return <EventSeatSelection {...props} event={event} />;
+};
+
+const ArtistProfileWrapper = (props) => {
+  const location = useLocation();
+  const artist = location.state?.artist || props.artist;
+
+  if (!artist) return <Navigate to="/" replace />;
+
+  return <ArtistProfile {...props} artist={artist} />;
+};
+
 function AppRouter() {
-  const [currentPage, setCurrentPage] = useState('home');
-  const [previousPage, setPreviousPage] = useState('home');
   const [isDark, setIsDark] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [selectedMovie, setSelectedMovie] = useState(null);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [selectedArtist, setSelectedArtist] = useState(null);
-
   const [searchQuery, setSearchQuery] = useState('');
 
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Scroll to top whenever page changes
+  // Scroll to top whenever location changes
   useEffect(() => {
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-  }, [currentPage]);
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
-  // Handle URL changes
-  useEffect(() => {
-    const path = window.location.pathname;
-    if (path === '/') {
-      setCurrentPage('home');
+  const handleAuthSuccess = (userData) => {
+    setIsAuthModalOpen(false);
+  };
 
-    } else if (path === '/register') {
-      setCurrentPage('register');
-    } else if (path === '/movies') {
-      setCurrentPage('movies');
-    } else if (path === '/events') {
-      setCurrentPage('events');
-    } else if (path === '/booking') {
-      setCurrentPage('booking');
-    } else if (path === '/movie-detail') {
-      // Only set movieDetail if we have a selected movie, otherwise redirect to movies
-      if (selectedMovie) {
-        setCurrentPage('movieDetail');
-      } else {
-        setCurrentPage('movies');
-        updateURL('movies');
-      }
-    } else if (path === '/event-detail') {
-      // Only set eventDetail if we have a selected event, otherwise redirect to events
-      if (selectedEvent) {
-        setCurrentPage('eventDetail');
-      } else {
-        setCurrentPage('events');
-        updateURL('events');
-      }
-    } else if (path === '/event-seats') {
-      setCurrentPage('eventSeats');
-    } else if (path === '/artist-profile') {
-      setCurrentPage('artistProfile');
-    } else if (path === '/profile') {
-      setCurrentPage('profile');
-    } else if (path === '/bookings') {
-      setCurrentPage('bookings');
-    } else if (path === '/settings') {
-      setCurrentPage('settings');
-    } else if (path === '/help') {
-      setCurrentPage('help');
-    } else if (path === '/terms') {
-      setCurrentPage('terms');
-    } else if (path === '/privacy') {
-      setCurrentPage('privacy');
-    } else if (path === '/contact') {
-      setCurrentPage('contact');
-    }
-  }, [selectedMovie, selectedEvent]);
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
-  // Update URL when page changes
-  const updateURL = (page) => {
+  const handleNavigate = (page) => {
+    // Map legacy page names to routes
     const routes = {
       'home': '/',
-
       'register': '/register',
       'movies': '/movies',
       'events': '/events',
@@ -112,23 +111,12 @@ function AppRouter() {
       'privacy': '/privacy',
       'contact': '/contact'
     };
-    window.history.pushState({}, '', routes[page] || '/');
-  };
 
-  const handleAuthSuccess = (userData) => {
-    // Auth context handles this automatically
-    setIsAuthModalOpen(false);
-  };
-
-  const handleLogout = () => {
-    logout();
-  };
-
-  const handleNavigate = (page) => {
-    setCurrentPage(page);
-    updateURL(page);
+    const route = routes[page] || '/';
+    navigate(route);
     setIsProfileOpen(false);
-    // Clear search query when navigating
+
+    // Clear search query when navigating away from search pages
     if (page !== 'movies' && page !== 'events') {
       setSearchQuery('');
     }
@@ -141,19 +129,14 @@ function AppRouter() {
   const handleSearch = async (query) => {
     setSearchQuery(query);
 
-    // If already on movies or events page, just update the query (handled above)
-    // But if we are on Home or other pages, we need to decide where to go
-    if (currentPage !== 'movies' && currentPage !== 'events') {
+    const currentPath = location.pathname;
+
+    if (currentPath !== '/movies' && currentPath !== '/events') {
       if (!query.trim()) return;
 
       try {
-        // Import eventService dynamically or use the one if available in scope (assuming imported at top)
-        // We need to fetch basic lists to see if it's a movie or event
-        // For performance, we could just default to Events, or maintain a small cache.
-        // Let's do a quick check.
         const { default: eventService } = await import('../../services/eventService');
 
-        // Parallel fetch to check matches
         const [moviesRes, eventsRes] = await Promise.all([
           eventService.getMovieEvents(),
           eventService.getNonMovieEvents()
@@ -173,299 +156,165 @@ function AppRouter() {
         ) : false;
 
         if (movieMatch && !eventMatch) {
-          setCurrentPage('movies');
-          updateURL('movies');
+          navigate('/movies');
         } else {
-          // Default to events if both match or neither match (Events page can usually handle general searches better or shows "No results")
-          // Or if user specifically wants "Movies", they usually go to movies tab.
-          // Let's default to Events as it is "EventHub".
-          if (eventMatch && !movieMatch) {
-            setCurrentPage('events');
-            updateURL('events');
-          } else {
-            // If both or neither, defaulting to Events page is safer as it's the broader category
-            setCurrentPage('events');
-            updateURL('events');
-          }
+          navigate('/events');
         }
 
       } catch (error) {
         console.error("Search redirection error:", error);
-        setCurrentPage('events');
-        updateURL('events');
+        navigate('/events');
       }
     }
   };
 
   const handleMovieClick = (item) => {
-    // Check if it's a movie based on multiple criteria
     if (item.type === 'movie' || item.genre || (!item.type && !item.category)) {
-      setPreviousPage(currentPage); // Use current page instead of hardcoding 'movies'
-      setSelectedMovie(item);
-      setCurrentPage('movieDetail');
-      updateURL('movieDetail');
+      navigate('/movie-detail', { state: { movie: item } });
     } else {
-      setPreviousPage(currentPage); // Use current page instead of hardcoding 'events'
-      setSelectedEvent(item);
-      setCurrentPage('eventDetail');
-      updateURL('eventDetail');
+      navigate('/event-detail', { state: { event: item } });
     }
   };
 
   const handleArtistClick = (artist) => {
-    setPreviousPage(currentPage);
-    setSelectedArtist(artist);
-    setCurrentPage('artistProfile');
-    updateURL('artistProfile');
+    navigate('/artist-profile', { state: { artist } });
   };
 
   const handleBookTickets = (item) => {
-    // Clear both selections first, then set the correct one
-    setSelectedMovie(null);
-    setSelectedEvent(null);
-
-    // Set previous page to current page (preserve navigation history)
-    setPreviousPage(currentPage);
-
-    if (item.type === 'movie' || item.genre) {
-      setSelectedMovie(item);
-    } else {
-      setSelectedEvent(item);
-    }
-    setCurrentPage('booking');
-    updateURL('booking');
+    const bookingItem = (item.type === 'movie' || item.genre) ? item : item;
+    navigate('/booking', { state: { item: bookingItem } });
   };
 
-  const handleGoToSeatSelection = () => {
-    setCurrentPage('eventSeats');
-    updateURL('eventSeats');
+  const handleGoToSeatSelection = (event) => {
+    navigate('/event-seats', { state: { event } });
   };
 
-  const handleBackToMovies = () => {
-    setCurrentPage(previousPage); // Go back to previous page instead of always movies
-    updateURL(previousPage);
-    setSelectedMovie(null);
+  const handleBack = () => {
+    navigate(-1);
   };
 
-  const handleBackToEvents = () => {
-    setCurrentPage(previousPage); // Go back to previous page instead of always events
-    updateURL(previousPage);
-    setSelectedEvent(null);
-  };
-
-  const renderPage = () => {
-    switch (currentPage) {
-
-      case 'register':
-        return <Register onAuthOpen={() => setIsAuthModalOpen(true)} />;
-      case 'movies':
-        return (
-          <MoviesPage
-            isDark={isDark}
-            setIsDark={setIsDark}
-            user={user}
-            onAuthOpen={() => setIsAuthModalOpen(true)}
-            onProfileClick={handleProfileClick}
-            onNavigate={handleNavigate}
-            onMovieClick={handleMovieClick}
-            onBookTickets={handleBookTickets}
-            searchQuery={searchQuery}
-            onSearch={handleSearch}
-          />
-        );
-      case 'events':
-        return (
-          <EventsPage
-            isDark={isDark}
-            setIsDark={setIsDark}
-            user={user}
-            onAuthOpen={() => setIsAuthModalOpen(true)}
-            onProfileClick={handleProfileClick}
-            onNavigate={handleNavigate}
-            onBookTickets={handleBookTickets}
-            onMovieClick={handleMovieClick}
-            onArtistClick={handleArtistClick}
-            searchQuery={searchQuery}
-            onSearch={handleSearch}
-          />
-        );
-      case 'movieDetail':
-        return (
-          <MovieDetail
-            movie={selectedMovie}
-            isDark={isDark}
-            setIsDark={setIsDark}
-            user={user}
-            onAuthOpen={() => setIsAuthModalOpen(true)}
-            onProfileClick={handleProfileClick}
-            onNavigate={handleNavigate}
-            onBack={handleBackToMovies}
-            onBookTickets={handleBookTickets}
-          />
-        );
-      case 'eventDetail':
-        return (
-          <EventDetail
-            event={selectedEvent}
-            isDark={isDark}
-            setIsDark={setIsDark}
-            user={user}
-            onAuthOpen={() => setIsAuthModalOpen(true)}
-            onProfileClick={handleProfileClick}
-            onNavigate={handleNavigate}
-            onBack={handleBackToEvents}
-            onBookTickets={handleBookTickets}
-          />
-        );
-      case 'eventSeats':
-        return (
-          <EventSeatSelection
-            event={selectedEvent || selectedMovie}
-            isDark={isDark}
-            setIsDark={setIsDark}
-            user={user}
-            onAuthOpen={() => setIsAuthModalOpen(true)}
-            onProfileClick={handleProfileClick}
-            onNavigate={handleNavigate}
-            onBack={() => {
-              setCurrentPage('booking');
-              updateURL('booking');
-            }}
-          />
-        );
-      case 'artistProfile':
-        return (
-          <ArtistProfile
-            artist={selectedArtist}
-            isDark={isDark}
-            setIsDark={setIsDark}
-            user={user}
-            onAuthOpen={() => setIsAuthModalOpen(true)}
-            onProfileClick={handleProfileClick}
-            onNavigate={handleNavigate}
-            onBack={() => {
-              setCurrentPage(previousPage);
-              updateURL(previousPage);
-              setSelectedArtist(null);
-            }}
-            onEventClick={handleMovieClick}
-          />
-        );
-      case 'booking':
-        return (
-          <BookingPage
-            item={selectedMovie || selectedEvent}
-            isDark={isDark}
-            setIsDark={setIsDark}
-            user={user}
-            onAuthOpen={() => setIsAuthModalOpen(true)}
-            onProfileClick={handleProfileClick}
-            onNavigate={handleNavigate}
-            onBack={() => {
-              setCurrentPage(previousPage);
-              updateURL(previousPage);
-            }}
-          />
-        );
-      case 'settings':
-        return (
-          <Settings
-            onBack={() => {
-              setCurrentPage('home');
-              updateURL('home');
-            }}
-            user={user}
-            isDark={isDark}
-            onProfileClick={handleProfileClick}
-            onNavigate={handleNavigate}
-          />
-        );
-      case 'help':
-        return (
-          <HelpCenter
-            onBack={() => {
-              setCurrentPage('home');
-              updateURL('home');
-            }}
-            user={user}
-            isDark={isDark}
-            onProfileClick={handleProfileClick}
-            onNavigate={handleNavigate}
-          />
-        );
-        return (
-          <ContactSupport
-            onBack={() => {
-              setCurrentPage('home');
-              updateURL('home');
-            }}
-          />
-        );
-      case 'privacy':
-        return (
-          <PrivacyPolicy
-            onBack={() => {
-              setCurrentPage('home');
-              updateURL('home');
-            }}
-          />
-        );
-      case 'terms':
-        return (
-          <TermsAndConditions
-            onBack={() => {
-              setCurrentPage('home');
-              updateURL('home');
-            }}
-          />
-        );
-      case 'bookings':
-        return (
-          <Bookings
-            onBack={() => {
-              setCurrentPage('home');
-              updateURL('home');
-            }}
-            user={user}
-            isDark={isDark}
-            onProfileClick={handleProfileClick}
-            onNavigate={handleNavigate}
-          />
-        );
-      case 'profile':
-        return (
-          <ProfilePage
-            onBack={() => {
-              setCurrentPage('home');
-              updateURL('home');
-            }}
-            user={user}
-            isDark={isDark}
-            onProfileClick={handleProfileClick}
-            onNavigate={handleNavigate}
-          />
-        );
-      default:
-        return (
-          <Home
-            isDark={isDark}
-            setIsDark={setIsDark}
-            user={user}
-            onAuthOpen={() => setIsAuthModalOpen(true)}
-            onProfileClick={handleProfileClick}
-            onNavigate={handleNavigate}
-            onMovieClick={handleMovieClick}
-            onBookTickets={handleBookTickets}
-            onArtistClick={handleArtistClick}
-            onSearch={handleSearch}
-          />
-        );
-    }
+  // Shared props for pages
+  const pageProps = {
+    isDark,
+    setIsDark,
+    user,
+    onAuthOpen: () => setIsAuthModalOpen(true),
+    onProfileClick: handleProfileClick,
+    onNavigate: handleNavigate,
+    searchQuery,
+    onSearch: handleSearch
   };
 
   return (
     <div className="App">
-      {renderPage()}
+      <Routes>
+        <Route path="/" element={
+          <Home
+            {...pageProps}
+            onMovieClick={handleMovieClick}
+            onBookTickets={handleBookTickets}
+            onArtistClick={handleArtistClick}
+          />
+        } />
+        <Route path="/register" element={<Register onAuthOpen={() => setIsAuthModalOpen(true)} />} />
+        <Route path="/movies" element={
+          <MoviesPage
+            {...pageProps}
+            onMovieClick={handleMovieClick}
+            onBookTickets={handleBookTickets}
+          />
+        } />
+        <Route path="/events" element={
+          <EventsPage
+            {...pageProps}
+            onBookTickets={handleBookTickets}
+            onMovieClick={handleMovieClick}
+            onArtistClick={handleArtistClick}
+          />
+        } />
+
+        {/* Detail Pages with Wrappers */}
+        <Route path="/movie-detail" element={
+          <MovieDetailWrapper
+            {...pageProps}
+            onBack={handleBack}
+            onBookTickets={handleBookTickets}
+          />
+        } />
+        <Route path="/event-detail" element={
+          <EventDetailWrapper
+            {...pageProps}
+            onBack={handleBack}
+            onBookTickets={handleBookTickets}
+          />
+        } />
+
+        <Route path="/booking" element={
+          <BookingPageWrapper
+            {...pageProps}
+            onBack={handleBack}
+          />
+        } />
+
+        <Route path="/event-seats" element={
+          <EventSeatSelectionWrapper
+            {...pageProps}
+            onBack={() => navigate('/booking', { state: { item: location.state?.event } })}
+          />
+        } />
+
+        <Route path="/artist-profile" element={
+          <ArtistProfileWrapper
+            {...pageProps}
+            onBack={handleBack}
+            onEventClick={handleMovieClick}
+          />
+        } />
+
+        {/* User Pages */}
+        <Route path="/profile" element={
+          <ProfilePage
+            {...pageProps}
+            onBack={() => navigate('/')}
+          />
+        } />
+        <Route path="/bookings" element={
+          <Bookings
+            {...pageProps}
+            onBack={() => navigate('/')}
+          />
+        } />
+        <Route path="/settings" element={
+          <Settings
+            {...pageProps}
+            onBack={() => navigate('/')}
+          />
+        } />
+        <Route path="/help" element={
+          <HelpCenter
+            {...pageProps}
+            onBack={() => navigate('/')}
+          />
+        } />
+        <Route path="/contact" element={
+          <ContactSupport
+            onBack={() => navigate('/')}
+          />
+        } />
+        <Route path="/privacy" element={
+          <PrivacyPolicy
+            onBack={() => navigate('/')}
+          />
+        } />
+        <Route path="/terms" element={
+          <TermsAndConditions
+            onBack={() => navigate('/')}
+          />
+        } />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
 
       <AuthModal
         isOpen={isAuthModalOpen}
