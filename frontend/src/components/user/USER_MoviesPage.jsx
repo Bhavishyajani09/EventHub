@@ -51,6 +51,7 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
   }, [movies, searchQuery]);
 
   const heroMovies = movies.length > 0 ? movies.slice(0, 4).map(movie => ({
+    ...movie, // Include all original properties like _id, capacity
     title: movie.title,
     genre: movie.category,
     rating: 'UA',
