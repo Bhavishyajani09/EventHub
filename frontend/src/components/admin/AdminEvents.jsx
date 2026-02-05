@@ -144,7 +144,7 @@ const AdminEvents = () => {
                   <img
                     src={event.image}
                     alt={event.title}
-                    className="w-full h-full object-contain"
+                    className="w-full h-48 object-cover bg-gray-50 rounded-lg"
                   />
                 ) : (
                   <svg className="w-16 h-16 text-gray-400 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -261,7 +261,7 @@ const AdminEvents = () => {
                     <img
                       src={detailsEvent.image}
                       alt={detailsEvent.title}
-                      className="w-full h-48 object-contain bg-gray-50 rounded-lg"
+                      className="w-full h-48 object-cover bg-gray-50 rounded-lg"
                     />
                   ) : (
                     <div className="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center">

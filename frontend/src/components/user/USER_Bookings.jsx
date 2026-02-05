@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import eventService from '../../services/eventService';
+import toast from 'react-hot-toast';
+import { BookingCardSkeleton } from '../common/Skeleton';
+import { Calendar, MapPin, Clock, Ticket } from 'lucide-react';
 
 const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
   const [activeTab, setActiveTab] = useState('Events');
@@ -18,7 +21,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
 
   const fetchBookings = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       if (!token) return;
 
       const response = await axios.get('http://localhost:5000/api/bookings/my-bookings', {
@@ -59,7 +62,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
   const handleCancelBooking = async (bookingId, eventDate) => {
     // Check if event is in the past
     if (new Date(eventDate) < new Date()) {
-      alert("Cannot cancel past events.");
+      toast.error("Cannot cancel past events.");
       return;
     }
 
@@ -70,14 +73,14 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
     try {
       const result = await eventService.cancelBooking(bookingId);
       if (result.success) {
-        alert(result.message);
+        toast.success(result.message || 'Booking cancelled successfully');
         fetchBookings(); // Refresh list
       } else {
-        alert(result.message || result.error || 'Failed to cancel booking');
+        toast.error(result.message || result.error || 'Failed to cancel booking');
       }
     } catch (error) {
       console.error('Cancellation error:', error);
-      alert('An error occurred while cancelling the booking. Please try again.');
+      toast.error('An error occurred while cancelling the booking. Please try again.');
     }
   };
 
@@ -242,7 +245,9 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
         </div>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px' }}>Loading...</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+            {Array(6).fill(0).map((_, i) => <BookingCardSkeleton key={i} isDark={isDark} />)}
+          </div>
         ) : activeBookings.length > 0 ? (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
             {activeBookings.map((booking) => (
@@ -283,7 +288,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                       style={{
                         height: '100%',
                         width: '100%',
-                        objectFit: 'contain', // Ensure full image is visible
+                        objectFit: 'cover', // Ensure full image is visible
                         display: 'block'
                       }}
                     />
@@ -338,11 +343,11 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                     gap: '4px'
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span>📅</span>
+                      <Calendar size={14} style={{ color: '#8b5cf6' }} />
                       <span>{new Date(booking.event?.date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })} at {new Date(booking.event?.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span>📍</span>
+                      <MapPin size={14} style={{ color: '#8b5cf6' }} />
                       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{booking.event?.location || booking.event?.venue}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>

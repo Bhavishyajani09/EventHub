@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Music, Laugh, Zap, Palette, Calendar, Clock } from 'lucide-react';
+import { Music, Laugh, Zap, Palette, Calendar, Clock, MapPin } from 'lucide-react';
 import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
 import eventService from '../../services/eventService';
 import artistService from '../../services/artistService';
+import toast from 'react-hot-toast';
+import { EventCardSkeleton, ArtistSkeleton } from '../common/Skeleton';
 
 const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBookTickets, onMovieClick, onArtistClick, searchQuery, onSearch }) => {
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
@@ -75,11 +77,11 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
   }, [heroEvents.length]);
 
   const exploreEvents = [
-    { name: 'MUSIC', icon: Music, color: '#f59e0b' },
-    { name: 'COMEDY', icon: Laugh, color: '#ef4444' },
-    { name: 'SPORTS', icon: Zap, color: '#10b981' },
-    { name: 'ART EXHIBITIONS', icon: Palette, color: '#8b5cf6' },
-    { name: 'SEASONAL EVENTS', icon: Calendar, color: '#f97316' }
+    { name: 'MUSIC', label: 'MUSIC', icon: Music, color: '#f59e0b' },
+    { name: 'COMEDY', label: 'COMEDY', icon: Laugh, color: '#ef4444' },
+    { name: 'SPORTS', label: 'SPORTS', icon: Zap, color: '#10b981' },
+    { name: 'ART', label: 'ART EXHIBITIONS', icon: Palette, color: '#8b5cf6' },
+    { name: 'SEASONAL EVENT', label: 'SEASONAL EVENTS', icon: Calendar, color: '#f97316' }
   ];
 
   const allEvents = events.map(event => ({
@@ -128,7 +130,19 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
 
   const filterEvents = (category) => {
     setSelectedCategory(category);
-    // Logic moved to effect above
+
+    // Smooth scroll to all events section
+    const element = document.getElementById('all-events-section');
+    if (element) {
+      const offset = 100; // Offset for navbar
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
   };
 
   return (
@@ -162,17 +176,27 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
         {/* Hero Section */}
         {loading ? (
           <div style={{
-            backgroundColor: isDark ? '#1f2937' : '#f3f4f6',
+            backgroundColor: isDark ? 'rgba(31, 41, 55, 0.5)' : 'rgba(243, 244, 246, 0.5)',
             borderRadius: '24px',
-            padding: '100px',
             marginBottom: '40px',
-            textAlign: 'center',
             height: '500px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            overflow: 'hidden',
+            position: 'relative'
           }}>
-            <p style={{ color: isDark ? '#9ca3af' : '#6b7280', fontSize: '18px' }}>Loading events...</p>
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.1) 50%, transparent 75%)',
+              backgroundSize: '200% 100%',
+              animation: 'shimmer 1.5s infinite linear'
+            }} />
+            <p style={{ color: isDark ? '#9ca3af' : '#6b7280', fontSize: '18px', zIndex: 1 }}>Loading featured events...</p>
           </div>
         ) : error ? (
           <div style={{
@@ -231,7 +255,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                   if (onBookTickets) {
                     onBookTickets(heroEvents[currentHeroIndex]);
                   } else {
-                    alert(`Booking ${heroEvents[currentHeroIndex].title}`);
+                    toast.success(`Booking ${heroEvents[currentHeroIndex].title}`);
                   }
                 }}
                 style={{
@@ -355,22 +379,38 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           marginBottom: '40px'
         }}>
           {exploreEvents.map((event, index) => (
-            <div key={index} style={{
-              backgroundColor: isDark ? '#1f2937' : 'white',
-              borderRadius: '12px',
-              padding: '20px',
-              textAlign: 'center',
-              cursor: 'pointer',
-              transition: 'transform 0.2s',
-              boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
-              height: '100px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            <div
+              key={index}
+              onClick={() => filterEvents(event.name)}
+              style={{
+                backgroundColor: isDark ? '#1f2937' : 'white',
+                borderRadius: '12px',
+                padding: '20px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                boxShadow: selectedCategory === event.name
+                  ? (isDark ? '0 0 15px rgba(139, 92, 246, 0.5)' : '0 0 15px rgba(139, 92, 246, 0.3)')
+                  : (isDark ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)'),
+                height: '100px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                border: selectedCategory === event.name ? '2px solid #8b5cf6' : '2px solid transparent'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                if (selectedCategory !== event.name) {
+                  e.currentTarget.style.boxShadow = isDark ? '0 4px 12px rgba(0, 0, 0, 0.4)' : '0 4px 12px rgba(0, 0, 0, 0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                if (selectedCategory !== event.name) {
+                  e.currentTarget.style.boxShadow = isDark ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)';
+                }
+              }}
             >
               <div style={{
                 fontSize: '32px',
@@ -384,9 +424,9 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
               <h4 style={{
                 fontSize: '12px',
                 fontWeight: '600',
-                color: isDark ? '#f9fafb' : '#111827',
+                color: selectedCategory === event.name ? '#8b5cf6' : (isDark ? '#f9fafb' : '#111827'),
                 margin: 0
-              }}>{event.name}</h4>
+              }}>{event.label}</h4>
             </div>
           ))}
         </div>
@@ -405,50 +445,56 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           gap: '20px',
           marginBottom: '40px'
         }}>
-          {artists.map((artist, index) => (
-            <div key={index}
-              onClick={() => {
-                if (onArtistClick) {
-                  onArtistClick(artist);
-                }
-              }}
-              style={{
-                textAlign: 'center',
-                cursor: 'pointer'
-              }}>
-              <div style={{
-                width: 'clamp(80px, 15vw, 120px)',
-                height: 'clamp(80px, 15vw, 120px)',
-                borderRadius: '50%',
-                backgroundImage: `url(${artist.image || '/placeholder-artist.jpg'})`,
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
-                backgroundColor: '#f9fafb',
-                margin: '0 auto 12px',
-                transition: 'transform 0.2s',
-                boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
-              }}
-                onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-                onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-              />
-              <h4 style={{
-                fontSize: '14px',
-                fontWeight: '500',
-                color: isDark ? '#f9fafb' : '#111827',
-                margin: 0
-              }}>{artist.name}</h4>
-            </div>
-          ))}
+          {artistLoading ? (
+            Array(5).fill(0).map((_, i) => <ArtistSkeleton key={i} isDark={isDark} />)
+          ) : (
+            artists.map((artist, index) => (
+              <div key={index}
+                onClick={() => {
+                  if (onArtistClick) {
+                    onArtistClick(artist);
+                  }
+                }}
+                style={{
+                  textAlign: 'center',
+                  cursor: 'pointer'
+                }}>
+                <div style={{
+                  width: 'clamp(80px, 15vw, 120px)',
+                  height: 'clamp(80px, 15vw, 120px)',
+                  borderRadius: '50%',
+                  backgroundImage: `url(${artist.image || '/placeholder-artist.jpg'})`,
+                  backgroundSize: 'cover',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'center',
+                  backgroundColor: '#f9fafb',
+                  margin: '0 auto 12px',
+                  transition: 'transform 0.2s',
+                  boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
+                }}
+                  onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+                  onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                />
+                <h4 style={{
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: isDark ? '#f9fafb' : '#111827',
+                  margin: 0
+                }}>{artist.name}</h4>
+              </div>
+            ))
+          )}
         </div>
 
         {/* All Events */}
-        <h2 style={{
-          fontSize: '24px',
-          fontWeight: 'bold',
-          color: isDark ? '#f9fafb' : '#111827',
-          marginBottom: '20px'
-        }}>All Events</h2>
+        <h2
+          id="all-events-section"
+          style={{
+            fontSize: '24px',
+            fontWeight: 'bold',
+            color: isDark ? '#f9fafb' : '#111827',
+            marginBottom: '20px'
+          }}>All Events</h2>
 
         {/* Filter Buttons */}
         <div style={{
@@ -483,18 +529,25 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                 border: 'none',
                 borderRadius: '20px',
                 fontSize: '14px',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                transition: 'all 0.2s'
               }}
             >
-              {event.name}
+              {event.label}
             </button>
           ))}
         </div>
 
         {/* Events Grid */}
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px' }}>
-            <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>Loading events...</p>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: '24px',
+            marginBottom: '40px',
+            justifyContent: 'center'
+          }}>
+            {Array(6).fill(0).map((_, i) => <EventCardSkeleton key={i} isDark={isDark} />)}
           </div>
         ) : filteredEvents.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px' }}>
@@ -533,7 +586,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                 <div style={{
                   height: '220px',
                   backgroundImage: `url(${event.image})`,
-                  backgroundSize: 'contain',
+                  backgroundSize: 'cover',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center',
                   backgroundColor: '#f9fafb',
@@ -578,7 +631,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                       alignItems: 'center',
                       gap: '6px'
                     }}>
-                      <span style={{ opacity: 0.7 }}>📍</span> {event.venue}
+                      <MapPin size={14} style={{ color: '#667eea', opacity: 0.8 }} /> {event.venue}
                     </p>
                   </div>
 
@@ -602,7 +655,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                         if (onBookTickets) {
                           onBookTickets(event);
                         } else {
-                          alert(`Booking ${event.title}`);
+                          toast.success(`Booking ${event.title}`);
                         }
                       }}
                       style={{

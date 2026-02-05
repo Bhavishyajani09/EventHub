@@ -8,8 +8,20 @@ const cloudinary = require('../config/cloudinary');
 exports.getOrganizerEvents = async (req, res) => {
   try {
     const organizerId = req.user.id;
+    const now = new Date();
+
+    // Find and update expired events for this organizer
+    await Event.updateMany(
+      {
+        organizer: organizerId,
+        date: { $lt: now },
+        isPublished: true
+      },
+      { isPublished: false }
+    );
+
     const events = await Event.find({ organizer: organizerId })
-      .sort({ createdAt: -1 })
+      .sort({ date: -1 })
       .populate('organizer', 'name email');
 
     res.json({
