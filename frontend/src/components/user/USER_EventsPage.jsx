@@ -293,7 +293,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
               height: '280px',
               borderRadius: '12px',
               backgroundImage: `url(${heroEvents[currentHeroIndex].image})`,
-              backgroundSize: 'contain',
+              backgroundSize: 'cover',
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
               backgroundColor: 'rgba(255, 255, 255, 0.1)',
