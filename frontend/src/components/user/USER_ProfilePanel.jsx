@@ -6,7 +6,7 @@ const ProfilePanel = ({ user, isOpen, onClose, onLogout, onNavigate, isDark }) =
   const panelRef = useRef(null);
 
   const menuItems = [
-    { id: 'profile', label: 'Profile', icon: User },
+    // Profile item removed
     { id: 'bookings', label: 'My Bookings', icon: Ticket },
     { id: 'settings', label: 'Settings', icon: Settings },
     { id: 'help', label: 'Help Center', icon: HelpCircle },

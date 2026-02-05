@@ -17,8 +17,8 @@ function OrganizerAppRouter() {
   const [isDark, setIsDark] = useState(false);
 
   const handleLogout = () => {
+    navigate('/');
     logout();
-    window.history.pushState({}, '', '/');
   };
 
   const handleNavigate = (page) => {

@@ -11,7 +11,7 @@ import BookingPage from './USER_BookingPage';
 import EventSeatSelection from './USER_EventSeatSelection';
 import AuthModal from '../../AuthModal';
 import ProfilePanel from './USER_ProfilePanel';
-import ProfilePage from './USER_Profile';
+// ProfilePage import removed
 import Bookings from './USER_Bookings';
 import Settings from './USER_Settings';
 import HelpCenter from './USER_HelpCenter';
@@ -103,7 +103,7 @@ function AppRouter() {
       'eventDetail': '/event-detail',
       'eventSeats': '/event-seats',
       'artistProfile': '/artist-profile',
-      'profile': '/profile',
+      // profile route removed
       'bookings': '/bookings',
       'settings': '/settings',
       'help': '/help',
@@ -272,12 +272,7 @@ function AppRouter() {
         } />
 
         {/* User Pages */}
-        <Route path="/profile" element={
-          <ProfilePage
-            {...pageProps}
-            onBack={() => navigate('/')}
-          />
-        } />
+        {/* Profile route removed */}
         <Route path="/bookings" element={
           <Bookings
             {...pageProps}
