@@ -181,7 +181,7 @@ const AdminEvents = () => {
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-2">
-                  <button 
+                  <button
                     onClick={() => handleViewDetails(event)}
                     className="flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700"
                   >
@@ -193,7 +193,7 @@ const AdminEvents = () => {
                   </button>
                   {event.status === 'pending' && (
                     <>
-                      <button 
+                      <button
                         onClick={() => handleApprove(event.id)}
                         className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-200"
                         title="Approve Event"
@@ -202,7 +202,7 @@ const AdminEvents = () => {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleReject(event)}
                         className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
                         title="Reject Event"

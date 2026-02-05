@@ -76,10 +76,10 @@ const toggleUserBlock = async (req, res) => {
   try {
     const { id } = req.params;
     console.log('Toggling block for user ID:', id);
-    
+
     // First find the user to get current status
     const user = await User.findById(id);
-    
+
     if (!user) {
       console.log('User not found:', id);
       return res.status(404).json({ message: 'User not found' });
@@ -87,7 +87,7 @@ const toggleUserBlock = async (req, res) => {
 
     // specific toggle update using findByIdAndUpdate to avoid full validation of legacy docs
     const updatedUser = await User.findByIdAndUpdate(
-      id, 
+      id,
       { isBlocked: !user.isBlocked },
       { new: true } // Return updated doc
     );
@@ -132,7 +132,7 @@ const toggleOrganizerBlock = async (req, res) => {
     const { id } = req.params;
     console.log('Toggling block for organizer ID:', id);
     const organizer = await Organizer.findById(id);
-    
+
     if (!organizer) {
       console.log('Organizer not found:', id);
       return res.status(404).json({ message: 'Organizer not found' });
@@ -143,7 +143,7 @@ const toggleOrganizerBlock = async (req, res) => {
       { isBlocked: !organizer.isBlocked },
       { new: true }
     );
-    
+
     console.log('Organizer block status updated:', updatedOrganizer.isBlocked);
 
     res.json({
@@ -169,7 +169,7 @@ const getAllEvents = async (req, res) => {
     const events = await Event.find({})
       .populate('organizer', 'name email')
       .sort({ createdAt: -1 });
-      
+
     res.json({
       success: true,
       count: events.length,
@@ -265,8 +265,8 @@ const getAdminProfile = async (req, res) => {
     console.log('Fetching admin profile for ID:', req.admin.id);
     const admin = await Admin.findById(req.admin.id).select('-password');
     if (!admin) {
-        console.log('Admin not found for ID:', req.admin.id);
-        return res.status(404).json({ message: 'Admin not found' });
+      console.log('Admin not found for ID:', req.admin.id);
+      return res.status(404).json({ message: 'Admin not found' });
     }
     res.json({
       success: true,
@@ -289,7 +289,7 @@ const updateAdminProfile = async (req, res) => {
     if (phone) admin.phone = phone;
 
     await admin.save();
-    
+
     res.json({
       success: true,
       message: 'Profile updated successfully',
@@ -353,7 +353,7 @@ const getPlatformSettings = async (req, res) => {
 const updatePlatformSettings = async (req, res) => {
   try {
     const { commission, taxPercentage, convenienceFee } = req.body;
-    
+
     let settings = await Settings.findOne();
     if (!settings) {
       settings = new Settings({});
@@ -400,7 +400,7 @@ const rejectEvent = async (req, res) => {
     const { reason } = req.body;
     const event = await Event.findByIdAndUpdate(
       req.params.id,
-      { 
+      {
         approvalStatus: 'rejected',
         rejectionReason: reason || 'No reason provided',
         isPublished: false

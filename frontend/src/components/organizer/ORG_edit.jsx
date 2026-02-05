@@ -32,7 +32,9 @@ const ORG_edit = ({ isDark }) => {
     price: '',
     category: '',
     image: null,
-    isPublished: false
+    isPublished: false,
+    hasArtist: false,
+    artistName: ''
   });
 
   const categories = [
@@ -64,7 +66,9 @@ const ORG_edit = ({ isDark }) => {
           price: event.price || '',
           category: event.category || '',
           image: null,
-          isPublished: event.isPublished || false
+          isPublished: event.isPublished || false,
+          hasArtist: event.hasArtist || false,
+          artistName: event.artistName || ''
         });
 
         if (event.image) {
@@ -297,6 +301,37 @@ const ORG_edit = ({ isDark }) => {
             />
           </div>
 
+          <div className="flex items-center gap-2 mt-4 mb-2">
+            <input
+              type="checkbox"
+              id="hasArtist"
+              name="hasArtist"
+              checked={formData.hasArtist}
+              onChange={handleInputChange}
+              className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+            />
+            <label htmlFor="hasArtist" className="text-sm font-medium text-gray-700">
+              Does your event have an artist?
+            </label>
+          </div>
+
+          {formData.hasArtist && (
+            <div className="mt-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Artist Name
+              </label>
+              <input
+                type="text"
+                name="artistName"
+                value={formData.artistName}
+                onChange={handleInputChange}
+                required={formData.hasArtist}
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                placeholder="Enter artist name"
+              />
+            </div>
+          )}
+
           {/* Date & Time */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <div>
@@ -406,73 +441,75 @@ const ORG_edit = ({ isDark }) => {
             )}
           </button>
         </div>
-      </form>
+      </form >
 
       {/* Crop Modal */}
-      {isCropping && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4">
-          <div className="bg-white rounded-lg w-full max-w-2xl h-[600px] flex flex-col overflow-hidden">
-            <div className="flex justify-between items-center p-4 border-b">
-              <h3 className="text-lg font-semibold">Crop Image</h3>
-              <button
-                onClick={() => {
-                  setIsCropping(false);
-                  setTempImage(null);
-                  setZoom(1);
-                }}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X size={24} />
-              </button>
-            </div>
+      {
+        isCropping && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4">
+            <div className="bg-white rounded-lg w-full max-w-2xl h-[600px] flex flex-col overflow-hidden">
+              <div className="flex justify-between items-center p-4 border-b">
+                <h3 className="text-lg font-semibold">Crop Image</h3>
+                <button
+                  onClick={() => {
+                    setIsCropping(false);
+                    setTempImage(null);
+                    setZoom(1);
+                  }}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X size={24} />
+                </button>
+              </div>
 
-            <div className="relative flex-1 bg-gray-900">
-              <Cropper
-                image={tempImage}
-                crop={crop}
-                zoom={zoom}
-                aspect={4 / 3}
-                onCropChange={setCrop}
-                onCropComplete={onCropComplete}
-                onZoomChange={setZoom}
-              />
-            </div>
-
-            <div className="p-4 border-t bg-gray-50">
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Zoom
-                </label>
-                <input
-                  type="range"
-                  value={zoom}
-                  min={1}
-                  max={3}
-                  step={0.1}
-                  aria-labelledby="Zoom"
-                  onChange={(e) => setZoom(e.target.value)}
-                  className="w-full"
+              <div className="relative flex-1 bg-gray-900">
+                <Cropper
+                  image={tempImage}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={4 / 3}
+                  onCropChange={setCrop}
+                  onCropComplete={onCropComplete}
+                  onZoomChange={setZoom}
                 />
               </div>
-              <div className="flex justify-end gap-3">
-                <button
-                  onClick={() => setIsCropping(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={showCroppedImage}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-                >
-                  Apply Crop
-                </button>
+
+              <div className="p-4 border-t bg-gray-50">
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Zoom
+                  </label>
+                  <input
+                    type="range"
+                    value={zoom}
+                    min={1}
+                    max={3}
+                    step={0.1}
+                    aria-labelledby="Zoom"
+                    onChange={(e) => setZoom(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => setIsCropping(false)}
+                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={showCroppedImage}
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                  >
+                    Apply Crop
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 };
 

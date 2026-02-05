@@ -1,8 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
+import artistService from '../../services/artistService';
 
-const ArtistProfile = ({ artist, isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBack, onEventClick }) => {
+const ArtistProfile = ({ artist: initialArtist, isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBack, onEventClick }) => {
+  const [artist, setArtist] = useState(initialArtist);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (initialArtist?._id) {
+      fetchFullArtist(initialArtist._id);
+    }
+  }, [initialArtist?._id]);
+
+  const fetchFullArtist = async (id) => {
+    try {
+      setLoading(true);
+      const response = await artistService.getArtistById(id);
+      if (response.success) {
+        setArtist(response.artist);
+      }
+    } catch (error) {
+      console.error('Error fetching artist details:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!artist) {
     return (
       <div style={{
@@ -18,7 +42,7 @@ const ArtistProfile = ({ artist, isDark, setIsDark, user, onAuthOpen, onProfileC
           color: isDark ? '#f9fafb' : '#111827'
         }}>
           <h2>Artist not found</h2>
-          <button 
+          <button
             onClick={() => onNavigate('events')}
             style={{
               padding: '12px 24px',
@@ -74,7 +98,7 @@ const ArtistProfile = ({ artist, isDark, setIsDark, user, onAuthOpen, onProfileC
       background: isDark ? 'linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)',
       minHeight: '100vh'
     }}>
-      <SharedNavbar 
+      <SharedNavbar
         isDark={isDark}
         setIsDark={setIsDark}
         user={user}
@@ -91,7 +115,7 @@ const ArtistProfile = ({ artist, isDark, setIsDark, user, onAuthOpen, onProfileC
         padding: 'clamp(20px, 5vw, 40px) clamp(16px, 4vw, 20px)'
       }}>
         {/* Back Button */}
-        <button 
+        <button
           onClick={onBack}
           style={{
             background: '#f3f4f6',
@@ -147,11 +171,7 @@ const ArtistProfile = ({ artist, isDark, setIsDark, user, onAuthOpen, onProfileC
               marginBottom: '0',
               textAlign: window.innerWidth > 768 ? 'left' : 'center'
             }}>
-              {artist.name} is one of the most versatile and popular singers in Bollywood, with 
-              over 3000 songs in her repertoire and numerous national and international awards. She has 
-              lent her voice to actresses in over 20 different languages including Hindi, Punjabi, 
-              English, Marathi, Tamil, Telugu, Kannada, Bengali, Bhojpuri, Gujarati, and Oriya. 
-              She has received several recognitions throughout her career & won 22 awards.
+              {artist.bio || `${artist.name} is one of the most popular artists in the district, known for their incredible talent in ${artist.category || 'their field'}. Join their upcoming events for an unforgettable experience!`}
             </p>
           </div>
         </div>
@@ -170,67 +190,62 @@ const ArtistProfile = ({ artist, isDark, setIsDark, user, onAuthOpen, onProfileC
             gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
             gap: '20px'
           }}>
-            {artistEvents.map((event, index) => (
-              <div 
-                key={index}
-                onClick={() => onEventClick && onEventClick(event)}
-                style={{
-                backgroundColor: isDark ? '#1f2937' : 'white',
-                borderRadius: '12px',
-                overflow: 'hidden',
-                boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                cursor: 'pointer',
-                transition: 'transform 0.2s',
-                position: 'relative'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-              >
-                {/* Status Badge */}
-                <div style={{
-                  position: 'absolute',
-                  top: '12px',
-                  left: '12px',
-                  backgroundColor: event.status === 'Live' ? '#ef4444' : '#3b82f6',
-                  color: 'white',
-                  padding: '4px 8px',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  zIndex: 1
-                }}>
-                  {event.status}
-                </div>
-
-                <div style={{
-                  height: '200px',
-                  backgroundImage: `url(${event.image})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center'
-                }} />
-
-                <div style={{ padding: '16px' }}>
-                  <h3 style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: isDark ? '#f9fafb' : '#111827',
-                    marginBottom: '8px',
-                    lineHeight: '1.3'
-                  }}>{event.title}</h3>
-
-                  <p style={{
-                    fontSize: '14px',
-                    color: isDark ? '#9ca3af' : '#6b7280',
-                    marginBottom: '4px'
-                  }}>{event.location}</p>
-
-                  <p style={{
-                    fontSize: '12px',
-                    color: isDark ? '#9ca3af' : '#6b7280'
-                  }}>Tickets to be announced</p>
-                </div>
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
+                <p style={{ color: isDark ? '#d1d5db' : '#4b5563' }}>Loading events...</p>
               </div>
-            ))}
+            ) : (!artist.events || artist.events.length === 0) ? (
+              <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
+                <p style={{ color: isDark ? '#d1d5db' : '#4b5563' }}>No events found for this artist</p>
+              </div>
+            ) : (
+              artist.events.map((event, index) => (
+                <div
+                  key={index}
+                  onClick={() => onEventClick && onEventClick(event)}
+                  style={{
+                    backgroundColor: isDark ? '#1f2937' : 'white',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s',
+                    position: 'relative'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                  <div style={{
+                    height: '200px',
+                    backgroundImage: `url(${event.image || '/placeholder-event.jpg'})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  }} />
+
+                  <div style={{ padding: '16px' }}>
+                    <h3 style={{
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      color: isDark ? '#f9fafb' : '#111827',
+                      marginBottom: '8px',
+                      lineHeight: '1.3'
+                    }}>{event.title}</h3>
+
+                    <p style={{
+                      fontSize: '14px',
+                      color: isDark ? '#9ca3af' : '#6b7280',
+                      marginBottom: '4px'
+                    }}>{event.location}</p>
+
+                    <p style={{
+                      fontSize: '12px',
+                      color: '#6366f1',
+                      fontWeight: '500'
+                    }}>{new Date(event.date).toLocaleDateString()}</p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

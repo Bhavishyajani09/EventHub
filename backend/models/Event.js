@@ -77,6 +77,20 @@ const eventSchema = new mongoose.Schema({
   rejectionReason: {
     type: String,
     default: ''
+  },
+  // Artist information
+  hasArtist: {
+    type: Boolean,
+    default: false
+  },
+  artist: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Artist',
+    default: null
+  },
+  artistName: {
+    type: String,
+    default: ''
   }
 }, {
   timestamps: true

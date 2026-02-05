@@ -3,33 +3,47 @@ import { Music, Laugh, Zap, Palette, Calendar, Clock } from 'lucide-react';
 import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
 import eventService from '../../services/eventService';
+import artistService from '../../services/artistService';
 
 const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBookTickets, onMovieClick, onArtistClick, searchQuery, onSearch }) => {
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   const [events, setEvents] = useState([]);
+  const [artists, setArtists] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [artistLoading, setArtistLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch events from API
+  // Fetch data from API
   useEffect(() => {
-    const fetchEvents = async () => {
+    const loadData = async () => {
       try {
         setLoading(true);
-        const response = await eventService.getNonMovieEvents();
-        if (response.success) {
-          setEvents(response.events || []);
+        setArtistLoading(true);
+
+        const [eventsRes, artistsRes] = await Promise.all([
+          eventService.getNonMovieEvents(),
+          artistService.getArtists()
+        ]);
+
+        if (eventsRes.success) {
+          setEvents(eventsRes.events || []);
         } else {
           setError('Failed to load events');
         }
+
+        if (artistsRes.success) {
+          setArtists(artistsRes.artists.slice(0, 5) || []);
+        }
       } catch (err) {
-        setError('Failed to load events');
-        console.error('Error fetching events:', err);
+        setError('Failed to load data');
+        console.error('Error fetching data:', err);
       } finally {
         setLoading(false);
+        setArtistLoading(false);
       }
     };
 
-    fetchEvents();
+    loadData();
   }, []);
 
   useEffect(() => {
@@ -73,11 +87,6 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
     { name: 'ART EXHIBITIONS', icon: Palette, color: '#8b5cf6' },
     { name: 'SEASONAL EVENTS', icon: Calendar, color: '#f97316' }
   ];
-
-  const artists = events.slice(0, 5).map(event => ({
-    name: event.title.split(' ')[0] || 'Artist',
-    image: event.image || '/placeholder-artist.jpg'
-  }));
 
   const allEvents = events.map(event => ({
     title: event.title,
@@ -394,7 +403,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           fontWeight: 'bold',
           color: isDark ? '#f9fafb' : '#111827',
           marginBottom: '20px'
-        }}>Artists in your District</h2>
+        }}>Featured Artists on Platform</h2>
 
         <div style={{
           display: 'grid',
@@ -414,11 +423,11 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                 cursor: 'pointer'
               }}>
               <div style={{
-                width: '100px',
-                height: '100px',
+                width: 'clamp(80px, 15vw, 120px)',
+                height: 'clamp(80px, 15vw, 120px)',
                 borderRadius: '50%',
-                backgroundImage: `url(${artist.image})`,
-                backgroundSize: 'contain',
+                backgroundImage: `url(${artist.image || '/placeholder-artist.jpg'})`,
+                backgroundSize: 'cover',
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
                 backgroundColor: '#f9fafb',

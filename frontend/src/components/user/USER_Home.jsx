@@ -6,20 +6,41 @@ import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
 import USER_MovieDetail from './USER_MovieDetail';
 import eventService from '../../services/eventService';
+import artistService from '../../services/artistService';
 
 const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick, onBookTickets, onArtistClick, onSearch }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfilePanelOpen, setIsProfilePanelOpen] = useState(false);
   const [events, setEvents] = useState([]);
   const [movies, setMovies] = useState([]);
+  const [artists, setArtists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [heroSearch, setHeroSearch] = useState('');
 
   useEffect(() => {
     document.title = 'EventHub - Discover Amazing Events';
-    fetchEvents();
-    fetchMovies();
+    const loadAllData = async () => {
+      setLoading(true);
+      await Promise.all([
+        fetchEvents(),
+        fetchMovies(),
+        fetchArtists()
+      ]);
+      setLoading(false);
+    };
+    loadAllData();
   }, []);
+
+  const fetchArtists = async () => {
+    try {
+      const response = await artistService.getArtists();
+      if (response.success) {
+        setArtists(response.artists.slice(0, 5) || []);
+      }
+    } catch (err) {
+      console.error('Error fetching artists:', err);
+    }
+  };
 
   const fetchEvents = async () => {
     try {
@@ -29,8 +50,6 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
       }
     } catch (err) {
       console.error('Error fetching events:', err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -480,7 +499,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
             fontWeight: 'bold',
             color: isDark ? '#f9fafb' : '#111827',
             marginBottom: 'clamp(16px, 4vw, 24px)'
-          }}>Artists in your District</h2>
+          }}>Featured Artists on Platform</h2>
 
           <div style={{
             display: 'grid',
@@ -488,47 +507,51 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
             gap: 'clamp(12px, 3vw, 20px)',
             marginBottom: 'clamp(32px, 6vw, 48px)'
           }}>
-            {[
-              { name: 'Sunidhi Chauhan', image: '/placeholder-artist.jpg' },
-              { name: 'Karan Aujla', image: '/placeholder-artist.jpg' },
-              { name: 'Sonu Nigam', image: '/placeholder-artist.jpg' },
-              { name: 'Aaditya "Kullu" Kulshreshth', image: '/placeholder-artist.jpg' },
-              { name: 'Kanha Kamboj', image: '/placeholder-artist.jpg' }
-            ].map((artist, index) => (
-              <div key={index}
-                onClick={() => {
-                  if (onArtistClick) {
-                    onArtistClick(artist);
-                  }
-                }}
-                style={{
-                  textAlign: 'center',
-                  cursor: 'pointer'
-                }}>
-                <div style={{
-                  width: 'clamp(80px, 15vw, 120px)',
-                  height: 'clamp(80px, 15vw, 120px)',
-                  borderRadius: '50%',
-                  backgroundImage: `url(${artist.image})`,
-                  backgroundSize: 'contain',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: 'center',
-                  backgroundColor: '#f9fafb',
-                  margin: '0 auto 12px',
-                  transition: 'transform 0.2s',
-                  boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
-                }}
-                  onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-                  onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-                >
-                </div>
-                <h4 style={{
-                  fontSize: 'clamp(12px, 2.5vw, 14px)',
-                  fontWeight: '500',
-                  color: isDark ? '#f9fafb' : '#111827'
-                }}>{artist.name}</h4>
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
+                <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>Loading artists...</p>
               </div>
-            ))}
+            ) : artists.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
+                <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>No artists found in your district</p>
+              </div>
+            ) : (
+              artists.map((artist, index) => (
+                <div key={index}
+                  onClick={() => {
+                    if (onArtistClick) {
+                      onArtistClick(artist);
+                    }
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer'
+                  }}>
+                  <div style={{
+                    width: 'clamp(80px, 15vw, 120px)',
+                    height: 'clamp(80px, 15vw, 120px)',
+                    borderRadius: '50%',
+                    backgroundImage: `url(${artist.image || '/placeholder-artist.jpg'})`,
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                    backgroundColor: '#f9fafb',
+                    margin: '0 auto 12px',
+                    transition: 'transform 0.2s',
+                    boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
+                  }}
+                    onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+                    onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                  >
+                  </div>
+                  <h4 style={{
+                    fontSize: 'clamp(12px, 2.5vw, 14px)',
+                    fontWeight: '500',
+                    color: isDark ? '#f9fafb' : '#111827'
+                  }}>{artist.name}</h4>
+                </div>
+              ))
+            )}
           </div>
 
           {/* Newsletter Section */}

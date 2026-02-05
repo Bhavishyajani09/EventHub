@@ -29,6 +29,7 @@ app.use('/payments', require('./routes/payments'));
 app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/events', require('./routes/events')); // Public events routes
+app.use('/api/artists', require('./routes/artistRoutes'));
 
 // Routes
 app.use('/api', organizerRoutes);
