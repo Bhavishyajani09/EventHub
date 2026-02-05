@@ -30,6 +30,8 @@ function AppRouter() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedArtist, setSelectedArtist] = useState(null);
 
+  const [searchQuery, setSearchQuery] = useState('');
+
   const { user, logout } = useAuth();
 
   // Scroll to top whenever page changes
@@ -126,10 +128,73 @@ function AppRouter() {
     setCurrentPage(page);
     updateURL(page);
     setIsProfileOpen(false);
+    // Clear search query when navigating
+    if (page !== 'movies' && page !== 'events') {
+      setSearchQuery('');
+    }
   };
 
   const handleProfileClick = () => {
     setIsProfileOpen(true);
+  };
+
+  const handleSearch = async (query) => {
+    setSearchQuery(query);
+
+    // If already on movies or events page, just update the query (handled above)
+    // But if we are on Home or other pages, we need to decide where to go
+    if (currentPage !== 'movies' && currentPage !== 'events') {
+      if (!query.trim()) return;
+
+      try {
+        // Import eventService dynamically or use the one if available in scope (assuming imported at top)
+        // We need to fetch basic lists to see if it's a movie or event
+        // For performance, we could just default to Events, or maintain a small cache.
+        // Let's do a quick check.
+        const { default: eventService } = await import('../../services/eventService');
+
+        // Parallel fetch to check matches
+        const [moviesRes, eventsRes] = await Promise.all([
+          eventService.getMovieEvents(),
+          eventService.getNonMovieEvents()
+        ]);
+
+        const movieMatch = moviesRes.success ? moviesRes.events.some(m =>
+          m.title.toLowerCase().includes(query.toLowerCase()) ||
+          m.category.toLowerCase().includes(query.toLowerCase()) ||
+          m.location.toLowerCase().includes(query.toLowerCase())
+        ) : false;
+
+        const eventMatch = eventsRes.success ? eventsRes.events.some(e =>
+          e.title.toLowerCase().includes(query.toLowerCase()) ||
+          e.category.toLowerCase().includes(query.toLowerCase()) ||
+          (e.venue && e.venue.toLowerCase().includes(query.toLowerCase())) ||
+          (e.location && e.location.toLowerCase().includes(query.toLowerCase()))
+        ) : false;
+
+        if (movieMatch && !eventMatch) {
+          setCurrentPage('movies');
+          updateURL('movies');
+        } else {
+          // Default to events if both match or neither match (Events page can usually handle general searches better or shows "No results")
+          // Or if user specifically wants "Movies", they usually go to movies tab.
+          // Let's default to Events as it is "EventHub".
+          if (eventMatch && !movieMatch) {
+            setCurrentPage('events');
+            updateURL('events');
+          } else {
+            // If both or neither, defaulting to Events page is safer as it's the broader category
+            setCurrentPage('events');
+            updateURL('events');
+          }
+        }
+
+      } catch (error) {
+        console.error("Search redirection error:", error);
+        setCurrentPage('events');
+        updateURL('events');
+      }
+    }
   };
 
   const handleMovieClick = (item) => {
@@ -204,6 +269,8 @@ function AppRouter() {
             onNavigate={handleNavigate}
             onMovieClick={handleMovieClick}
             onBookTickets={handleBookTickets}
+            searchQuery={searchQuery}
+            onSearch={handleSearch}
           />
         );
       case 'events':
@@ -218,6 +285,8 @@ function AppRouter() {
             onBookTickets={handleBookTickets}
             onMovieClick={handleMovieClick}
             onArtistClick={handleArtistClick}
+            searchQuery={searchQuery}
+            onSearch={handleSearch}
           />
         );
       case 'movieDetail':
@@ -388,6 +457,7 @@ function AppRouter() {
             onMovieClick={handleMovieClick}
             onBookTickets={handleBookTickets}
             onArtistClick={handleArtistClick}
+            onSearch={handleSearch}
           />
         );
     }

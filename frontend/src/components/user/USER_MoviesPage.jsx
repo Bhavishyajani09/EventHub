@@ -4,10 +4,11 @@ import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
 import eventService from '../../services/eventService';
 
-const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick, onBookTickets }) => {
+const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick, onBookTickets, searchQuery, onSearch }) => {
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   const [movies, setMovies] = useState([]);
+  const [filteredMovies, setFilteredMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -19,6 +20,7 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
         const response = await eventService.getMovieEvents();
         if (response.success) {
           setMovies(response.events || []);
+          setFilteredMovies(response.events || []);
         } else {
           setError('Failed to load movies');
         }
@@ -32,6 +34,21 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
 
     fetchMovies();
   }, []);
+
+  // Filter movies based on searchQuery and selectedFilters
+  useEffect(() => {
+    let result = movies;
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(movie =>
+        movie.title.toLowerCase().includes(query) ||
+        movie.category.toLowerCase().includes(query) ||
+        movie.location.toLowerCase().includes(query)
+      );
+    }
+    setFilteredMovies(result);
+  }, [movies, searchQuery]);
 
   const heroMovies = movies.length > 0 ? movies.slice(0, 4).map(movie => ({
     ...movie, // Include all original properties like _id, capacity
@@ -70,8 +87,8 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
     { id: '3d', label: '3D', type: 'format' }
   ];
 
-  const weeklyMovies = movies.slice(0, 4);
-  const theatreMovies = movies.slice(4);
+  const weeklyMovies = filteredMovies.slice(0, 4);
+  const theatreMovies = filteredMovies.slice(4);
 
   const toggleFilter = (filterId) => {
     setSelectedFilters(prev =>
@@ -106,6 +123,7 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
         onProfileClick={onProfileClick}
         onNavigate={onNavigate}
         activePage="movies"
+        onSearch={onSearch}
       />
 
       {/* Main Content */}
@@ -273,7 +291,7 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           ) : (
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
               gap: '20px',
               marginBottom: '32px'
             }}>
@@ -341,7 +359,7 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           ) : (
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(5, 1fr)',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
               gap: '20px'
             }}>
               {theatreMovies.map((movie, index) => (

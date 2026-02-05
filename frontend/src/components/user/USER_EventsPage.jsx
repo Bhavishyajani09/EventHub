@@ -4,7 +4,7 @@ import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
 import eventService from '../../services/eventService';
 
-const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBookTickets, onMovieClick, onArtistClick }) => {
+const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBookTickets, onMovieClick, onArtistClick, searchQuery, onSearch }) => {
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,11 +39,13 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
   const heroEvents = events.length > 0 ? events.slice(0, 5).map(event => ({
     title: event.title,
     location: event.location,
-    price: event.price === 0 ? 'FREE CONCERT' : 
-           (event.seatTypes && event.seatTypes.length > 0 
-            ? `₹${Math.min(...event.seatTypes.map(seat => seat.price))} ONWARDS` 
-            : `₹${event.price} ONWARDS`),
-    image: event.image || '/placeholder-artist.jpg'
+    price: event.price === 0 ? 'FREE CONCERT' :
+      (event.seatTypes && event.seatTypes.length > 0
+        ? `₹${Math.min(...event.seatTypes.map(seat => seat.price))} ONWARDS`
+        : `₹${event.price} ONWARDS`),
+    image: event.image || '/placeholder-artist.jpg',
+    _id: event._id,
+    type: 'event'
   })) : [
     {
       title: 'Loading Events...',
@@ -83,10 +85,10 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
     date: new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
     time: new Date(event.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
     fullDate: new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
-    price: event.price === 0 ? 'FREE' : 
-           (event.seatTypes && event.seatTypes.length > 0 
-            ? `₹${Math.min(...event.seatTypes.map(seat => seat.price))}` 
-            : `₹${event.price}`),
+    price: event.price === 0 ? 'FREE' :
+      (event.seatTypes && event.seatTypes.length > 0
+        ? `₹${Math.min(...event.seatTypes.map(seat => seat.price))}`
+        : `₹${event.price}`),
     image: event.image || '/placeholder-artist.jpg',
     category: event.category.toUpperCase(),
     type: 'event',
@@ -98,18 +100,32 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
   const [selectedCategory, setSelectedCategory] = useState('All Events');
   const [filteredEvents, setFilteredEvents] = useState([]);
 
-  // Update filtered events when allEvents changes
+  // Update filtered events when allEvents or searchQuery changes
   useEffect(() => {
-    setFilteredEvents(allEvents);
-  }, [events]);
+    let result = allEvents;
+
+    // Filter by Category
+    if (selectedCategory !== 'All Events') {
+      result = result.filter(event => event.category === selectedCategory);
+    }
+
+    // Filter by Search Query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(event =>
+        event.title.toLowerCase().includes(query) ||
+        event.category.toLowerCase().includes(query) ||
+        event.venue.toLowerCase().includes(query) ||
+        event.location.toLowerCase().includes(query)
+      );
+    }
+
+    setFilteredEvents(result);
+  }, [events, selectedCategory, searchQuery]);
 
   const filterEvents = (category) => {
     setSelectedCategory(category);
-    if (category === 'All Events') {
-      setFilteredEvents(allEvents);
-    } else {
-      setFilteredEvents(allEvents.filter(event => event.category === category));
-    }
+    // Logic moved to effect above
   };
 
   return (
@@ -130,6 +146,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
         onProfileClick={onProfileClick}
         onNavigate={onNavigate}
         activePage="events"
+        onSearch={onSearch}
       />
 
       <div style={{
@@ -187,137 +204,137 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
             overflow: 'hidden',
             backdropFilter: 'blur(10px)'
           }}>
-          {/* Left side - Text content */}
-          <div style={{
-            flex: 1,
-            maxWidth: '60%'
-          }}>
-            <h1 style={{
-              fontSize: 'clamp(32px, 7vw, 56px)',
-              fontWeight: '800',
-              marginBottom: '20px',
-              textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-              lineHeight: '1.1'
-            }}>{heroEvents[currentHeroIndex].title.split(' | ')[0]}</h1>
-            <p style={{
-              fontSize: 'clamp(16px, 3.5vw, 20px)',
-              color: 'rgba(255, 255, 255, 0.95)',
-              marginBottom: '40px',
-              lineHeight: '1.6'
-            }}>{heroEvents[currentHeroIndex].location}</p>
+            {/* Left side - Text content */}
+            <div style={{
+              flex: 1,
+              maxWidth: '60%'
+            }}>
+              <h1 style={{
+                fontSize: 'clamp(32px, 7vw, 56px)',
+                fontWeight: '800',
+                marginBottom: '20px',
+                textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                lineHeight: '1.1'
+              }}>{heroEvents[currentHeroIndex].title.split(' | ')[0]}</h1>
+              <p style={{
+                fontSize: 'clamp(16px, 3.5vw, 20px)',
+                color: 'rgba(255, 255, 255, 0.95)',
+                marginBottom: '40px',
+                lineHeight: '1.6'
+              }}>{heroEvents[currentHeroIndex].location}</p>
+
+              <button
+                onClick={() => {
+                  if (onBookTickets) {
+                    onBookTickets(heroEvents[currentHeroIndex]);
+                  } else {
+                    alert(`Booking ${heroEvents[currentHeroIndex].title}`);
+                  }
+                }}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  color: '#000',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = 'white'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'}
+              >
+                Book now
+              </button>
+            </div>
+
+            {/* Right side - Artist poster */}
+            <div style={{
+              width: '200px',
+              height: '280px',
+              borderRadius: '12px',
+              backgroundImage: `url(${heroEvents[currentHeroIndex].image})`,
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+              transition: 'all 0.5s ease'
+            }} />
+
+            {/* Navigation arrows */}
+            <button
+              onClick={() => setCurrentHeroIndex(currentHeroIndex === 0 ? heroEvents.length - 1 : currentHeroIndex - 1)}
+              style={{
+                position: 'absolute',
+                left: '20px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                cursor: 'pointer',
+                fontSize: '18px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              ‹
+            </button>
 
             <button
-              onClick={() => {
-                if (onBookTickets) {
-                  onBookTickets(heroEvents[currentHeroIndex]);
-                } else {
-                  alert(`Booking ${heroEvents[currentHeroIndex].title}`);
-                }
-              }}
+              onClick={() => setCurrentHeroIndex(currentHeroIndex === heroEvents.length - 1 ? 0 : currentHeroIndex + 1)}
               style={{
-                padding: '12px 24px',
-                backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                color: '#000',
+                position: 'absolute',
+                right: '20px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                color: 'white',
                 border: 'none',
-                borderRadius: '8px',
-                fontSize: '16px',
-                fontWeight: '600',
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
                 cursor: 'pointer',
-                transition: 'all 0.2s'
+                fontSize: '18px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
-              onMouseEnter={(e) => e.target.style.backgroundColor = 'white'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'}
             >
-              Book now
+              ›
             </button>
-          </div>
 
-          {/* Right side - Artist poster */}
-          <div style={{
-            width: '200px',
-            height: '280px',
-            borderRadius: '12px',
-            backgroundImage: `url(${heroEvents[currentHeroIndex].image})`,
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center',
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
-            transition: 'all 0.5s ease'
-          }} />
-
-          {/* Navigation arrows */}
-          <button
-            onClick={() => setCurrentHeroIndex(currentHeroIndex === 0 ? heroEvents.length - 1 : currentHeroIndex - 1)}
-            style={{
+            {/* Dots indicator */}
+            <div style={{
               position: 'absolute',
-              left: '20px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '50%',
-              width: '40px',
-              height: '40px',
-              cursor: 'pointer',
-              fontSize: '18px',
+              bottom: '20px',
+              left: '50%',
+              transform: 'translateX(-50%)',
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            ‹
-          </button>
-
-          <button
-            onClick={() => setCurrentHeroIndex(currentHeroIndex === heroEvents.length - 1 ? 0 : currentHeroIndex + 1)}
-            style={{
-              position: 'absolute',
-              right: '20px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '50%',
-              width: '40px',
-              height: '40px',
-              cursor: 'pointer',
-              fontSize: '18px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            ›
-          </button>
-
-          {/* Dots indicator */}
-          <div style={{
-            position: 'absolute',
-            bottom: '20px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            display: 'flex',
-            gap: '8px'
-          }}>
-            {heroEvents.map((_, index) => (
-              <div
-                key={index}
-                onClick={() => setCurrentHeroIndex(index)}
-                style={{
-                  width: '10px',
-                  height: '10px',
-                  borderRadius: '50%',
-                  backgroundColor: currentHeroIndex === index ? 'white' : 'rgba(255, 255, 255, 0.5)',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }}
-              />
-            ))}
+              gap: '8px'
+            }}>
+              {heroEvents.map((_, index) => (
+                <div
+                  key={index}
+                  onClick={() => setCurrentHeroIndex(index)}
+                  style={{
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    backgroundColor: currentHeroIndex === index ? 'white' : 'rgba(255, 255, 255, 0.5)',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                />
+              ))}
+            </div>
           </div>
-        </div>
         )}
 
         {/* Explore Events */}
@@ -488,131 +505,131 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
             marginBottom: '40px',
             justifyContent: 'center'
           }}>
-          {filteredEvents.map((event, index) => (
-            <div key={index}
-              onClick={() => {
-                if (onMovieClick) {
-                  onMovieClick(event);
-                }
-              }}
-              style={{
-                backgroundColor: isDark ? '#1f2937' : 'white',
-                borderRadius: '16px',
-                overflow: 'hidden',
-                boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                cursor: 'pointer',
-                transition: 'transform 0.2s',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                border: isDark ? '1px solid #374151' : '1px solid #e5e7eb'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-            >
-              <div style={{
-                height: '220px',
-                backgroundImage: `url(${event.image})`,
-                backgroundSize: 'contain',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
-                backgroundColor: '#f9fafb',
-                flexShrink: 0
-              }} />
-              <div style={{
-                padding: '20px',
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column'
-              }}>
-                <div>
-                  <div style={{
-                    fontSize: '12px',
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    fontWeight: '700',
-                    marginBottom: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}>
-                    <Clock size={14} style={{ color: '#667eea' }} />
-                    {event.fullDate} • {event.time}
+            {filteredEvents.map((event, index) => (
+              <div key={index}
+                onClick={() => {
+                  if (onMovieClick) {
+                    onMovieClick(event);
+                  }
+                }}
+                style={{
+                  backgroundColor: isDark ? '#1f2937' : 'white',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  border: isDark ? '1px solid #374151' : '1px solid #e5e7eb'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              >
+                <div style={{
+                  height: '220px',
+                  backgroundImage: `url(${event.image})`,
+                  backgroundSize: 'contain',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'center',
+                  backgroundColor: '#f9fafb',
+                  flexShrink: 0
+                }} />
+                <div style={{
+                  padding: '20px',
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column'
+                }}>
+                  <div>
+                    <div style={{
+                      fontSize: '12px',
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      fontWeight: '700',
+                      marginBottom: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}>
+                      <Clock size={14} style={{ color: '#667eea' }} />
+                      {event.fullDate} • {event.time}
+                    </div>
+
+                    <h3 style={{
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      color: isDark ? '#f9fafb' : '#111827',
+                      marginBottom: '8px',
+                      lineHeight: '1.4'
+                    }}>{event.title}</h3>
+
+                    <p style={{
+                      fontSize: '14px',
+                      color: isDark ? '#9ca3af' : '#6b7280',
+                      marginBottom: '16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}>
+                      <span style={{ opacity: 0.7 }}>📍</span> {event.venue}
+                    </p>
                   </div>
 
-                  <h3 style={{
-                    fontSize: '18px',
-                    fontWeight: '700',
-                    color: isDark ? '#f9fafb' : '#111827',
-                    marginBottom: '8px',
-                    lineHeight: '1.4'
-                  }}>{event.title}</h3>
-
-                  <p style={{
-                    fontSize: '14px',
-                    color: isDark ? '#9ca3af' : '#6b7280',
-                    marginBottom: '16px',
+                  <div style={{
                     display: 'flex',
+                    justifyContent: 'space-between',
                     alignItems: 'center',
-                    gap: '6px'
+                    marginTop: 'auto',
+                    width: '100%',
+                    paddingTop: '16px',
+                    borderTop: isDark ? '1px solid #374151' : '1px solid #f3f4f6'
                   }}>
-                    <span style={{ opacity: 0.7 }}>📍</span> {event.venue}
-                  </p>
-                </div>
-
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginTop: 'auto',
-                  width: '100%',
-                  paddingTop: '16px',
-                  borderTop: isDark ? '1px solid #374151' : '1px solid #f3f4f6'
-                }}>
-                  <span style={{
-                    fontSize: '18px',
-                    fontWeight: '700',
-                    color: event.price === 'FREE' ? '#10b981' : (isDark ? '#f9fafb' : '#111827')
-                  }}>{event.price}</span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent card click
-                      if (onBookTickets) {
-                        onBookTickets(event);
-                      } else {
-                        alert(`Booking ${event.title}`);
-                      }
-                    }}
-                    style={{
-                      padding: '8px 16px',
-                      background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
-                      backgroundSize: '200% 200%',
-                      animation: 'gradientMove 3s ease infinite',
-                      color: 'white',
-                      boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.transform = 'translateY(-2px)';
-                      e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.transform = 'translateY(0)';
-                      e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
-                    }}>
-                    Book Now
-                  </button>
+                    <span style={{
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      color: event.price === 'FREE' ? '#10b981' : (isDark ? '#f9fafb' : '#111827')
+                    }}>{event.price}</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent card click
+                        if (onBookTickets) {
+                          onBookTickets(event);
+                        } else {
+                          alert(`Booking ${event.title}`);
+                        }
+                      }}
+                      style={{
+                        padding: '8px 16px',
+                        background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+                        backgroundSize: '200% 200%',
+                        animation: 'gradientMove 3s ease infinite',
+                        color: 'white',
+                        boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.transform = 'translateY(-2px)';
+                        e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = 'translateY(0)';
+                        e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                      }}>
+                      Book Now
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
           </div>
         )}
       </div>

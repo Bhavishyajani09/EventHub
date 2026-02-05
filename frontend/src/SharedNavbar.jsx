@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useAuth } from './context/AuthContext'; // Import useAuth
 import { Sun, Moon, User, LogOut, Settings, UserCircle } from 'lucide-react';
 
-const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick, onNavigate, activePage = 'home', hideNavigation = false, searchOnly = false, pageTitle, onLogout, hideThemeToggle = false, hideProfileOption = false, enableDropdown = false }) => {
+const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick, onNavigate, activePage = 'home', hideNavigation = false, searchOnly = false, pageTitle, onLogout, hideThemeToggle = false, hideProfileOption = false, enableDropdown = false, onSearch }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [localSearchQuery, setLocalSearchQuery] = useState('');
 
   // Fallback to context user if prop not provided
   const context = tryUseAuth();
@@ -17,6 +18,18 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
       return null;
     }
   }
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && onSearch) {
+      onSearch(localSearchQuery);
+    }
+  };
+
+  const handleSearchClick = () => {
+    if (onSearch) {
+      onSearch(localSearchQuery);
+    }
+  };
 
   // Debug logging
   // console.log('SharedNavbar user:', user);
@@ -175,6 +188,9 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
                 <input
                   type="text"
                   placeholder="Search events, movies..."
+                  value={localSearchQuery}
+                  onChange={(e) => setLocalSearchQuery(e.target.value)}
+                  onKeyDown={handleKeyDown}
                   style={{
                     width: '100%',
                     paddingLeft: '40px',
@@ -198,15 +214,18 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
                     e.target.style.boxShadow = 'none';
                   }}
                 />
-                <svg style={{
-                  position: 'absolute',
-                  left: '12px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  width: '18px',
-                  height: '18px',
-                  color: isDark ? '#9ca3af' : '#6b7280'
-                }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  onClick={handleSearchClick}
+                  style={{
+                    position: 'absolute',
+                    left: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    width: '18px',
+                    height: '18px',
+                    color: isDark ? '#9ca3af' : '#6b7280',
+                    cursor: 'pointer'
+                  }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
