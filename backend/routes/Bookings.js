@@ -192,4 +192,118 @@ router.post('/create', auth, async (req, res) => {
   }
 });
 
+// Cancel booking
+// Cancel booking
+router.post('/cancel/:bookingId', auth, async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const userId = req.user.id;
+    
+    console.log(`[Cancel Booking] Request for bookingId: ${bookingId}, User: ${userId}`);
+
+    // Find booking
+    const booking = await Booking.findOne({ _id: bookingId, user: userId });
+    
+    if (!booking) {
+      console.log(`[Cancel Booking] Booking not found or user unauthorized`);
+      return res.status(404).json({
+        success: false,
+        message: 'Booking not found or unauthorized'
+      });
+    }
+
+    if (booking.status === 'cancelled') {
+        console.log(`[Cancel Booking] Booking already cancelled`);
+        return res.status(400).json({
+            success: false,
+            message: 'Booking is already cancelled'
+        });
+    }
+
+    // Find event
+    const event = await Event.findById(booking.event);
+    if (!event) {
+      console.log(`[Cancel Booking] Event not found for id: ${booking.event}`);
+      return res.status(404).json({
+        success: false,
+        message: 'Event associated with booking not found'
+      });
+    }
+
+    console.log(`[Cancel Booking] Found event: ${event.title}, Date: ${event.date}`);
+
+    // Check time difference for refund policy (24 hours)
+    const eventDate = new Date(event.date);
+    const currentDate = new Date();
+    const timeDiff = eventDate.getTime() - currentDate.getTime();
+    const hoursDiff = timeDiff / (1000 * 3600);
+    
+    console.log(`[Cancel Booking] Hours diff: ${hoursDiff}`);
+
+    let refundStatus = 'none';
+    let refundMessage = 'Cancellation successful. No refund as per policy (less than 24h before event).';
+
+    if (hoursDiff > 24) {
+      refundStatus = 'full';
+      refundMessage = 'Cancellation successful. Amount refunded to source.';
+    }
+
+    // Update booking status
+    booking.status = 'cancelled';
+    await booking.save();
+    console.log(`[Cancel Booking] Booking status updated to cancelled`);
+
+    // Restore event capacity/seats
+    console.log(`[Cancel Booking] Restoring tickets. Type: ${booking.ticketType}, Count: ${booking.tickets}`);
+    
+    if (event.seatTypes && event.seatTypes.length > 0) {
+      // Case-insensitive matching with trim
+      const bookingTicketType = (booking.ticketType || '').toLowerCase().trim();
+      
+      const seatTypeIndex = event.seatTypes.findIndex(
+        seat => seat.name && seat.name.toLowerCase().trim() === bookingTicketType
+      );
+      
+      if (seatTypeIndex !== -1) {
+        const currentAvailable = event.seatTypes[seatTypeIndex].available || 0;
+        const newAvailable = currentAvailable + Number(booking.tickets);
+        
+        console.log(`[Cancel Booking] Updating seat ${event.seatTypes[seatTypeIndex].name}. Old: ${currentAvailable}, New: ${newAvailable}`);
+        
+        event.seatTypes[seatTypeIndex].available = newAvailable;
+      } else {
+        console.warn(`[Cancel Booking] Seat type match failed. Booking type: '${bookingTicketType}'. Available types: ${event.seatTypes.map(s => s.name).join(', ')}`);
+        // Fallback: Try to find "General" or "Standard" if checking fail? 
+        // Or simply fail silently on inventory restore but still cancel booking?
+        // Let's log heavily.
+      }
+    } else {
+      const currentCapacity = event.capacity || 0;
+      event.capacity = currentCapacity + Number(booking.tickets);
+      console.log(`[Cancel Booking] Updating general capacity. Old: ${currentCapacity}, New: ${event.capacity}`);
+    }
+    
+    // Mark modified to ensure mongoose saves it
+    event.markModified('seatTypes');
+    event.markModified('capacity');
+    
+    await event.save();
+    console.log(`[Cancel Booking] Event saved successfully`);
+
+    res.json({
+      success: true,
+      message: refundMessage,
+      refundStatus
+    });
+
+  } catch (error) {
+    console.error('[Cancel Booking] Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to cancel booking',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;

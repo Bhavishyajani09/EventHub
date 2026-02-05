@@ -67,6 +67,15 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
   const displayDate = getDisplayDate();
   const displayTime = getDisplayTime();
 
+  // Check if sold out
+  const isSoldOut = React.useMemo(() => {
+    if (!event) return false;
+    if (event.seatTypes && event.seatTypes.length > 0) {
+      return event.seatTypes.every(seat => seat.available <= 0);
+    }
+    return event.capacity <= 0;
+  }, [event]);
+
   return (
     <div style={{
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
@@ -276,32 +285,43 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
               </div>
 
               <button
-                onClick={() => onBookTickets && onBookTickets(event)}
+                disabled={isSoldOut}
+                onClick={() => !isSoldOut && onBookTickets && onBookTickets(event)}
                 style={{
                   width: '100%',
                   padding: '12px',
-                  background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+                  background: isSoldOut
+                    ? (isDark ? '#374151' : '#d1d5db')
+                    : 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
                   backgroundSize: '200% 200%',
-                  animation: 'gradientMove 3s ease infinite',
-                  color: 'white',
-                  boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  animation: isSoldOut ? 'none' : 'gradientMove 3s ease infinite',
+                  color: isSoldOut ? (isDark ? '#9ca3af' : '#6b7280') : 'white',
+                  boxShadow: isSoldOut
+                    ? 'none'
+                    : '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  border: isSoldOut
+                    ? (isDark ? '1px solid #4b5563' : '1px solid #9ca3af')
+                    : '1px solid rgba(255, 255, 255, 0.1)',
                   borderRadius: '8px',
                   fontSize: '16px',
                   fontWeight: '600',
-                  cursor: 'pointer',
+                  cursor: isSoldOut ? 'not-allowed' : 'pointer',
                   transition: 'all 0.3s ease'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
+                  if (!isSoldOut) {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
+                  }
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                  if (!isSoldOut) {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                  }
                 }}
               >
-                BOOK TICKETS
+                {isSoldOut ? 'SOLD OUT' : 'BOOK TICKETS'}
               </button>
             </div>
           </div>

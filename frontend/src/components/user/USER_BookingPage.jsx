@@ -286,7 +286,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {Object.entries(seatTypes).map(([type, details]) => {
                 // Check if seats are available
-                const isAvailable = !details.available || details.available > 0;
+                const isAvailable = details.available === undefined || details.available > 0;
                 return (
                   <div
                     key={type}
@@ -297,14 +297,35 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
                       borderRadius: '6px',
                       padding: 'clamp(16px, 4vw, 20px) clamp(20px, 5vw, 24px)',
                       cursor: isAvailable ? 'pointer' : 'not-allowed',
-                      opacity: isAvailable ? 1 : 0.5,
+                      opacity: isAvailable ? 1 : 0.6,
                       transition: 'all 0.2s ease',
                       display: 'flex',
                       justifyContent: 'space-between',
-                      alignItems: 'center'
+                      alignItems: 'center',
+                      position: 'relative',
+                      overflow: 'hidden'
                     }}
                   >
-                    <div>
+                    {!isAvailable && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%) rotate(-10deg)',
+                        backgroundColor: 'rgba(239, 68, 68, 0.9)',
+                        color: 'white',
+                        padding: '4px 12px',
+                        borderRadius: '4px',
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        zIndex: 10,
+                        border: '2px solid white',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                      }}>
+                        SOLD OUT
+                      </div>
+                    )}
+                    <div style={{ opacity: isAvailable ? 1 : 0.5 }}>
                       <h5 style={{
                         fontSize: 'clamp(14px, 3.5vw, 16px)',
                         fontWeight: '600',
@@ -329,7 +350,8 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      transition: 'all 0.2s ease'
+                      transition: 'all 0.2s ease',
+                      opacity: isAvailable ? 1 : 0.5
                     }}>
                       {selectedSeatType === type && (
                         <div style={{
