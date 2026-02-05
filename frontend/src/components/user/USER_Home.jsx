@@ -7,12 +7,13 @@ import SharedFooter from '../../SharedFooter';
 import USER_MovieDetail from './USER_MovieDetail';
 import eventService from '../../services/eventService';
 
-const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick, onBookTickets, onArtistClick }) => {
+const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick, onBookTickets, onArtistClick, onSearch }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfilePanelOpen, setIsProfilePanelOpen] = useState(false);
   const [events, setEvents] = useState([]);
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [heroSearch, setHeroSearch] = useState('');
 
   useEffect(() => {
     document.title = 'EventHub - Discover Amazing Events';
@@ -88,6 +89,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
         onProfileClick={onProfileClick}
         onNavigate={onNavigate}
         activePage="home"
+        onSearch={onSearch}
       />
 
       {/* Main Content */}
@@ -202,6 +204,13 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                   <input
                     type="text"
                     placeholder="Search here"
+                    value={heroSearch}
+                    onChange={(e) => setHeroSearch(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && onSearch) {
+                        onSearch(heroSearch);
+                      }
+                    }}
                     style={{
                       border: 'none',
                       outline: 'none',
@@ -227,6 +236,9 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                   whiteSpace: 'nowrap',
                   boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)'
                 }}
+                  onClick={() => {
+                    if (onSearch) onSearch(heroSearch);
+                  }}
                   onMouseEnter={(e) => {
                     e.target.style.transform = 'translateY(-2px)';
                     e.target.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.6)';
@@ -381,7 +393,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
               events.map((event, index) => {
                 return (
                   <div key={index}
-                    onClick={() => handleMovieClick({...event, type: 'event'})}
+                    onClick={() => handleMovieClick({ ...event, type: 'event' })}
                     style={{
                       backgroundColor: isDark ? '#1f2937' : 'white',
                       borderRadius: '12px',
@@ -428,7 +440,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                         marginBottom: '12px'
                       }}>{event.category} | {event.location}</p>
                       <button
-                        onClick={(e) => handleBookTickets({...event, type: 'event'}, e)}
+                        onClick={(e) => handleBookTickets({ ...event, type: 'event' }, e)}
                         style={{
                           width: '100%',
                           padding: '8px 16px',

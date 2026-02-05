@@ -4,10 +4,11 @@ import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
 import eventService from '../../services/eventService';
 
-const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick, onBookTickets }) => {
+const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick, onBookTickets, searchQuery, onSearch }) => {
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   const [movies, setMovies] = useState([]);
+  const [filteredMovies, setFilteredMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -19,6 +20,7 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
         const response = await eventService.getMovieEvents();
         if (response.success) {
           setMovies(response.events || []);
+          setFilteredMovies(response.events || []);
         } else {
           setError('Failed to load movies');
         }
@@ -33,14 +35,29 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
     fetchMovies();
   }, []);
 
+  // Filter movies based on searchQuery and selectedFilters
+  useEffect(() => {
+    let result = movies;
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(movie =>
+        movie.title.toLowerCase().includes(query) ||
+        movie.category.toLowerCase().includes(query) ||
+        movie.location.toLowerCase().includes(query)
+      );
+    }
+    setFilteredMovies(result);
+  }, [movies, searchQuery]);
+
   const heroMovies = movies.length > 0 ? movies.slice(0, 4).map(movie => ({
     title: movie.title,
     genre: movie.category,
     rating: 'UA',
     image: movie.image || '/placeholder-movie.jpg',
-    price: movie.seatTypes && movie.seatTypes.length > 0 
-           ? Math.min(...movie.seatTypes.map(seat => seat.price))
-           : movie.price,
+    price: movie.seatTypes && movie.seatTypes.length > 0
+      ? Math.min(...movie.seatTypes.map(seat => seat.price))
+      : movie.price,
     location: movie.location,
     seatTypes: movie.seatTypes
   })) : [
@@ -69,12 +86,12 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
     { id: '3d', label: '3D', type: 'format' }
   ];
 
-  const weeklyMovies = movies.slice(0, 4);
-  const theatreMovies = movies.slice(4);
+  const weeklyMovies = filteredMovies.slice(0, 4);
+  const theatreMovies = filteredMovies.slice(4);
 
   const toggleFilter = (filterId) => {
-    setSelectedFilters(prev => 
-      prev.includes(filterId) 
+    setSelectedFilters(prev =>
+      prev.includes(filterId)
         ? prev.filter(id => id !== filterId)
         : [...prev, filterId]
     );
@@ -97,7 +114,7 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
       overflowX: 'hidden'
     }}>
       {/* Navbar */}
-      <SharedNavbar 
+      <SharedNavbar
         isDark={isDark}
         setIsDark={setIsDark}
         user={user}
@@ -105,6 +122,7 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
         onProfileClick={onProfileClick}
         onNavigate={onNavigate}
         activePage="movies"
+        onSearch={onSearch}
       />
 
       {/* Main Content */}
@@ -190,25 +208,25 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
               lineHeight: '1.6',
               textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
             }}>{heroMovies[currentHeroIndex].rating} | {heroMovies[currentHeroIndex].genre}</p>
-            <button 
+            <button
               onClick={() => {
                 if (onBookTickets) {
                   onBookTickets(heroMovies[currentHeroIndex]);
                 }
               }}
               style={{
-              padding: '12px 24px',
-              backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              color: '#000',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = 'white'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'}
+                padding: '12px 24px',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                color: '#000',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = 'white'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'}
             >
               Book now
             </button>
@@ -256,7 +274,7 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
             color: isDark ? '#f9fafb' : '#111827',
             marginBottom: '24px'
           }}>This Week's Releases</h2>
-          
+
           {loading ? (
             <div style={{ textAlign: 'center', padding: '40px' }}>
               <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>Loading movies...</p>
@@ -272,23 +290,23 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           ) : (
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
               gap: '20px',
               marginBottom: '32px'
             }}>
               {weeklyMovies.map((movie, index) => (
-                <div key={index} 
+                <div key={index}
                   onClick={() => handleMovieClick(movie)}
                   style={{
-                  backgroundColor: isDark ? '#1f2937' : 'white',
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                    backgroundColor: isDark ? '#1f2937' : 'white',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                 >
                   <div style={{
                     height: '220px',
@@ -313,9 +331,9 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                     <p style={{
                       fontSize: '12px',
                       color: isDark ? '#9ca3af' : '#6b7280'
-                    }}>{movie.category} | ₹{movie.seatTypes && movie.seatTypes.length > 0 
-                        ? Math.min(...movie.seatTypes.map(seat => seat.price))
-                        : movie.price}</p>
+                    }}>{movie.category} | ₹{movie.seatTypes && movie.seatTypes.length > 0
+                      ? Math.min(...movie.seatTypes.map(seat => seat.price))
+                      : movie.price}</p>
                   </div>
                 </div>
               ))}
@@ -340,22 +358,22 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
           ) : (
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(5, 1fr)',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
               gap: '20px'
             }}>
               {theatreMovies.map((movie, index) => (
-                <div key={index} 
+                <div key={index}
                   onClick={() => handleMovieClick(movie)}
                   style={{
-                  backgroundColor: isDark ? '#1f2937' : 'white',
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                    backgroundColor: isDark ? '#1f2937' : 'white',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                 >
                   <div style={{
                     height: '220px',
@@ -380,9 +398,9 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
                     <p style={{
                       fontSize: '12px',
                       color: isDark ? '#9ca3af' : '#6b7280'
-                    }}>{movie.category} | ₹{movie.seatTypes && movie.seatTypes.length > 0 
-                        ? Math.min(...movie.seatTypes.map(seat => seat.price))
-                        : movie.price}</p>
+                    }}>{movie.category} | ₹{movie.seatTypes && movie.seatTypes.length > 0
+                      ? Math.min(...movie.seatTypes.map(seat => seat.price))
+                      : movie.price}</p>
                   </div>
                 </div>
               ))}
