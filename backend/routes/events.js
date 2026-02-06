@@ -113,7 +113,8 @@ router.get('/city/:city', async (req, res) => {
 
     const events = await Event.find({
       city: city.trim().toLowerCase(),
-      status: 'active'
+      status: 'active',
+      date: { $gte: new Date() }
     })
       .populate('organizer', 'name email')
       .sort({ date: 1 });
@@ -142,7 +143,8 @@ router.get('/category/:category', async (req, res) => {
 
     const events = await Event.find({
       category: category.trim().toLowerCase(),
-      status: 'active'
+      status: 'active',
+      date: { $gte: new Date() }
     })
       .populate('organizer', 'name email')
       .sort({ date: 1 });
@@ -224,6 +226,7 @@ router.get('/search', async (req, res) => {
     const events = await Event.find({
       $and: [
         { status: 'active' },
+        { date: { $gte: new Date() } },
         {
           $or: [
             { name: { $regex: q, $options: 'i' } },

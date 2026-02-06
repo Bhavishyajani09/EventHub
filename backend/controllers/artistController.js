@@ -28,16 +28,33 @@ const getArtists = async (req, res) => {
  */
 const getArtistById = async (req, res) => {
     try {
-        const artist = await Artist.findById(req.params.id).populate('events');
-        if (!artist) {
-            return res.status(404).json({
-                success: false,
-                message: 'Artist not found'
+        const artist = await Artist.findById(req.params.id).populate({
+            path: 'events',
+            match: { date: { $gte: new Date() } },
+            options: { sort: { date: 1 } }
+        });
+        
+        if (artist) {
+            let artistObj = artist.toObject();
+            
+            if (artistObj.events && artistObj.events.length > 0) {
+                const now = new Date();
+                artistObj.events = artistObj.events.filter(event => {
+                    if (!event.date) return false;
+                    const eventDate = new Date(event.date);
+                    return eventDate >= now;
+                });
+            }
+            
+            return res.json({
+                success: true,
+                artist: artistObj
             });
         }
-        res.json({
-            success: true,
-            artist
+        
+        return res.status(404).json({
+            success: false,
+            message: 'Artist not found'
         });
     } catch (error) {
         console.error('Get artist by ID error:', error);
