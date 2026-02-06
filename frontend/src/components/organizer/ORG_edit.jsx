@@ -87,6 +87,42 @@ const ORG_edit = ({ isDark }) => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    // Prevent negative values for price and capacity
+    if (type === 'number' && value !== '') {
+      const numValue = parseFloat(value);
+      if (numValue < 0) return;
+      if (name === 'capacity' && numValue === 0) return; // Capacity should be at least 1
+    }
+
+    if (name === 'date') {
+      const selectedDate = new Date(value);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate < today) {
+        setError('Cannot select a past date');
+        return;
+      }
+      setError('');
+    }
+
+    if (name === 'time' && formData.date) {
+      const selectedDate = new Date(formData.date);
+      const today = new Date();
+      if (selectedDate.toDateString() === today.toDateString()) {
+        const [hours, minutes] = value.split(':');
+        const selectedTime = new Date();
+        selectedTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+        if (selectedTime < today) {
+          setError('Cannot select a past time for today');
+          return;
+        }
+      }
+      setError('');
+    }
+
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
@@ -346,6 +382,7 @@ const ORG_edit = ({ isDark }) => {
                 onChange={handleInputChange}
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
                 required
+                min={new Date().toISOString().split('T')[0]}
               />
             </div>
 

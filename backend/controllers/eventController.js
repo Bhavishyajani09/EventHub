@@ -91,19 +91,37 @@ exports.createEvent = async (req, res) => {
       imageUrl = result.secure_url;
     }
 
-    // 2. Parse seat types
+    // 2. Parse and validate seat types
     let parsedSeatTypes = [];
     if (seatTypes) {
       try {
-        parsedSeatTypes = JSON.parse(seatTypes).map(seat => ({
-          ...seat,
-          price: parseFloat(seat.price),
-          quantity: parseInt(seat.quantity),
-          available: parseInt(seat.quantity)
-        }));
+        parsedSeatTypes = JSON.parse(seatTypes).map(seat => {
+          const price = parseFloat(seat.price) || 0;
+          const quantity = parseInt(seat.quantity) || 0;
+
+          if (price < 0 || quantity < 0) {
+            throw new Error('Seat price and quantity must be non-negative');
+          }
+
+          return {
+            ...seat,
+            price,
+            quantity,
+            available: quantity
+          };
+        });
       } catch (e) {
         console.error('Error parsing seat types:', e);
+        if (e.message === 'Seat price and quantity must be non-negative') throw e;
       }
+    }
+
+    // Validate capacity and price
+    if (parseFloat(price) < 0 || parseInt(capacity) < 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Price and capacity must be non-negative'
+      });
     }
 
     // 3. Find or create artist with the event image
@@ -127,10 +145,20 @@ exports.createEvent = async (req, res) => {
     }
 
     // 4. Create Event
+    const eventDate = new Date(`${date}T${time}`);
+    const now = new Date();
+
+    if (eventDate < now) {
+      return res.status(400).json({
+        success: false,
+        message: 'Event date and time cannot be in the past'
+      });
+    }
+
     const event = new Event({
       title,
       description,
-      date: new Date(`${date}T${time}`),
+      date: eventDate,
       location,
       capacity: parseInt(capacity),
       price: parseFloat(price),
@@ -187,13 +215,24 @@ exports.updateEvent = async (req, res) => {
       updateData.image = result.secure_url;
     }
 
-    // 2. Handle metadata fields
+    // 2. Handle metadata fields and validate numeric values
     if (title !== undefined) updateData.title = title;
     if (description !== undefined) updateData.description = description;
     if (location !== undefined) updateData.location = location;
     if (category !== undefined) updateData.category = category;
-    if (capacity !== undefined && capacity !== '') updateData.capacity = parseInt(capacity);
-    if (price !== undefined && price !== '') updateData.price = parseFloat(price);
+
+    if (capacity !== undefined && capacity !== '') {
+      const cap = parseInt(capacity);
+      if (cap < 0) return res.status(400).json({ success: false, message: 'Capacity must be non-negative' });
+      updateData.capacity = cap;
+    }
+
+    if (price !== undefined && price !== '') {
+      const prc = parseFloat(price);
+      if (prc < 0) return res.status(400).json({ success: false, message: 'Price must be non-negative' });
+      updateData.price = prc;
+    }
+
     if (isPublished !== undefined) updateData.isPublished = isPublished === 'true' || isPublished === true;
 
     // 3. Handle Artist Logic
@@ -226,17 +265,26 @@ exports.updateEvent = async (req, res) => {
 
     // 4. Handle Date/Time
     if (date) {
+      let eventDate;
       if (time) {
-        updateData.date = new Date(`${date}T${time}`);
+        eventDate = new Date(`${date}T${time}`);
       } else {
         const existingEvent = await Event.findById(req.params.id);
         if (existingEvent && existingEvent.date) {
           const existingTime = existingEvent.date.toTimeString().split(' ')[0];
-          updateData.date = new Date(`${date}T${existingTime}`);
+          eventDate = new Date(`${date}T${existingTime}`);
         } else {
-          updateData.date = new Date(`${date}T00:00:00`);
+          eventDate = new Date(`${date}T00:00:00`);
         }
       }
+
+      if (eventDate < new Date()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Event date and time cannot be in the past'
+        });
+      }
+      updateData.date = eventDate;
     }
 
     const event = await Event.findOneAndUpdate(

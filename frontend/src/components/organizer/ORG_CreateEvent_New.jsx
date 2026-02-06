@@ -41,6 +41,35 @@ const CreateEvent = ({ isDark }) => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    if (name === 'date') {
+      const selectedDate = new Date(value);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate < today) {
+        setError('Cannot select a past date');
+        return;
+      }
+      setError('');
+    }
+
+    if (name === 'time' && formData.date) {
+      const selectedDate = new Date(formData.date);
+      const today = new Date();
+      if (selectedDate.toDateString() === today.toDateString()) {
+        const [hours, minutes] = value.split(':');
+        const selectedTime = new Date();
+        selectedTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+        if (selectedTime < today) {
+          setError('Cannot select a past time for today');
+          return;
+        }
+      }
+      setError('');
+    }
+
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
@@ -95,6 +124,11 @@ const CreateEvent = ({ isDark }) => {
   };
 
   const updateSeatType = (type, field, value) => {
+    // Prevent negative values for price and quantity
+    if (value !== '' && parseFloat(value) < 0) {
+      return;
+    }
+
     setSeatTypes(prev => {
       const updated = {
         ...prev,
@@ -361,6 +395,7 @@ const CreateEvent = ({ isDark }) => {
               value={formData.date}
               onChange={handleInputChange}
               required
+              min={new Date().toISOString().split('T')[0]}
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
             />
           </div>
