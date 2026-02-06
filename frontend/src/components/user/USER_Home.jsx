@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Search, MapPin } from 'lucide-react';
-import AuthModal from '../../AuthModal';
-import USER_ProfilePanel from './USER_ProfilePanel';
 import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
 import USER_MovieDetail from './USER_MovieDetail';
@@ -10,8 +8,6 @@ import artistService from '../../services/artistService';
 import { EventCardSkeleton, ArtistSkeleton } from '../common/Skeleton';
 
 const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onMovieClick, onBookTickets, onArtistClick, onSearch }) => {
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isProfilePanelOpen, setIsProfilePanelOpen] = useState(false);
   const [events, setEvents] = useState([]);
   const [movies, setMovies] = useState([]);
   const [artists, setArtists] = useState([]);
@@ -73,18 +69,6 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
     }
   };
 
-  const handleAuthSuccess = (userData) => {
-    console.log('User logged in:', userData);
-  };
-
-  const handleLogout = () => {
-    console.log('User logged out');
-  };
-
-  const handleNavigateLocal = (page) => {
-    console.log(`Navigating to: ${page}`);
-  };
-
   const handleMovieClick = (movie) => {
     if (onMovieClick) {
       onMovieClick(movie);
@@ -102,8 +86,9 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
   return (
     <div style={{
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-      width: '100%',
+      background: isDark ? 'linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)',
       minHeight: '100vh',
+      width: '100vw',
       margin: 0,
       padding: 0,
       overflowX: 'hidden'
@@ -122,8 +107,6 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
 
       {/* Main Content */}
       <div style={{
-        background: isDark ? 'linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)',
-        minHeight: 'calc(100vh - 64px)',
         padding: 'clamp(16px, 4vw, 32px)',
         width: '100%',
         boxSizing: 'border-box'
@@ -651,34 +634,12 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
       {/* Footer */}
       <SharedFooter isDark={isDark} onNavigate={onNavigate} />
 
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        onAuthSuccess={handleAuthSuccess}
-        isDark={isDark}
-      />
-
-      {/* Profile Panel */}
-      <USER_ProfilePanel
-        user={user}
-        isOpen={isProfilePanelOpen}
-        onClose={() => setIsProfilePanelOpen(false)}
-        onLogout={handleLogout}
-        onNavigate={handleNavigateLocal}
-        isDark={isDark}
-      />
-
-      {/* Mobile responsive styles */}
+      {/* Global CSS Reset */}
       <style>{`
         * {
           box-sizing: border-box;
           margin: 0;
           padding: 0;
-        }
-        input:focus {
-          outline: none !important;
-          box-shadow: none !important;
         }
         body {
           margin: 0;
@@ -699,32 +660,6 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
           }
           100% {
             background-position: 0% 50%;
-          }
-        }
-        
-        @media (max-width: 768px) {
-          nav > div > div {
-            flex-direction: column;
-            height: auto;
-            padding: 16px 0;
-            gap: 12px;
-          }
-          nav > div > div > div:first-child {
-            justify-content: center;
-          }
-          nav > div > div > div:nth-child(2) {
-            order: 3;
-            justify-content: center;
-          }
-          nav > div > div > div:last-child {
-            order: 2;
-            width: 100%;
-            justify-content: center;
-          }
-        }
-        @media (max-width: 480px) {
-          nav > div > div > div:first-child > div:last-child {
-            display: none;
           }
         }
       `}</style>
