@@ -270,22 +270,20 @@ const CreateEvent = ({ isDark }) => {
                 </button>
               </div>
             ) : (
-              <div className="text-center">
+              <label className="cursor-pointer block text-center w-full h-full">
                 <Upload className="mx-auto h-12 w-12 text-gray-400" />
                 <div className="mt-4">
-                  <label className="cursor-pointer">
-                    <span className="mt-2 block text-sm font-medium text-gray-900">
-                      Upload event image
-                    </span>
-                    <input
-                      type="file"
-                      className="sr-only"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    />
-                  </label>
+                  <span className="mt-2 block text-sm font-medium text-gray-900">
+                    Upload event image
+                  </span>
+                  <input
+                    type="file"
+                    className="sr-only"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                  />
                 </div>
-              </div>
+              </label>
             )}
           </div>
         </div>
