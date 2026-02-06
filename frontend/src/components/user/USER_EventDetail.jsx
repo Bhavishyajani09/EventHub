@@ -104,9 +104,8 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
         maxWidth: '1200px',
         margin: '0 auto',
         padding: '20px',
-        width: 'calc(100% - 40px)',
+        width: '100%',
         boxSizing: 'border-box',
-        overflowX: 'hidden'
       }}>
         {/* Back Button */}
         <button
@@ -127,9 +126,8 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
         </button>
 
         {/* Event Details Section */}
-        <div style={{
+        <div className="event-detail-grid" style={{
           display: 'grid',
-          gridTemplateColumns: window.innerWidth > 768 ? '1fr 400px' : '1fr',
           gap: '40px',
           marginBottom: '40px'
         }}>
@@ -544,6 +542,17 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
 
       {/* Footer */}
       <SharedFooter isDark={isDark} onNavigate={onNavigate} />
+
+      <style>{`
+        .event-detail-grid {
+          grid-template-columns: 1fr;
+        }
+        @media (min-width: 768px) {
+          .event-detail-grid {
+            grid-template-columns: 1fr 400px;
+          }
+        }
+      `}</style>
     </div>
   );
 };

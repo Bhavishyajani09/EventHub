@@ -94,7 +94,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
   return (
     <div style={{
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-      width: '100vw',
+      width: '100%',
       minHeight: '100vh',
       margin: 0,
       padding: 0,
