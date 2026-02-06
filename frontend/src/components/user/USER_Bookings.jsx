@@ -8,6 +8,10 @@ import { Calendar, MapPin, Clock, Ticket, Star, X } from "lucide-react";
 const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
   const [loading, setLoading] = useState(true);
   const [bookings, setBookings] = useState([]);
+  const [reviewModal, setReviewModal] = useState({ open: false, booking: null });
+  const [reviewData, setReviewData] = useState({ rating: 0, comment: "" });
+  const [reviewStatus, setReviewStatus] = useState({});
+  const [submittingReview, setSubmittingReview] = useState(false);
 
   useEffect(() => {
     fetchBookings();
