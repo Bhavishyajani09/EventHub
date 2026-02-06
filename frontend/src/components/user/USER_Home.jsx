@@ -107,21 +107,22 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
 
       {/* Main Content */}
       <div style={{
-        padding: 'clamp(16px, 4vw, 32px)',
         width: '100%',
         boxSizing: 'border-box'
       }}>
+        {/* Hero Section */}
         <div style={{
           width: '100%',
           maxWidth: '1400px',
-          margin: '0 auto'
+          margin: '0 auto',
+          padding: '0 clamp(16px, 4vw, 32px)',
+          marginTop: 'clamp(24px, 4vw, 32px)',
+          marginBottom: 'clamp(32px, 6vw, 48px)'
         }}>
-          {/* Hero Section */}
           <div style={{
             borderRadius: '24px',
             padding: 'clamp(60px, 10vw, 100px)',
             textAlign: 'center',
-            marginBottom: 'clamp(32px, 6vw, 48px)',
             position: 'relative',
             overflow: 'hidden',
             boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)'
@@ -273,7 +274,15 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
               </div>
             </div>
           </div>
+        </div>
 
+        {/* Content Sections */}
+        <div style={{
+          width: '100%',
+          maxWidth: '1400px',
+          margin: '0 auto',
+          padding: '0 clamp(16px, 4vw, 32px)'
+        }}>
           <h2 style={{
             fontSize: 'clamp(20px, 5vw, 24px)',
             fontWeight: 'bold',

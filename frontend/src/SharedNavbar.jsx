@@ -140,27 +140,31 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
                   onClick={() => onNavigate(tab.key)}
                   style={{
                     padding: '10px 20px',
-                    borderRadius: '8px',
+                    borderRadius: '12px',
                     fontSize: '14px',
                     fontWeight: '600',
-                    border: 'none',
+                    border: activePage === tab.key ? '2px solid #8b5cf6' : '2px solid transparent',
                     cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    backgroundColor: activePage === tab.key ? '#8b5cf6' : 'transparent',
-                    color: activePage === tab.key ? 'white' : (isDark ? '#d1d5db' : '#6b7280'),
+                    transition: 'all 0.3s ease',
+                    backgroundColor: activePage === tab.key ? 'rgba(139, 92, 246, 0.08)' : 'transparent',
+                    color: activePage === tab.key ? '#8b5cf6' : (isDark ? '#d1d5db' : '#6b7280'),
                     whiteSpace: 'nowrap',
-                    boxShadow: activePage === tab.key ? '0 2px 8px rgba(139, 92, 246, 0.3)' : 'none'
+                    boxShadow: 'none'
                   }}
                   onMouseEnter={(e) => {
                     if (activePage !== tab.key) {
                       e.target.style.backgroundColor = isDark ? '#4b5563' : '#e2e8f0';
                       e.target.style.color = isDark ? '#f9fafb' : '#374151';
+                    } else {
+                      e.target.style.backgroundColor = 'rgba(139, 92, 246, 0.15)';
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (activePage !== tab.key) {
                       e.target.style.backgroundColor = 'transparent';
                       e.target.style.color = isDark ? '#d1d5db' : '#6b7280';
+                    } else {
+                      e.target.style.backgroundColor = 'rgba(139, 92, 246, 0.08)';
                     }
                   }}
                 >
