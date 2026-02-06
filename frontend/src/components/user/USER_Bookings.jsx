@@ -364,7 +364,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                 {booking.event?.image && (
                   <div
                     style={{
-                      height: "120px",
+                      height: "220px",
                       width: "100%",
                       backgroundColor: isDark ? "#111827" : "#f3f4f6", // distinct background
                       display: "flex",
