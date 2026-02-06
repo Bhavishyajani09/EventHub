@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import authService from '../services/authService';
+import { Mail, Lock, User, ShieldCheck, ArrowRight, Loader2, Users } from 'lucide-react';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
@@ -70,90 +71,269 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)',
+      padding: '20px',
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
+    }}>
+      <div style={{
+        backgroundColor: 'white',
+        borderRadius: '24px',
+        padding: 'clamp(32px, 6vw, 48px)',
+        width: '100%',
+        maxWidth: '480px',
+        boxShadow: '0 25px 50px rgba(0, 0, 0, 0.1)',
+        animation: 'slideUp 0.5s ease-out'
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <div style={{
+            width: '64px',
+            height: '64px',
+            backgroundColor: '#f3f4f6',
+            borderRadius: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 20px',
+            color: '#6366f1'
+          }}>
+            <ShieldCheck size={32} />
+          </div>
+          <h2 style={{
+            fontSize: 'clamp(24px, 5vw, 28px)',
+            fontWeight: '800',
+            color: '#111827',
+            marginBottom: '8px'
+          }}>
+            Welcome Back
           </h2>
+          <p style={{ color: '#6b7280', fontSize: '16px', margin: 0 }}>
+            Sign in to continue to EventHub
+          </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', marginLeft: '4px' }}>Login As</label>
+            <div style={{ position: 'relative' }}>
+              <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}>
+                <Users size={20} />
+              </div>
               <select
                 name="userType"
                 value={formData.userType}
                 onChange={handleChange}
-                className="relative block w-full px-3 py-2 border border-gray-300 rounded-t-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                style={{
+                  width: '100%',
+                  padding: '14px 16px 14px 48px',
+                  backgroundColor: '#f9fafb',
+                  border: '2px solid #e5e7eb',
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  transition: 'all 0.2s',
+                  boxSizing: 'border-box',
+                  outline: 'none',
+                  appearance: 'none',
+                  cursor: 'pointer'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#8b5cf6';
+                  e.target.style.backgroundColor = 'white';
+                  e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#e5e7eb';
+                  e.target.style.backgroundColor = '#f9fafb';
+                  e.target.style.boxShadow = 'none';
+                }}
               >
-                <option value="user">User</option>
-                <option value="organizer">Organizer</option>
+                <option value="user">User Account</option>
+                <option value="organizer">Organizer Account</option>
               </select>
             </div>
-            <div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', marginLeft: '4px' }}>Email Address</label>
+            <div style={{ position: 'relative' }}>
+              <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}>
+                <Mail size={20} />
+              </div>
               <input
                 name="email"
                 type="email"
                 required
+                placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
-                className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Email address"
+                style={{
+                  width: '100%',
+                  padding: '14px 16px 14px 48px',
+                  backgroundColor: '#f9fafb',
+                  border: '2px solid #e5e7eb',
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  transition: 'all 0.2s',
+                  boxSizing: 'border-box',
+                  outline: 'none'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#8b5cf6';
+                  e.target.style.backgroundColor = 'white';
+                  e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#e5e7eb';
+                  e.target.style.backgroundColor = '#f9fafb';
+                  e.target.style.boxShadow = 'none';
+                }}
               />
             </div>
-            <div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', marginLeft: '4px' }}>Password</label>
+              <Link to="/forgot-password" style={{
+                fontSize: '12px',
+                fontWeight: '600',
+                color: '#8b5cf6',
+                textDecoration: 'none'
+              }}>
+                Forgot password?
+              </Link>
+            </div>
+            <div style={{ position: 'relative' }}>
+              <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}>
+                <Lock size={20} />
+              </div>
               <input
                 name="password"
                 type="password"
                 required
+                placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleChange}
-                className="relative block w-full px-3 py-2 border border-gray-300 rounded-b-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Password"
+                style={{
+                  width: '100%',
+                  padding: '14px 16px 14px 48px',
+                  backgroundColor: '#f9fafb',
+                  border: '2px solid #e5e7eb',
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  transition: 'all 0.2s',
+                  boxSizing: 'border-box',
+                  outline: 'none'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#8b5cf6';
+                  e.target.style.backgroundColor = 'white';
+                  e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#e5e7eb';
+                  e.target.style.backgroundColor = '#f9fafb';
+                  e.target.style.boxShadow = 'none';
+                }}
               />
             </div>
           </div>
 
-          <div className="flex items-center justify-end">
-            <div className="text-sm">
-              <button
-                type="button"
-                onClick={() => navigate('/forgot-password')}
-                className="font-medium text-indigo-600 hover:text-indigo-500"
-              >
-                Forgot your password?
-              </button>
-            </div>
-          </div>
-
           {error && (
-            <div className="text-red-600 text-sm text-center">{error}</div>
+            <div style={{
+              color: '#ef4444',
+              fontSize: '14px',
+              textAlign: 'center',
+              backgroundColor: '#fef2f2',
+              padding: '10px',
+              borderRadius: '8px',
+              fontWeight: '500'
+            }}>
+              {error}
+            </div>
           )}
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-            >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
-          </div>
-
-          <div className="text-center">
-            <span className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <button
-                type="button"
-                onClick={() => navigate('/register')}
-                className="font-medium text-indigo-600 hover:text-indigo-500"
-              >
-                Sign up
-              </button>
-            </span>
-          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '16px',
+              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%)',
+              backgroundSize: '200% 200%',
+              color: 'white',
+              border: 'none',
+              borderRadius: '12px',
+              fontSize: '16px',
+              fontWeight: '700',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 10px 15px -3px rgba(139, 92, 246, 0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              marginTop: '10px'
+            }}
+            onMouseEnter={(e) => {
+              if (!loading) {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 15px 25px -5px rgba(139, 92, 246, 0.4)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!loading) {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(139, 92, 246, 0.3)';
+              }
+            }}
+          >
+            {loading ? (
+              <Loader2 className="animate-spin" size={20} />
+            ) : (
+              <>
+                Sign In
+                <ArrowRight size={20} />
+              </>
+            )}
+          </button>
         </form>
+
+        <div style={{ textAlign: 'center', marginTop: '24px' }}>
+          <span style={{ fontSize: '14px', color: '#6b7280' }}>
+            Don't have an account?{' '}
+            <Link to="/register" style={{
+              color: '#8b5cf6',
+              fontWeight: '600',
+              textDecoration: 'none',
+              transition: 'color 0.2s'
+            }}
+              onMouseEnter={(e) => e.target.style.color = '#7c3aed'}
+              onMouseLeave={(e) => e.target.style.color = '#8b5cf6'}
+            >
+              Sign up now
+            </Link>
+          </span>
+        </div>
       </div>
+
+      <style>{`
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-spin {
+          animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 };
