@@ -201,13 +201,12 @@ const EventCard = ({ event, onDelete, onEdit, onPublishToggle, isDark }) => {
         </div>
       )}
       {/* Event Image */}
-      <div className={`h-48 relative flex items-center justify-center bg-white`}>
+      <div className={`h-64 relative flex items-center justify-center ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
         {event.image ? (
           <img
             src={event.image}
             alt={event.title}
-            className="w-full h-full object-cover"
-            style={{ objectPosition: 'center' }}
+            className="w-full h-full object-cover object-top"
           />
         ) : (
           <Calendar className="h-12 w-12 text-gray-400" />

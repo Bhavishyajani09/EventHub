@@ -56,7 +56,7 @@
 //   const [showModal, setShowModal] = useState(false);
 //   const [selectedEvent, setSelectedEvent] = useState(null);
 //   const [modalMode, setModalMode] = useState("view");
- 
+
 
 //   // Filter & Search logic
 //   const filteredEvents = events.filter((event) => {
@@ -85,14 +85,14 @@
 //           value={search}
 //           onChange={(e) => setSearch(e.target.value)}
 //         />
-        
+
 //          {/* 🎯 Filter with Icon */}
 //           <div className="relative w-full md:w-1/4">
 //             <Filter
 //               size={16}
 //               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
 //             />
-        
+
 //             <select
 //               className="w-full pl-10 pr-4 py-2 rounded-lg border focus:outline-none"
 //               value={filterStatus}
@@ -104,7 +104,7 @@
 //               <option>Completed</option>
 //             </select>
 //           </div>
-            
+
 //       </div>
 
 //       {/* Events Grid */}
@@ -383,7 +383,7 @@ export default function MyEvents() {
             <img
               src={event.image}
               alt={event.title}
-              className="h-48 w-full object-cover"
+              className="h-64 w-full object-cover object-top"
             />
 
             {/* Info */}

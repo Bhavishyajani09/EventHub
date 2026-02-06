@@ -92,11 +92,11 @@ export default function Sidebar({ isDark }) {
       {/* Sidebar */}
       <aside
         className={`
-          border-r h-screen transition-all duration-300 z-40 group
+          border-r transition-all duration-300 z-40 group
           ${collapsed ? "w-16" : "w-64"} 
-          ${mobileOpen ? "fixed" : "lg:relative lg:block hidden"}
+          ${mobileOpen ? "fixed top-0 left-0 h-screen" : "lg:sticky lg:top-[70px] lg:h-[calc(100vh-70px)] lg:block hidden"}
           ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}
-          flex flex-col relative
+          flex flex-col
         `}
       >
         {/* Collapse Toggle - Desktop Only */}

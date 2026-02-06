@@ -139,12 +139,12 @@ const AdminEvents = () => {
           {filteredEvents.map((event) => (
             <div key={event.id} className="rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition-shadow duration-200 bg-white border-gray-100">
               {/* Event Header with Color or Image */}
-              <div className="h-48 flex items-center justify-center relative overflow-hidden bg-white">
+              <div className="h-64 flex items-center justify-center relative overflow-hidden bg-white">
                 {event.image ? (
                   <img
                     src={event.image}
                     alt={event.title}
-                    className="w-full h-48 object-cover bg-gray-50 rounded-lg"
+                    className="w-full h-full object-cover object-top bg-gray-50 rounded-lg"
                   />
                 ) : (
                   <svg className="w-16 h-16 text-gray-400 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,8 +174,8 @@ const AdminEvents = () => {
                     </svg>
                     <span className="text-sm">{event.date}</span>
                   </div>
-                  <div className="text-sm text-gray-500">
-                    by {event.organizer}
+                  <div className="text-xs font-bold text-gray-500 tracking-wide uppercase">
+                    BY - <span className="text-sm font-black text-indigo-600 tracking-normal normal-case">{event.organizer}</span>
                   </div>
                 </div>
 
@@ -261,7 +261,7 @@ const AdminEvents = () => {
                     <img
                       src={detailsEvent.image}
                       alt={detailsEvent.title}
-                      className="w-full h-48 object-cover bg-gray-50 rounded-lg"
+                      className="w-full h-64 object-cover object-top bg-gray-50 rounded-lg"
                     />
                   ) : (
                     <div className="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -292,7 +292,7 @@ const AdminEvents = () => {
                     </div>
                     <div>
                       <span className="font-medium text-gray-600">Organizer:</span>
-                      <p className="text-gray-900">{detailsEvent.organizer}</p>
+                      <p className="text-gray-900 font-black">BY- {detailsEvent.organizer}</p>
                     </div>
                     <div>
                       <span className="font-medium text-gray-600">Published:</span>

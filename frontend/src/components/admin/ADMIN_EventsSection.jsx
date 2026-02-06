@@ -80,7 +80,7 @@ const EventsSection = () => {
         {filteredEvents.map((event) => (
           <div key={event.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200">
             {/* Event Header with Color */}
-            <div className={`${event.color} h-32 flex items-center justify-center`}>
+            <div className={`${event.color} h-64 flex items-center justify-center`}>
               <svg className="w-16 h-16 text-white opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
@@ -107,8 +107,8 @@ const EventsSection = () => {
                   </svg>
                   <span className="text-sm">{event.date}</span>
                 </div>
-                <div className="text-sm text-gray-500">
-                  by {event.organizer}
+                <div className="text-xs font-bold text-gray-500 tracking-wide uppercase">
+                  BY - <span className="text-sm font-black text-indigo-600 tracking-normal normal-case">{event.organizer}</span>
                 </div>
               </div>
 
