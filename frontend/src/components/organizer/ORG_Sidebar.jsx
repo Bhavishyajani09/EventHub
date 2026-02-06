@@ -120,7 +120,7 @@ export default function Sidebar({ isDark }) {
                 className="w-9 h-9 rounded-lg"
               />
               <div>
-                <h2 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-800'}`}>EventHub</h2>
+                <h2 className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-800'}`}>EventHub</h2>
                 <p className={`text-xs uppercase tracking-wide ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Organizer</p>
               </div>
             </div>

@@ -93,8 +93,8 @@ const MyEvents = ({ isDark }) => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>My Events</h1>
-          <p className={`mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Manage your events</p>
+          <h1 className={`text-2xl font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>My Events</h1>
+          <p className={`mt-1 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Manage your events</p>
         </div>
         <button
           onClick={() => navigate('/create-event')}
@@ -181,7 +181,7 @@ const EventCard = ({ event, onDelete, onEdit, onPublishToggle, isDark }) => {
     const IconComponent = config.icon;
 
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${config.color}`}>
+      <span className={`px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${config.color}`}>
         <IconComponent size={12} />
         {config.text}
       </span>
@@ -250,7 +250,7 @@ const EventCard = ({ event, onDelete, onEdit, onPublishToggle, isDark }) => {
         </div>
 
         <div className="mt-4 flex justify-between items-center">
-          <span className="text-lg font-bold text-indigo-600">
+          <span className="text-lg font-medium text-indigo-600">
             ₹{event.price}
           </span>
 
@@ -258,7 +258,7 @@ const EventCard = ({ event, onDelete, onEdit, onPublishToggle, isDark }) => {
             {canPublish && (
               <button
                 onClick={() => onPublishToggle(event._id, event.isPublished)}
-                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${event.isPublished
+                className={`px-3 py-1 rounded text-sm font-normal transition-colors ${event.isPublished
                   ? 'bg-blue-600 text-white hover:bg-blue-700'
                   : 'bg-blue-600 text-white hover:bg-blue-700'
                   }`}
