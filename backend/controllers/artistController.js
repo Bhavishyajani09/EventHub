@@ -7,10 +7,23 @@ const Artist = require('../models/Artist');
  */
 const getArtists = async (req, res) => {
     try {
-        const artists = await Artist.find().sort({ createdAt: -1 });
+        // Find all artists and populate events with filters
+        const artists = await Artist.find().sort({ createdAt: -1 }).populate({
+            path: 'events',
+            match: { 
+                date: { $gte: new Date() },
+                isPublished: true,
+                approvalStatus: 'approved'
+            },
+            select: '_id' // We only need to check if events exist
+        });
+
+        // Filter out artists who have no valid events
+        const activeArtists = artists.filter(artist => artist.events && artist.events.length > 0);
+
         res.json({
             success: true,
-            artists
+            artists: activeArtists
         });
     } catch (error) {
         console.error('Get artists error:', error);
@@ -30,7 +43,11 @@ const getArtistById = async (req, res) => {
     try {
         const artist = await Artist.findById(req.params.id).populate({
             path: 'events',
-            match: { date: { $gte: new Date() } },
+            match: { 
+                date: { $gte: new Date() },
+                isPublished: true,
+                approvalStatus: 'approved'
+            },
             options: { sort: { date: 1 } }
         });
         
@@ -43,6 +60,10 @@ const getArtistById = async (req, res) => {
                     if (!event.date) return false;
                     const eventDate = new Date(event.date);
                     return eventDate >= now;
+                    // Note: Since we heavily filtered in populate, this manual filter is mostly a double-check 
+                    // for date, but populated docs are already filtered by mongoose. 
+                    // However, sometimes populate match doesn't work effectively on empty arrays if structure differs, 
+                    // so keeping date check is fine, effectively it's already filtered.
                 });
             }
             

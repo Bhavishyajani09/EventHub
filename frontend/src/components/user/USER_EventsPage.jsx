@@ -85,23 +85,32 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
     { name: 'SEASONAL EVENT', label: 'SEASONAL EVENTS', icon: Calendar, color: '#f97316' }
   ];
 
-  const allEvents = events.map(event => ({
-    title: event.title,
-    location: event.location,
-    date: new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
-    time: new Date(event.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-    fullDate: new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
-    price: event.price === 0 ? 'FREE' :
-      (event.seatTypes && event.seatTypes.length > 0
-        ? `₹${Math.min(...event.seatTypes.map(seat => seat.price))}`
-        : `₹${event.price}`),
-    image: event.image || '/placeholder-artist.jpg',
-    category: event.category.toUpperCase(),
-    type: 'event',
-    venue: event.location,
-    seatTypes: event.seatTypes,
-    _id: event._id
-  }));
+  const allEvents = events
+    .filter(event => {
+      // Filter out events that are expired (past date)
+      if (!event.date) return false;
+      const eventDate = new Date(event.date);
+      const now = new Date();
+      // Keep events that are in the future or today
+      return eventDate >= now;
+    })
+    .map(event => ({
+      title: event.title,
+      location: event.location,
+      date: new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+      time: new Date(event.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      fullDate: new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+      price: event.price === 0 ? 'FREE' :
+        (event.seatTypes && event.seatTypes.length > 0
+          ? `₹${Math.min(...event.seatTypes.map(seat => seat.price))}`
+          : `₹${event.price}`),
+      image: event.image || '/placeholder-artist.jpg',
+      category: event.category.toUpperCase(),
+      type: 'event',
+      venue: event.location,
+      seatTypes: event.seatTypes,
+      _id: event._id
+    }));
 
   const location = useLocation();
   const [selectedCategory, setSelectedCategory] = useState(location.state?.category || 'All Events');

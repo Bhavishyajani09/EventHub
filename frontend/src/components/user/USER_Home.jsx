@@ -47,7 +47,11 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
     try {
       const response = await eventService.getNonMovieEvents();
       if (response.success) {
-        setEvents(response.events.slice(0, 4) || []);
+        const validEvents = (response.events || []).filter(event => {
+          if (!event.date) return false;
+          return new Date(event.date) >= new Date();
+        });
+        setEvents(validEvents.slice(0, 4));
       }
     } catch (err) {
       console.error('Error fetching events:', err);
@@ -58,7 +62,11 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
     try {
       const response = await eventService.getMovieEvents();
       if (response.success) {
-        setMovies(response.events.slice(0, 4) || []);
+        const validMovies = (response.events || []).filter(movie => {
+          if (!movie.date) return false;
+          return new Date(movie.date) >= new Date();
+        });
+        setMovies(validMovies.slice(0, 4));
       }
     } catch (err) {
       console.error('Error fetching movies:', err);

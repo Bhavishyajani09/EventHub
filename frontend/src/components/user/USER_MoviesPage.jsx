@@ -20,8 +20,12 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
         setLoading(true);
         const response = await eventService.getMovieEvents();
         if (response.success) {
-          setMovies(response.events || []);
-          setFilteredMovies(response.events || []);
+          const validMovies = (response.events || []).filter(movie => {
+            if (!movie.date) return false;
+            return new Date(movie.date) >= new Date();
+          });
+          setMovies(validMovies);
+          setFilteredMovies(validMovies);
         } else {
           setError('Failed to load movies');
         }
