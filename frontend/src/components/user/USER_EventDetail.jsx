@@ -39,6 +39,52 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
     );
   }
 
+  const isExpired = React.useMemo(() => {
+    if (!event || !event.date) return false;
+    const eventDate = new Date(event.date);
+    const now = new Date();
+    // Reset time part for accurate date comparison if needed, or keep time for precise expiration
+    return eventDate < now;
+  }, [event]);
+
+  if (isExpired) {
+    return (
+      <div style={{
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+        backgroundColor: isDark ? '#111827' : '#f8fafc',
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div style={{
+          textAlign: 'center',
+          color: isDark ? '#f9fafb' : '#111827',
+          padding: '20px'
+        }}>
+          <h2 style={{ fontSize: '24px', marginBottom: '16px' }}>This Event Has Expired</h2>
+          <p style={{ color: isDark ? '#9ca3af' : '#6b7280', marginBottom: '24px' }}>
+            The event you are looking for has already taken place.
+          </p>
+          <button
+            onClick={() => onNavigate('events')}
+            style={{
+              padding: '12px 24px',
+              backgroundColor: '#8b5cf6',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: '500'
+            }}
+          >
+            Explore Other Events
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const getDisplayDate = () => {
     if (event.fullDate) return event.fullDate;
     if (event.date) {
