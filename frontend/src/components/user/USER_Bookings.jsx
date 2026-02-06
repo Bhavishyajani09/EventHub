@@ -3,7 +3,7 @@ import axios from 'axios';
 import eventService from '../../services/eventService';
 import toast from 'react-hot-toast';
 import { BookingCardSkeleton } from '../common/Skeleton';
-import { Calendar, MapPin, Clock, Ticket } from 'lucide-react';
+import { Calendar, MapPin, Clock, Ticket, Star, X } from 'lucide-react';
 
 const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
   const [activeTab, setActiveTab] = useState('Events');
@@ -12,6 +12,10 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
     Events: [],
     Movies: []
   });
+  const [reviewModal, setReviewModal] = useState({ open: false, booking: null });
+  const [reviewData, setReviewData] = useState({ rating: 0, comment: '' });
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewStatus, setReviewStatus] = useState({}); // Track review status for each booking
 
   const tabs = ['Events', 'Movies'];
 
@@ -56,6 +60,80 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
       console.error('Error fetching bookings:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkReviewStatus = async (eventId) => {
+    try {
+      const token = sessionStorage.getItem('token');
+      if (!token) return null;
+
+      const response = await axios.get(`http://localhost:5000/api/reviews/can-review/${eventId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Error checking review status:', error);
+      return null;
+    }
+  };
+
+  const handleOpenReviewModal = async (booking) => {
+    const status = await checkReviewStatus(booking.event._id);
+
+    if (status && !status.canReview) {
+      if (status.reason === 'Already reviewed') {
+        toast.success('You have already reviewed this event');
+      } else {
+        toast.error(status.reason);
+      }
+      return;
+    }
+
+    setReviewModal({ open: true, booking });
+    setReviewData({ rating: 0, comment: '' });
+  };
+
+  const handleCloseReviewModal = () => {
+    setReviewModal({ open: false, booking: null });
+    setReviewData({ rating: 0, comment: '' });
+  };
+
+  const handleSubmitReview = async () => {
+    if (reviewData.rating === 0) {
+      toast.error('Please select a rating');
+      return;
+    }
+
+    setSubmittingReview(true);
+    try {
+      const token = sessionStorage.getItem('token');
+      const response = await axios.post(
+        'http://localhost:5000/api/reviews',
+        {
+          eventId: reviewModal.booking.event._id,
+          rating: reviewData.rating,
+          comment: reviewData.comment
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      if (response.data.success) {
+        toast.success('Review submitted successfully!');
+        setReviewStatus(prev => ({
+          ...prev,
+          [reviewModal.booking.event._id]: 'reviewed'
+        }));
+        handleCloseReviewModal();
+      }
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      toast.error(error.response?.data?.message || 'Failed to submit review');
+    } finally {
+      setSubmittingReview(false);
     }
   };
 
@@ -372,35 +450,74 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                     </div>
 
                     {booking.status !== 'cancelled' ? (
-                      <button
-                        onClick={() => handleCancelBooking(booking._id, booking.event?.date)}
-                        style={{
-                          width: '100%',
-                          padding: '10px 16px',
-                          backgroundColor: 'transparent',
-                          color: '#ef4444',
-                          border: '1px solid #ef4444',
-                          borderRadius: '8px',
-                          fontSize: '13px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '6px'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.target.style.backgroundColor = '#ef4444';
-                          e.target.style.color = 'white';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.backgroundColor = 'transparent';
-                          e.target.style.color = '#ef4444';
-                        }}
-                      >
-                        Cancel Booking
-                      </button>
+                      <>
+                        {/* Check if event has expired */}
+                        {new Date(booking.event?.date) < new Date() ? (
+                          <button
+                            onClick={() => handleOpenReviewModal(booking)}
+                            disabled={reviewStatus[booking.event._id] === 'reviewed'}
+                            style={{
+                              width: '100%',
+                              padding: '10px 16px',
+                              backgroundColor: reviewStatus[booking.event._id] === 'reviewed' ? (isDark ? '#374151' : '#f3f4f6') : '#8b5cf6',
+                              color: reviewStatus[booking.event._id] === 'reviewed' ? (isDark ? '#9ca3af' : '#6b7280') : 'white',
+                              border: 'none',
+                              borderRadius: '8px',
+                              fontSize: '13px',
+                              fontWeight: '600',
+                              cursor: reviewStatus[booking.event._id] === 'reviewed' ? 'not-allowed' : 'pointer',
+                              transition: 'all 0.2s',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '6px'
+                            }}
+                            onMouseEnter={(e) => {
+                              if (reviewStatus[booking.event._id] !== 'reviewed') {
+                                e.target.style.backgroundColor = '#7c3aed';
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (reviewStatus[booking.event._id] !== 'reviewed') {
+                                e.target.style.backgroundColor = '#8b5cf6';
+                              }
+                            }}
+                          >
+                            <Star size={16} />
+                            {reviewStatus[booking.event._id] === 'reviewed' ? 'Review Submitted' : 'Write Review'}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleCancelBooking(booking._id, booking.event?.date)}
+                            style={{
+                              width: '100%',
+                              padding: '10px 16px',
+                              backgroundColor: 'transparent',
+                              color: '#ef4444',
+                              border: '1px solid #ef4444',
+                              borderRadius: '8px',
+                              fontSize: '13px',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '6px'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.target.style.backgroundColor = '#ef4444';
+                              e.target.style.color = 'white';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.backgroundColor = 'transparent';
+                              e.target.style.color = '#ef4444';
+                            }}
+                          >
+                            Cancel Booking
+                          </button>
+                        )}
+                      </>
                     ) : (
                       <div style={{
                         width: '100%',
@@ -527,6 +644,196 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
           </div>
         )}
       </div>
+
+      {/* Review Modal */}
+      {reviewModal.open && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px'
+        }}>
+          <div style={{
+            backgroundColor: isDark ? '#1f2937' : 'white',
+            borderRadius: '16px',
+            maxWidth: '500px',
+            width: '100%',
+            maxHeight: '90vh',
+            overflow: 'auto',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3)'
+          }}>
+            {/* Modal Header */}
+            <div style={{
+              padding: '20px',
+              borderBottom: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <h2 style={{
+                fontSize: '20px',
+                fontWeight: '600',
+                color: isDark ? '#f9fafb' : '#111827',
+                margin: 0
+              }}>Write a Review</h2>
+              <button
+                onClick={handleCloseReviewModal}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '8px',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: isDark ? '#9ca3af' : '#6b7280'
+                }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div style={{ padding: '24px' }}>
+              <div style={{ marginBottom: '20px' }}>
+                <h3 style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: isDark ? '#f9fafb' : '#111827',
+                  marginBottom: '8px'
+                }}>{reviewModal.booking?.event?.title}</h3>
+                <p style={{
+                  fontSize: '14px',
+                  color: isDark ? '#9ca3af' : '#6b7280',
+                  margin: 0
+                }}>
+                  {new Date(reviewModal.booking?.event?.date).toLocaleDateString(undefined, {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                  })}
+                </p>
+              </div>
+
+              {/* Rating */}
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: isDark ? '#f9fafb' : '#111827',
+                  marginBottom: '12px'
+                }}>Rating *</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      onClick={() => setReviewData({ ...reviewData, rating: star })}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        transition: 'transform 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                    >
+                      <Star
+                        size={32}
+                        fill={star <= reviewData.rating ? '#fbbf24' : 'none'}
+                        stroke={star <= reviewData.rating ? '#fbbf24' : (isDark ? '#4b5563' : '#d1d5db')}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Comment */}
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: isDark ? '#f9fafb' : '#111827',
+                  marginBottom: '8px'
+                }}>Comment (Optional)</label>
+                <textarea
+                  value={reviewData.comment}
+                  onChange={(e) => setReviewData({ ...reviewData, comment: e.target.value })}
+                  placeholder="Share your experience..."
+                  maxLength={500}
+                  style={{
+                    width: '100%',
+                    minHeight: '120px',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: isDark ? '1px solid #374151' : '1px solid #d1d5db',
+                    backgroundColor: isDark ? '#111827' : '#f9fafb',
+                    color: isDark ? '#f9fafb' : '#111827',
+                    fontSize: '14px',
+                    fontFamily: 'inherit',
+                    resize: 'vertical'
+                  }}
+                />
+                <p style={{
+                  fontSize: '12px',
+                  color: isDark ? '#6b7280' : '#9ca3af',
+                  marginTop: '4px',
+                  textAlign: 'right'
+                }}>{reviewData.comment.length}/500</p>
+              </div>
+
+              {/* Actions */}
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button
+                  onClick={handleCloseReviewModal}
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    backgroundColor: 'transparent',
+                    color: isDark ? '#9ca3af' : '#6b7280',
+                    border: isDark ? '1px solid #374151' : '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSubmitReview}
+                  disabled={submittingReview || reviewData.rating === 0}
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    backgroundColor: (submittingReview || reviewData.rating === 0) ? (isDark ? '#374151' : '#e5e7eb') : '#8b5cf6',
+                    color: (submittingReview || reviewData.rating === 0) ? (isDark ? '#6b7280' : '#9ca3af') : 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: (submittingReview || reviewData.rating === 0) ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {submittingReview ? 'Submitting...' : 'Submit Review'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
