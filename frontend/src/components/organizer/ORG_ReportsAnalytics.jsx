@@ -1,78 +1,110 @@
-import React, { useState } from "react";
-import { ArrowUpRight, Download } from "lucide-react";
-import { eventsData, bookings } from "../../lib/data";
-
+import React, { useState, useEffect } from "react";
+import { ArrowUpRight, Loader2 } from "lucide-react";
+import organizerService from "../../services/organizerService";
+import { useAuth } from "../../context/AuthContext";
 
 export default function ReportsAnalytics({ isDark }) {
+  const { user } = useAuth();
   const [timeRange, setTimeRange] = useState("Last 30 Days");
   const [selectedEvent, setSelectedEvent] = useState("All Events");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  // 🔹 Filter logic (example)
-  const applyFilters = () => {
-    console.log("Filters Applied 👇");
-    console.log({
-      timeRange,
-      selectedEvent,
-      startDate,
-      endDate,
-    });
+  // Analytics data state
+  const [analyticsData, setAnalyticsData] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch analytics data
+  const fetchAnalytics = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      if (!user || user.role !== 'organizer') {
+        setError('Please login as an organizer to view analytics');
+        setLoading(false);
+        return;
+      }
+
+      // Build query parameters
+      const params = {};
+
+      if (timeRange && !startDate && !endDate) {
+        params.timeRange = timeRange;
+      }
+
+      if (selectedEvent && selectedEvent !== 'All Events') {
+        params.eventId = selectedEvent;
+      }
+
+      if (startDate && endDate) {
+        params.startDate = startDate;
+        params.endDate = endDate;
+      }
+
+      const response = await organizerService.getAnalytics(params);
+
+      if (response.success) {
+        setAnalyticsData(response.data);
+        setEvents(response.data.events || []);
+      }
+    } catch (err) {
+      console.error('Error fetching analytics:', err);
+      setError(err.response?.data?.message || 'Failed to fetch analytics data');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  /* ================= EVENTS BASED ================= */
+  // Load analytics on mount
+  useEffect(() => {
+    if (user && user.role === 'organizer') {
+      fetchAnalytics();
+    } else {
+      setError('Please login as an organizer to view analytics');
+      setLoading(false);
+    }
+  }, [user]);
 
-  // 🎟 Total Tickets Sold
-  const totalTicketsSold = eventsData.reduce(
-    (sum, e) => sum + Number(e.sold || 0),
-    0
-  );
+  // Apply filters
+  const applyFilters = () => {
+    fetchAnalytics();
+  };
 
-  // 🎫 Total Tickets Available
-  const totalTickets = eventsData.reduce(
-    (sum, e) => sum + Number(e.total || 0),
-    0
-  );
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className={`animate-spin ${isDark ? 'text-white' : 'text-gray-900'}`} size={32} />
+      </div>
+    );
+  }
 
-  // 📊 Conversion Rate (Sold / Total)
-  const conversionRate =
-    totalTickets === 0
-      ? 0
-      : ((totalTicketsSold / totalTickets) * 100).toFixed(1);
+  if (error) {
+    return (
+      <div className={`p-6 rounded-xl border ${isDark ? 'bg-gray-800 border-gray-700 text-red-400' : 'bg-white border-gray-200 text-red-600'}`}>
+        <p>Error: {error}</p>
+      </div>
+    );
+  }
 
-  /* ================= BOOKINGS BASED ================= */
+  if (!analyticsData) {
+    return (
+      <div className={`p-6 rounded-xl border ${isDark ? 'bg-gray-800 border-gray-700 text-gray-400' : 'bg-white border-gray-200 text-gray-600'}`}>
+        <p>No analytics data available</p>
+      </div>
+    );
+  }
 
-  const confirmedBookings = bookings.filter(
-    (b) => b.status?.toLowerCase() === "confirmed"
-  );
-
-
-  // 🎟 Ticket type wise count (from bookings)
-  const ticketTypeCount = confirmedBookings.reduce((acc, b) => {
-    const type = b.category;              // Silver / Gold / VIP
-    const qty = Number(b.tickets || 0);   // no of tickets
-
-    acc[type] = (acc[type] || 0) + qty;
-    return acc;
-  }, {});
-
-  // 🎟 Total confirmed tickets
-  const totalConfirmedTickets = Object.values(ticketTypeCount).reduce(
-    (sum, val) => sum + val,
-    0
-  );
-
-  // 📊 Convert to percentage
-  const ticketDistribution = Object.entries(ticketTypeCount).map(
-    ([type, count]) => ({
-      label: type,
-      percent:
-        totalConfirmedTickets === 0
-          ? 0
-          : Math.round((count / totalConfirmedTickets) * 100),
-    })
-  );
-
+  const {
+    totalRevenue = 0,
+    ticketsSold = 0,
+    avgTicketPrice = 0,
+    conversionRate = 0,
+    ticketTypeDistribution = [],
+    bookingFunnel = {}
+  } = analyticsData;
 
   return (
     <div className="space-y-6">
@@ -107,8 +139,8 @@ export default function ReportsAnalytics({ isDark }) {
             className={`px-3 py-2 border rounded-lg w-full ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
           >
             <option>All Events</option>
-            {eventsData.map((event) => (
-              <option key={event.id} value={event.title}>
+            {events.map((event) => (
+              <option key={event._id} value={event._id}>
                 {event.title}
               </option>
             ))}
@@ -137,9 +169,10 @@ export default function ReportsAnalytics({ isDark }) {
 
           <button
             onClick={applyFilters}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            disabled={loading}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Apply Filters
+            {loading ? 'Loading...' : 'Apply Filters'}
           </button>
 
         </div>
@@ -149,28 +182,28 @@ export default function ReportsAnalytics({ isDark }) {
 
         <StatCard
           title="Total Revenue"
-          value={`₹${confirmedBookings.reduce((sum, b) => sum + Number(b.amount), 0).toLocaleString()}`}
+          value={`₹${totalRevenue.toLocaleString()}`}
           change="Live"
           isDark={isDark}
         />
 
         <StatCard
           title="Total Tickets Sold"
-          value={totalConfirmedTickets}
+          value={ticketsSold}
           subtitle="From confirmed bookings"
           isDark={isDark}
         />
 
         <StatCard
           title="Avg Ticket Price"
-          value={`₹${totalConfirmedTickets > 0 ? Math.round(confirmedBookings.reduce((sum, b) => sum + Number(b.amount), 0) / totalConfirmedTickets) : 0}`}
+          value={`₹${avgTicketPrice}`}
           subtitle="Per ticket"
           isDark={isDark}
         />
 
         <StatCard
           title="Conversion Rate"
-          value={`${bookings.length > 0 ? ((confirmedBookings.length / bookings.length) * 100).toFixed(1) : 0}%`}
+          value={`${conversionRate}%`}
           subtitle="Confirmed vs Total bookings"
           isDark={isDark}
         />
@@ -185,16 +218,17 @@ export default function ReportsAnalytics({ isDark }) {
             Ticket Type Distribution
           </h2>
 
-          {ticketDistribution.length === 0 ? (
+          {ticketTypeDistribution.length === 0 ? (
             <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
               No ticket data available
             </p>
           ) : (
-            ticketDistribution.map((item) => (
+            ticketTypeDistribution.map((item) => (
               <Distribution
                 key={item.label}
                 label={item.label}
                 percent={item.percent}
+                count={item.count}
                 isDark={isDark}
               />
             ))
@@ -205,13 +239,33 @@ export default function ReportsAnalytics({ isDark }) {
         <div className={`md:col-span-8 p-6 rounded-xl border ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <h2 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Booking Funnel</h2>
 
-          <FunnelRow label="Total Bookings" value={bookings.length} percent="100%" isDark={isDark} />
-          <FunnelRow label="Confirmed Bookings" value={confirmedBookings.length} percent={`${bookings.length > 0 ? ((confirmedBookings.length / bookings.length) * 100).toFixed(1) : 0}%`} isDark={isDark} />
-          <FunnelRow label="Cancelled Bookings" value={bookings.filter(b => b.status?.toLowerCase() === 'cancelled').length} percent={`${bookings.length > 0 ? ((bookings.filter(b => b.status?.toLowerCase() === 'cancelled').length / bookings.length) * 100).toFixed(1) : 0}%`} isDark={isDark} />
-          <FunnelRow label="Total Revenue" value={`₹${confirmedBookings.reduce((sum, b) => sum + Number(b.amount), 0).toLocaleString()}`} percent={`${bookings.length > 0 ? ((confirmedBookings.length / bookings.length) * 100).toFixed(1) : 0}%`} isDark={isDark} />
+          <FunnelRow
+            label="Total Bookings"
+            value={bookingFunnel.totalBookings || 0}
+            percent="100%"
+            isDark={isDark}
+          />
+          <FunnelRow
+            label="Confirmed Bookings"
+            value={bookingFunnel.confirmedBookings || 0}
+            percent={`${bookingFunnel.totalBookings > 0 ? ((bookingFunnel.confirmedBookings / bookingFunnel.totalBookings) * 100).toFixed(1) : 0}%`}
+            isDark={isDark}
+          />
+          <FunnelRow
+            label="Cancelled Bookings"
+            value={bookingFunnel.cancelledBookings || 0}
+            percent={`${bookingFunnel.totalBookings > 0 ? ((bookingFunnel.cancelledBookings / bookingFunnel.totalBookings) * 100).toFixed(1) : 0}%`}
+            isDark={isDark}
+          />
+          <FunnelRow
+            label="Total Revenue"
+            value={`₹${(bookingFunnel.totalRevenue || 0).toLocaleString()}`}
+            percent={`${conversionRate}%`}
+            isDark={isDark}
+          />
 
           <p className={`text-sm mt-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-            Overall Conversion Rate: <b className={isDark ? 'text-white' : 'text-gray-900'}>{bookings.length > 0 ? ((confirmedBookings.length / bookings.length) * 100).toFixed(1) : 0}%</b> from total bookings to confirmed bookings
+            Overall Conversion Rate: <b className={isDark ? 'text-white' : 'text-gray-900'}>{conversionRate}%</b> from total bookings to confirmed bookings
           </p>
         </div>
 
@@ -223,13 +277,15 @@ export default function ReportsAnalytics({ isDark }) {
 
         <ul className={`list-disc pl-5 text-sm space-y-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
           <li>
-            Your conversion rate improved by <b>2.3%</b> this period.
+            Your conversion rate is <b>{conversionRate}%</b> for the selected period.
           </li>
+          {ticketTypeDistribution.length > 0 && (
+            <li>
+              {ticketTypeDistribution[0].label} tickets are leading with <b>{ticketTypeDistribution[0].percent}%</b> of total sales.
+            </li>
+          )}
           <li>
-            Gold tickets are best sellers at <b>35%</b> of total sales.
-          </li>
-          <li>
-            Most drop-off occurs between <b>Add to Cart</b> and <b>Checkout</b>.
+            Total revenue generated: <b>₹{totalRevenue.toLocaleString()}</b>
           </li>
         </ul>
       </div>
@@ -270,12 +326,12 @@ function FunnelRow({ label, value, percent, isDark }) {
   );
 }
 
-function Distribution({ label, percent, isDark }) {
+function Distribution({ label, percent, count, isDark }) {
   return (
     <div className="mb-3">
       <div className={`flex justify-between text-sm mb-1 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
         <span>{label}</span>
-        <span>{percent}%</span>
+        <span>{percent}% ({count} tickets)</span>
       </div>
       <div className={`h-2 rounded ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}>
         <div

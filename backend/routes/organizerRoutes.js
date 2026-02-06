@@ -9,7 +9,8 @@ const {
   getEventAttendees,
   getDashboard,
   closeEventBooking,
-  cancelEvent
+  cancelEvent,
+  getAnalytics
 } = require('../controllers/organizerController');
 
 /**
@@ -75,6 +76,13 @@ router.get('/organizer/events/:id/attendees', authMiddleware, getEventAttendees)
  * @access  Private
  */
 router.get('/organizer/dashboard', authMiddleware, getDashboard);
+
+/**
+ * @route   GET /organizer/analytics
+ * @desc    Get analytics data with filters
+ * @access  Private
+ */
+router.get('/organizer/analytics', authMiddleware, getAnalytics);
 
 /**
  * Event Control Routes

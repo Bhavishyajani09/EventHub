@@ -13,7 +13,7 @@ const organizerService = {
       if (!token) {
         throw new Error('No authentication token found');
       }
-      
+
       const response = await axios.get(`${API_BASE_URL}/api/organizer/dashboard`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -31,7 +31,7 @@ const organizerService = {
       if (!token) {
         throw new Error('No authentication token found');
       }
-      
+
       const response = await axios.get(`${API_BASE_URL}/api/organizer/events`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -48,9 +48,9 @@ const organizerService = {
       if (!token) {
         throw new Error('No authentication token found');
       }
-      
+
       const response = await axios.post(`${API_BASE_URL}/api/organizer/events`, eventData, {
-        headers: { 
+        headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
         }
@@ -68,9 +68,9 @@ const organizerService = {
       if (!token) {
         throw new Error('No authentication token found');
       }
-      
+
       const response = await axios.put(`${API_BASE_URL}/api/organizer/events/${eventId}`, eventData, {
-        headers: { 
+        headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
         }
@@ -88,7 +88,7 @@ const organizerService = {
       if (!token) {
         throw new Error('No authentication token found');
       }
-      
+
       const response = await axios.get(`${API_BASE_URL}/api/organizer/events/${eventId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -135,13 +135,40 @@ const organizerService = {
     return response.data;
   },
 
+  // Analytics
+  getAnalytics: async (params = {}) => {
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const queryParams = new URLSearchParams();
+      if (params.timeRange) queryParams.append('timeRange', params.timeRange);
+      if (params.eventId) queryParams.append('eventId', params.eventId);
+      if (params.startDate) queryParams.append('startDate', params.startDate);
+      if (params.endDate) queryParams.append('endDate', params.endDate);
+
+      const queryString = queryParams.toString();
+      const url = `${API_BASE_URL}/api/organizer/analytics${queryString ? `?${queryString}` : ''}`;
+
+      const response = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Analytics error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
+
   // Image upload
   uploadImage: async (file) => {
     const formData = new FormData();
     formData.append('image', file);
-    
+
     const response = await axios.post(`${API_BASE_URL}/api/upload/image`, formData, {
-      headers: { 
+      headers: {
         Authorization: `Bearer ${getAuthToken()}`,
         'Content-Type': 'multipart/form-data'
       }

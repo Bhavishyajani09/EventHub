@@ -392,6 +392,148 @@ const cancelEvent = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Get analytics data for organizer
+ * @route   GET /organizer/analytics
+ * @access  Private
+ */
+const getAnalytics = async (req, res) => {
+  try {
+    const organizerId = req.user.id;
+    const { timeRange, eventId, startDate, endDate } = req.query;
+
+    // Get all events for this organizer
+    const organizerEvents = await Event.find({ organizer: organizerId }).select('_id title');
+    const eventIds = organizerEvents.map(event => event._id);
+
+    if (eventIds.length === 0) {
+      return res.json({
+        success: true,
+        data: {
+          events: [],
+          totalRevenue: 0,
+          ticketsSold: 0,
+          avgTicketPrice: 0,
+          conversionRate: 0,
+          ticketTypeDistribution: [],
+          bookingFunnel: {
+            totalBookings: 0,
+            confirmedBookings: 0,
+            cancelledBookings: 0,
+            totalRevenue: 0
+          }
+        }
+      });
+    }
+
+    // Build filter for bookings
+    let bookingFilter = { event: { $in: eventIds } };
+
+    // Apply event filter if specific event selected
+    if (eventId && eventId !== 'All Events') {
+      bookingFilter.event = eventId;
+    }
+
+    // Apply date range filter
+    let dateFilter = {};
+    if (startDate && endDate) {
+      dateFilter = {
+        createdAt: {
+          $gte: new Date(startDate),
+          $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999))
+        }
+      };
+    } else if (timeRange) {
+      const now = new Date();
+      let startDateCalc;
+
+      switch (timeRange) {
+        case 'Last 7 Days':
+          startDateCalc = new Date(now.setDate(now.getDate() - 7));
+          break;
+        case 'Last 30 Days':
+          startDateCalc = new Date(now.setDate(now.getDate() - 30));
+          break;
+        case 'This Year':
+          startDateCalc = new Date(now.getFullYear(), 0, 1);
+          break;
+        default:
+          startDateCalc = new Date(now.setDate(now.getDate() - 30));
+      }
+
+      dateFilter = {
+        createdAt: { $gte: startDateCalc }
+      };
+    }
+
+    // Combine filters
+    const finalFilter = { ...bookingFilter, ...dateFilter };
+
+    // Get all bookings with filter
+    const allBookings = await Booking.find(finalFilter);
+    const confirmedBookings = allBookings.filter(b => b.status === 'confirmed');
+    const cancelledBookings = allBookings.filter(b => b.status === 'cancelled');
+
+    // Calculate total revenue
+    const totalRevenue = confirmedBookings.reduce((sum, b) => sum + b.totalAmount, 0);
+
+    // Calculate tickets sold
+    const ticketsSold = confirmedBookings.reduce((sum, b) => sum + b.tickets, 0);
+
+    // Calculate average ticket price
+    const avgTicketPrice = ticketsSold > 0 ? Math.round(totalRevenue / ticketsSold) : 0;
+
+    // Calculate conversion rate
+    const conversionRate = allBookings.length > 0
+      ? ((confirmedBookings.length / allBookings.length) * 100).toFixed(1)
+      : 0;
+
+    // Calculate ticket type distribution
+    const ticketTypeCount = confirmedBookings.reduce((acc, b) => {
+      const type = b.ticketType;
+      const qty = b.tickets;
+      acc[type] = (acc[type] || 0) + qty;
+      return acc;
+    }, {});
+
+    const totalConfirmedTickets = Object.values(ticketTypeCount).reduce((sum, val) => sum + val, 0);
+
+    const ticketTypeDistribution = Object.entries(ticketTypeCount).map(([type, count]) => ({
+      label: type,
+      count: count,
+      percent: totalConfirmedTickets === 0 ? 0 : Math.round((count / totalConfirmedTickets) * 100)
+    }));
+
+    // Booking funnel data
+    const bookingFunnel = {
+      totalBookings: allBookings.length,
+      confirmedBookings: confirmedBookings.length,
+      cancelledBookings: cancelledBookings.length,
+      totalRevenue: totalRevenue
+    };
+
+    res.json({
+      success: true,
+      data: {
+        events: organizerEvents,
+        totalRevenue,
+        ticketsSold,
+        avgTicketPrice,
+        conversionRate,
+        ticketTypeDistribution,
+        bookingFunnel
+      }
+    });
+
+  } catch (error) {
+    console.error('Analytics error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error fetching analytics'
+    });
+  }
+};
+
 module.exports = {
   registerOrganizer,
   loginOrganizer,
@@ -400,5 +542,6 @@ module.exports = {
   getEventAttendees,
   getDashboard,
   closeEventBooking,
-  cancelEvent
+  cancelEvent,
+  getAnalytics
 };
