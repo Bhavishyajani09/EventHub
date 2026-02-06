@@ -10,6 +10,7 @@ const RegisterForm = () => {
     email: '',
     phone: '',
     password: '',
+    confirmPassword: '',
     userType: 'user'
   });
   const [loading, setLoading] = useState(false);
@@ -27,8 +28,14 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    setLoading(true);
 
     try {
       let response;
@@ -292,6 +299,44 @@ const RegisterForm = () => {
                 required
                 placeholder="Create password"
                 value={formData.password}
+                onChange={handleChange}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px 12px 48px',
+                  backgroundColor: '#f9fafb',
+                  border: '2px solid #e5e7eb',
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  transition: 'all 0.2s',
+                  boxSizing: 'border-box',
+                  outline: 'none'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#8b5cf6';
+                  e.target.style.backgroundColor = 'white';
+                  e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#e5e7eb';
+                  e.target.style.backgroundColor = '#f9fafb';
+                  e.target.style.boxShadow = 'none';
+                }}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', marginLeft: '4px' }}>Confirm Password</label>
+            <div style={{ position: 'relative' }}>
+              <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}>
+                <ShieldCheck size={20} />
+              </div>
+              <input
+                name="confirmPassword"
+                type="password"
+                required
+                placeholder="Confirm password"
+                value={formData.confirmPassword}
                 onChange={handleChange}
                 style={{
                   width: '100%',

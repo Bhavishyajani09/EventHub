@@ -15,6 +15,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
     email: '',
     phone: '',
     password: '',
+    confirmPassword: '',
     role: 'user'
   });
   const [errors, setErrors] = useState({});
@@ -48,6 +49,10 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
       newErrors.password = 'Password is required';
     } else if (currentScreen !== 'forgot' && formData.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
+    }
+
+    if (currentScreen === 'register' && formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
     }
 
     setErrors(newErrors);
@@ -163,7 +168,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
   };
 
   const resetForm = () => {
-    setFormData({ fullName: '', email: '', phone: '', password: '', role: 'user' });
+    setFormData({ fullName: '', email: '', phone: '', password: '', confirmPassword: '', role: 'user' });
     setErrors({});
     setMessage({ text: '', type: '' });
     setShowPassword(false);
@@ -202,15 +207,17 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
       onClick={handleClose}
     >
       <div style={{
-        backgroundColor: 'white',
-        borderRadius: '16px',
-        padding: 'clamp(32px, 6vw, 48px)',
+        backgroundColor: '#ffffff',
+        borderRadius: '20px',
+        padding: '40px 48px',
         width: '100%',
-        maxWidth: '440px',
-        boxShadow: '0 25px 50px rgba(0, 0, 0, 0.25)',
+        maxWidth: '520px',
+        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.15)',
         position: 'relative',
-        animation: 'slideUp 0.3s ease-out',
-        maxHeight: '90vh'
+        animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+        maxHeight: '92vh',
+        overflowY: 'auto',
+        border: '1px solid #e5e7eb'
       }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -248,10 +255,10 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
         </button>
 
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <h2 style={{
-            fontSize: 'clamp(24px, 5vw, 28px)',
-            fontWeight: '700',
+            fontSize: '32px',
+            fontWeight: '600',
             color: '#111827',
             marginBottom: '8px'
           }}>
@@ -261,12 +268,12 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
           </h2>
           <p style={{
             color: '#6b7280',
-            fontSize: '16px',
+            fontSize: '15px',
             margin: 0
           }}>
-            {currentScreen === 'login' && 'Sign in to your EventHub account'}
+            {currentScreen === 'login' && 'Sign in to access your dashboard'}
             {currentScreen === 'register' && 'Join EventHub to discover amazing events'}
-            {currentScreen === 'forgot' && 'Enter your email to receive reset link'}
+            {currentScreen === 'forgot' && 'Enter your email for the reset link'}
           </p>
         </div>
 
@@ -293,7 +300,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
             <div style={{
               display: 'flex',
               gap: '12px',
-              marginBottom: '24px'
+              marginBottom: '20px'
             }}>
               <button
                 type="button"
@@ -306,16 +313,16 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                   background: formData.role === 'user' ? '#f3f4f6' : 'white',
                   color: formData.role === 'user' ? '#8b5cf6' : '#6b7280',
                   fontSize: '14px',
-                  fontWeight: '600',
+                  fontWeight: '500',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  gap: '8px'
+                  gap: '2px'
                 }}
               >
-                <User size={24} />
+                <User size={12} />
                 User
               </button>
               <button
@@ -329,16 +336,16 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                   background: formData.role === 'organizer' ? '#f3f4f6' : 'white',
                   color: formData.role === 'organizer' ? '#8b5cf6' : '#6b7280',
                   fontSize: '14px',
-                  fontWeight: '600',
+                  fontWeight: '500',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  gap: '8px'
+                  gap: '2px'
                 }}
               >
-                <Users size={24} />
+                <Users size={12} />
                 Organizer
               </button>
               {currentScreen === 'login' && (
@@ -353,16 +360,16 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                     background: formData.role === 'admin' ? '#f3f4f6' : 'white',
                     color: formData.role === 'admin' ? '#8b5cf6' : '#6b7280',
                     fontSize: '14px',
-                    fontWeight: '600',
+                    fontWeight: '500',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    gap: '8px'
+                    gap: '2px'
                   }}
                 >
-                  <Users size={24} />
+                  <Users size={12} />
                   Admin
                 </button>
               )}
@@ -380,24 +387,21 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                 style={{
                   width: '100%',
                   padding: '16px 20px',
-                  border: `2px solid ${errors.fullName ? '#ef4444' : '#e5e7eb'}`,
+                  border: `1.5px solid ${errors.fullName ? '#ef4444' : '#e5e7eb'}`,
                   borderRadius: '12px',
                   fontSize: '16px',
+                  fontWeight: '500',
                   outline: 'none',
                   transition: 'all 0.2s',
                   backgroundColor: '#f9fafb',
                   boxSizing: 'border-box'
                 }}
                 onFocus={(e) => {
-                  if (!errors.fullName) {
-                    e.target.style.borderColor = '#8b5cf6';
-                  }
+                  e.target.style.borderColor = '#8b5cf6';
                   e.target.style.backgroundColor = 'white';
                 }}
                 onBlur={(e) => {
-                  if (!errors.fullName) {
-                    e.target.style.borderColor = '#e5e7eb';
-                  }
+                  e.target.style.borderColor = errors.fullName ? '#ef4444' : '#e5e7eb';
                   e.target.style.backgroundColor = '#f9fafb';
                 }}
               />
@@ -411,7 +415,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
 
           {/* Phone - Only for Register */}
           {currentScreen === 'register' && (
-            <div style={{ marginBottom: '20px' }}>
+            <div style={{ marginBottom: '12px' }}>
               <input
                 type="tel"
                 name="phone"
@@ -421,24 +425,21 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                 style={{
                   width: '100%',
                   padding: '16px 20px',
-                  border: `2px solid ${errors.phone ? '#ef4444' : '#e5e7eb'}`,
+                  border: `1.5px solid ${errors.phone ? '#ef4444' : '#e5e7eb'}`,
                   borderRadius: '12px',
                   fontSize: '16px',
+                  fontWeight: '500',
                   outline: 'none',
                   transition: 'all 0.2s',
                   backgroundColor: '#f9fafb',
                   boxSizing: 'border-box'
                 }}
                 onFocus={(e) => {
-                  if (!errors.phone) {
-                    e.target.style.borderColor = '#8b5cf6';
-                  }
+                  e.target.style.borderColor = '#8b5cf6';
                   e.target.style.backgroundColor = 'white';
                 }}
                 onBlur={(e) => {
-                  if (!errors.phone) {
-                    e.target.style.borderColor = '#e5e7eb';
-                  }
+                  e.target.style.borderColor = errors.phone ? '#ef4444' : '#e5e7eb';
                   e.target.style.backgroundColor = '#f9fafb';
                 }}
               />
@@ -451,7 +452,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
           )}
 
           {/* Email */}
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '12px' }}>
             <input
               type="email"
               name="email"
@@ -461,24 +462,21 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
               style={{
                 width: '100%',
                 padding: '16px 20px',
-                border: `2px solid ${errors.email ? '#ef4444' : '#e5e7eb'}`,
+                border: `1.5px solid ${errors.email ? '#ef4444' : '#e5e7eb'}`,
                 borderRadius: '12px',
                 fontSize: '16px',
+                fontWeight: '500',
                 outline: 'none',
                 transition: 'all 0.2s',
                 backgroundColor: '#f9fafb',
                 boxSizing: 'border-box'
               }}
               onFocus={(e) => {
-                if (!errors.email) {
-                  e.target.style.borderColor = '#8b5cf6';
-                }
+                e.target.style.borderColor = '#8b5cf6';
                 e.target.style.backgroundColor = 'white';
               }}
               onBlur={(e) => {
-                if (!errors.email) {
-                  e.target.style.borderColor = '#e5e7eb';
-                }
+                e.target.style.borderColor = errors.email ? '#ef4444' : '#e5e7eb';
                 e.target.style.backgroundColor = '#f9fafb';
               }}
             />
@@ -491,7 +489,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
 
           {/* Password - Not for Forgot Password */}
           {currentScreen !== 'forgot' && (
-            <div style={{ marginBottom: '24px', position: 'relative' }}>
+            <div style={{ marginBottom: '12px', position: 'relative' }}>
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
@@ -501,24 +499,21 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                 style={{
                   width: '100%',
                   padding: '16px 50px 16px 20px',
-                  border: `2px solid ${errors.password ? '#ef4444' : '#e5e7eb'}`,
+                  border: `1.5px solid ${errors.password ? '#ef4444' : '#e5e7eb'}`,
                   borderRadius: '12px',
                   fontSize: '16px',
+                  fontWeight: '500',
                   outline: 'none',
                   transition: 'all 0.2s',
                   backgroundColor: '#f9fafb',
                   boxSizing: 'border-box'
                 }}
                 onFocus={(e) => {
-                  if (!errors.password) {
-                    e.target.style.borderColor = '#8b5cf6';
-                  }
+                  e.target.style.borderColor = '#8b5cf6';
                   e.target.style.backgroundColor = 'white';
                 }}
                 onBlur={(e) => {
-                  if (!errors.password) {
-                    e.target.style.borderColor = '#e5e7eb';
-                  }
+                  e.target.style.borderColor = errors.password ? '#ef4444' : '#e5e7eb';
                   e.target.style.backgroundColor = '#f9fafb';
                 }}
               />
@@ -533,18 +528,82 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  color: '#6b7280',
+                  color: '#9ca3af',
                   padding: '4px',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  transition: 'color 0.2s'
                 }}
+                onMouseEnter={(e) => e.target.style.color = '#8b5cf6'}
+                onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPassword ? <EyeOff size={12} /> : <Eye size={12} />}
               </button>
               {errors.password && (
                 <p style={{ color: '#ef4444', fontSize: '14px', margin: '4px 0 0 0' }}>
                   {errors.password}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Confirm Password - Only for Register */}
+          {currentScreen === 'register' && (
+            <div style={{ marginBottom: '20px', position: 'relative' }}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                style={{
+                  width: '100%',
+                  padding: '16px 50px 16px 20px',
+                  border: `1.5px solid ${errors.confirmPassword ? '#ef4444' : '#e5e7eb'}`,
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  outline: 'none',
+                  transition: 'all 0.2s',
+                  backgroundColor: '#f9fafb',
+                  boxSizing: 'border-box'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#8b5cf6';
+                  e.target.style.backgroundColor = 'white';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = errors.confirmPassword ? '#ef4444' : '#e5e7eb';
+                  e.target.style.backgroundColor = '#f9fafb';
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '16px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#9ca3af',
+                  padding: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'color 0.2s'
+                }}
+                onMouseEnter={(e) => e.target.style.color = '#8b5cf6'}
+                onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
+              >
+                {showPassword ? <EyeOff size={12} /> : <Eye size={12} />}
+              </button>
+              {errors.confirmPassword && (
+                <p style={{ color: '#ef4444', fontSize: '14px', margin: '4px 0 0 0' }}>
+                  {errors.confirmPassword}
                 </p>
               )}
             </div>
@@ -562,23 +621,23 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
               border: 'none',
               borderRadius: '12px',
               fontSize: '16px',
-              fontWeight: '600',
+              fontWeight: '500',
               cursor: isLoading ? 'not-allowed' : 'pointer',
               transition: 'all 0.2s',
-              boxShadow: isLoading ? 'none' : '0 4px 12px rgba(139, 92, 246, 0.4)'
+              boxShadow: isLoading ? 'none' : '0 4px 12px rgba(139, 92, 246, 0.2)',
+              position: 'relative',
+              overflow: 'hidden'
             }}
             onMouseEnter={(e) => {
               if (!isLoading) {
                 e.target.style.backgroundColor = '#7c3aed';
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 6px 20px rgba(139, 92, 246, 0.6)';
+                e.target.style.transform = 'translateY(-1px)';
               }
             }}
             onMouseLeave={(e) => {
               if (!isLoading) {
                 e.target.style.backgroundColor = '#8b5cf6';
                 e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 4px 12px rgba(139, 92, 246, 0.4)';
               }
             }}
           >
@@ -602,9 +661,13 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                   color: '#8b5cf6',
                   fontSize: '14px',
                   cursor: 'pointer',
-                  textDecoration: 'underline',
-                  marginBottom: '16px'
+                  fontWeight: '500',
+                  marginBottom: '16px',
+                  transition: 'all 0.2s',
+                  textDecoration: 'none'
                 }}
+                onMouseEnter={(e) => e.target.style.color = '#7c3aed'}
+                onMouseLeave={(e) => e.target.style.color = '#8b5cf6'}
               >
                 Forgot Password?
               </button>
@@ -618,9 +681,12 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                     color: '#8b5cf6',
                     fontSize: '14px',
                     cursor: 'pointer',
-                    textDecoration: 'underline',
-                    fontWeight: '600'
+                    fontWeight: '600',
+                    transition: 'all 0.2s',
+                    textDecoration: 'none'
                   }}
+                  onMouseEnter={(e) => e.target.style.color = '#7c3aed'}
+                  onMouseLeave={(e) => e.target.style.color = '#8b5cf6'}
                 >
                   Register
                 </button>
@@ -639,9 +705,12 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                   color: '#8b5cf6',
                   fontSize: '14px',
                   cursor: 'pointer',
-                  textDecoration: 'underline',
-                  fontWeight: '600'
+                  fontWeight: '600',
+                  transition: 'all 0.2s',
+                  textDecoration: 'none'
                 }}
+                onMouseEnter={(e) => e.target.style.color = '#7c3aed'}
+                onMouseLeave={(e) => e.target.style.color = '#8b5cf6'}
               >
                 Login
               </button>
@@ -657,8 +726,12 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
                 color: '#8b5cf6',
                 fontSize: '14px',
                 cursor: 'pointer',
-                textDecoration: 'underline'
+                fontWeight: '600',
+                transition: 'all 0.2s',
+                textDecoration: 'none'
               }}
+              onMouseEnter={(e) => e.target.style.color = '#7c3aed'}
+              onMouseLeave={(e) => e.target.style.color = '#8b5cf6'}
             >
               Back to Login
             </button>
@@ -676,7 +749,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
         @keyframes slideUp {
           from { 
             opacity: 0;
-            transform: translateY(30px) scale(0.95);
+            transform: translateY(40px) scale(0.9);
           }
           to { 
             opacity: 1;
@@ -684,10 +757,26 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
           }
         }
         
+        ::-webkit-scrollbar {
+          width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+          background: #e5e7eb;
+          border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: #d1d5db;
+        }
+        
         @media (max-width: 480px) {
           .auth-modal-content {
-            margin: 10px;
-            padding: 24px !important;
+            margin: 0;
+            padding: 20px !important;
+            border-radius: 0;
+            min-height: 100vh;
           }
         }
       `}</style>
