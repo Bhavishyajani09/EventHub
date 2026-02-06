@@ -208,16 +208,17 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
     >
       <div style={{
         backgroundColor: '#ffffff',
-        borderRadius: '20px',
-        padding: '40px 48px',
+        borderRadius: '24px',
+        padding: '48px',
         width: '100%',
         maxWidth: '520px',
-        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.15)',
+        minHeight: '640px',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
         position: 'relative',
         animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-        maxHeight: '92vh',
-        overflowY: 'auto',
-        border: '1px solid #e5e7eb'
+        border: '1px solid #e5e7eb',
+        display: 'flex',
+        flexDirection: 'column'
       }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -255,7 +256,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
         </button>
 
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <h2 style={{
             fontSize: '32px',
             fontWeight: '600',
@@ -294,13 +295,18 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
         )}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} style={{ marginBottom: '24px' }}>
-          {/* Role Selection - For Login and Register */}
+        <form onSubmit={handleSubmit} style={{
+          marginBottom: '32px',
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: currentScreen === 'login' ? 'center' : 'flex-start'
+        }}>
           {(currentScreen === 'register' || currentScreen === 'login') && (
             <div style={{
               display: 'flex',
               gap: '12px',
-              marginBottom: '20px'
+              marginBottom: currentScreen === 'login' ? '32px' : '16px'
             }}>
               <button
                 type="button"
@@ -452,7 +458,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
           )}
 
           {/* Email */}
-          <div style={{ marginBottom: '12px' }}>
+          <div style={{ marginBottom: currentScreen === 'login' ? '24px' : '12px' }}>
             <input
               type="email"
               name="email"
@@ -489,7 +495,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
 
           {/* Password - Not for Forgot Password */}
           {currentScreen !== 'forgot' && (
-            <div style={{ marginBottom: '12px', position: 'relative' }}>
+            <div style={{ marginBottom: currentScreen === 'login' ? '32px' : '12px', position: 'relative' }}>
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
