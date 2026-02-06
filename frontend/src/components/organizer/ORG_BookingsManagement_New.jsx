@@ -79,8 +79,8 @@ const BookingsManagement = ({ isDark }) => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Bookings Management</h1>
-        <p className={`mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Track and manage event bookings</p>
+        <h1 className={`text-2xl font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>Bookings Management</h1>
+        <p className={`mt-1 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Track and manage event bookings</p>
       </div>
 
       {/* Stats Cards */}
@@ -89,7 +89,7 @@ const BookingsManagement = ({ isDark }) => {
           <div className="flex items-center justify-between">
             <div>
               <p className={`text-sm font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Total Bookings</p>
-              <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats.totalBookings}</p>
+              <p className={`text-2xl font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats.totalBookings}</p>
             </div>
             <Calendar className="h-8 w-8 text-blue-600" />
           </div>
@@ -99,7 +99,7 @@ const BookingsManagement = ({ isDark }) => {
           <div className="flex items-center justify-between">
             <div>
               <p className={`text-sm font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Total Revenue</p>
-              <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats.totalRevenue ? `₹${stats.totalRevenue.toLocaleString()}` : '₹0'}</p>
+              <p className={`text-2xl font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats.totalRevenue ? `₹${stats.totalRevenue.toLocaleString()}` : '₹0'}</p>
             </div>
             <IndianRupee className="h-8 w-8 text-green-600" />
           </div>
@@ -109,7 +109,7 @@ const BookingsManagement = ({ isDark }) => {
           <div className="flex items-center justify-between">
             <div>
               <p className={`text-sm font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Confirmed</p>
-              <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats.confirmedBookings}</p>
+              <p className={`text-2xl font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats.confirmedBookings}</p>
             </div>
             <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
               <div className="h-4 w-4 bg-green-600 rounded-full"></div>
@@ -121,7 +121,7 @@ const BookingsManagement = ({ isDark }) => {
           <div className="flex items-center justify-between">
             <div>
               <p className={`text-sm font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Pending</p>
-              <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats.pendingBookings}</p>
+              <p className={`text-2xl font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats.pendingBookings}</p>
             </div>
             <div className="h-8 w-8 bg-yellow-100 rounded-full flex items-center justify-center">
               <div className="h-4 w-4 bg-yellow-600 rounded-full"></div>
