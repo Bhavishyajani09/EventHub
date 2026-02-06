@@ -113,7 +113,8 @@ router.get('/city/:city', async (req, res) => {
 
     const events = await Event.find({
       city: city.trim().toLowerCase(),
-      status: 'active',
+      isPublished: true,
+      approvalStatus: 'approved',
       date: { $gte: new Date() }
     })
       .populate('organizer', 'name email')
@@ -143,7 +144,8 @@ router.get('/category/:category', async (req, res) => {
 
     const events = await Event.find({
       category: category.trim().toLowerCase(),
-      status: 'active',
+      isPublished: true,
+      approvalStatus: 'approved',
       date: { $gte: new Date() }
     })
       .populate('organizer', 'name email')
@@ -175,7 +177,8 @@ router.get('/date/:date', async (req, res) => {
         $gte: startDate,
         $lt: endDate
       },
-      status: 'active'
+      isPublished: true,
+      approvalStatus: 'approved'
     })
       .populate('organizer', 'name email')
       .sort({ time: 1 });
@@ -225,7 +228,8 @@ router.get('/search', async (req, res) => {
 
     const events = await Event.find({
       $and: [
-        { status: 'active' },
+        { isPublished: true },
+        { approvalStatus: 'approved' },
         { date: { $gte: new Date() } },
         {
           $or: [

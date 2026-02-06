@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
 import artistService from '../../services/artistService';
+import { MapPin, Calendar, ArrowLeft, Star, Music, Mic, Palette, Trophy } from 'lucide-react';
 
 const ArtistProfile = ({ artist: initialArtist, isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBack, onEventClick }) => {
   const [artist, setArtist] = useState(initialArtist);
@@ -12,6 +13,10 @@ const ArtistProfile = ({ artist: initialArtist, isDark, setIsDark, user, onAuthO
       fetchFullArtist(initialArtist._id);
     }
   }, [initialArtist?._id]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const fetchFullArtist = async (id) => {
     try {
@@ -27,21 +32,33 @@ const ArtistProfile = ({ artist: initialArtist, isDark, setIsDark, user, onAuthO
     }
   };
 
+  const getCategoryIcon = (category) => {
+    switch (category) {
+      case 'Music': return <Music size={18} />;
+      case 'Comedy': return <Mic size={18} />;
+      case 'Art': return <Palette size={18} />;
+      case 'Sports': return <Trophy size={18} />;
+      default: return <Star size={18} />;
+    }
+  };
+
   if (!artist) {
     return (
       <div style={{
-        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+        fontFamily: 'Inter, sans-serif',
         backgroundColor: isDark ? '#111827' : '#f8fafc',
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
       }}>
-        <div style={{
-          textAlign: 'center',
-          color: isDark ? '#f9fafb' : '#111827'
-        }}>
-          <h2>Artist not found</h2>
+        <div style={{ textAlign: 'center' }}>
+          <h2 style={{
+            color: isDark ? '#f9fafb' : '#111827',
+            fontSize: '24px',
+            fontWeight: 'bold',
+            marginBottom: '16px'
+          }}>Artist Not Found</h2>
           <button
             onClick={() => onNavigate('events')}
             style={{
@@ -49,54 +66,29 @@ const ArtistProfile = ({ artist: initialArtist, isDark, setIsDark, user, onAuthO
               backgroundColor: '#3b82f6',
               color: 'white',
               border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              marginTop: '16px'
+              borderRadius: '12px',
+              fontWeight: '600',
+              cursor: 'pointer'
             }}
           >
-            Back to Events
+            Explore Events
           </button>
         </div>
       </div>
     );
   }
 
-  const artistEvents = [
-    {
-      title: `${artist.name} - I Am Home India Tour 2025-26`,
-      location: 'Jaipur',
-      date: 'Today',
-      status: 'Live',
-      image: artist.image
-    },
-    {
-      title: `${artist.name} - I Am Home India Tour 2025-26`,
-      location: 'Chandigarh',
-      date: 'Tomorrow',
-      status: 'Chandigarh',
-      image: artist.image
-    },
-    {
-      title: `${artist.name} - I Am Home India Tour 2025-26`,
-      location: 'Lucknow',
-      date: 'This Weekend',
-      status: 'Lucknow',
-      image: artist.image
-    },
-    {
-      title: `${artist.name} - I Am Home India Tour 2025-26`,
-      location: 'Indore',
-      date: 'Next Week',
-      status: 'Indore',
-      image: artist.image
-    }
-  ];
+  const bgGradient = isDark
+    ? '#111827' // Solid dark
+    : '#f8fafc'; // Solid light
 
   return (
     <div style={{
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-      background: isDark ? 'linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)',
-      minHeight: '100vh'
+      background: bgGradient,
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column'
     }}>
       <SharedNavbar
         isDark={isDark}
@@ -110,93 +102,131 @@ const ArtistProfile = ({ artist: initialArtist, isDark, setIsDark, user, onAuthO
       />
 
       <div style={{
+        flex: 1,
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: 'clamp(20px, 5vw, 40px) clamp(16px, 4vw, 20px)'
+        padding: 'clamp(20px, 4vw, 40px)',
+        width: '100%'
       }}>
+
         {/* Back Button */}
         <button
           onClick={onBack}
           style={{
-            background: '#f3f4f6',
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'transparent',
+            border: 'none',
             fontSize: '14px',
-            color: '#374151',
+            fontWeight: '600',
+            color: isDark ? '#9ca3af' : '#6b7280',
             cursor: 'pointer',
-            padding: '8px 16px',
-            fontWeight: '500',
-            marginBottom: '20px'
+            marginBottom: '32px',
+            padding: 0
           }}
         >
+          <ArrowLeft size={16} />
           Back
         </button>
 
-        {/* Artist Header */}
+        {/* Artist Header Layout */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: window.innerWidth > 768 ? '400px 1fr' : '1fr',
-          gap: 'clamp(20px, 5vw, 40px)',
-          marginBottom: 'clamp(40px, 8vw, 60px)'
+          gridTemplateColumns: window.innerWidth > 768 ? '300px 1fr' : '1fr',
+          gap: 'clamp(30px, 5vw, 60px)',
+          marginBottom: '60px',
+          alignItems: 'start'
         }}>
-          {/* Artist Image */}
-          <div style={{
-            backgroundImage: `url(${artist.image})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            borderRadius: '16px',
-            height: 'clamp(300px, 50vw, 400px)',
-            boxShadow: isDark ? '0 8px 32px rgba(0, 0, 0, 0.4)' : '0 8px 32px rgba(0, 0, 0, 0.15)'
-          }} />
+          {/* Artist Image Frame */}
+          <div>
+            <div style={{
+              width: '100%',
+              aspectRatio: '1/1',
+              borderRadius: '24px',
+              overflow: 'hidden',
+              boxShadow: isDark ? '0 20px 40px rgba(0, 0, 0, 0.4)' : '0 20px 40px rgba(0, 0, 0, 0.15)',
+            }}>
+              <div style={{
+                backgroundImage: `url(${artist.image})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                width: '100%',
+                height: '100%'
+              }} />
+            </div>
+          </div>
 
           {/* Artist Info */}
           <div style={{
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'center'
+            paddingTop: '10px'
           }}>
             <h1 style={{
-              fontSize: 'clamp(32px, 8vw, 48px)',
-              fontWeight: 'bold',
+              fontSize: 'clamp(32px, 5vw, 48px)',
+              fontWeight: '800',
               color: isDark ? '#f9fafb' : '#111827',
-              marginBottom: '20px',
+              marginBottom: '16px',
               lineHeight: '1.1',
-              textAlign: window.innerWidth > 768 ? 'left' : 'center'
+              letterSpacing: '-0.02em'
             }}>{artist.name}</h1>
 
             <p style={{
-              fontSize: 'clamp(16px, 4vw, 18px)',
-              color: isDark ? '#d1d5db' : '#4b5563',
-              lineHeight: '1.6',
+              fontSize: 'clamp(16px, 1.5vw, 18px)',
+              color: isDark ? '#9ca3af' : '#4b5563',
+              lineHeight: '1.7',
               marginBottom: '0',
-              textAlign: window.innerWidth > 768 ? 'left' : 'center'
+              maxWidth: '800px'
             }}>
-              {artist.bio || `${artist.name} is one of the most popular artists in the district, known for their incredible talent in ${artist.category || 'their field'}. Join their upcoming events for an unforgettable experience!`}
+              {artist.bio || `${artist.name} is a renowned performer. Known for their exceptional talent, they consistently deliver unforgettable experiences.`}
             </p>
           </div>
         </div>
 
-        {/* All Events Section */}
+        {/* Updated Event Cards Section */}
         <div>
-          <h2 style={{
-            fontSize: '24px',
-            fontWeight: 'bold',
-            color: isDark ? '#f9fafb' : '#111827',
-            marginBottom: '30px'
-          }}>ALL EVENTS</h2>
+          <div style={{ marginBottom: '32px' }}>
+            <h2 style={{
+              fontSize: '24px',
+              fontWeight: 'bold',
+              color: isDark ? '#f9fafb' : '#111827',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
+            }}>
+              <Calendar className={isDark ? 'text-indigo-400' : 'text-indigo-600'} size={24} />
+              Upcoming Events
+            </h2>
+          </div>
 
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '20px'
+            gap: '24px',
+            paddingBottom: '40px'
           }}>
             {loading ? (
               <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
                 <p style={{ color: isDark ? '#d1d5db' : '#4b5563' }}>Loading events...</p>
               </div>
             ) : (!artist.events || artist.events.length === 0) ? (
-              <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
-                <p style={{ color: isDark ? '#d1d5db' : '#4b5563' }}>No events found for this artist</p>
+              <div style={{
+                textAlign: 'center',
+                padding: '60px 20px',
+                gridColumn: '1 / -1',
+                background: isDark ? '#1f2937' : '#f9fafb',
+                borderRadius: '16px',
+                border: `2px dashed ${isDark ? '#374151' : '#e5e7eb'}`
+              }}>
+                <div style={{ opacity: 0.5, marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
+                  <Calendar size={40} color={isDark ? '#9ca3af' : '#9ca3af'} />
+                </div>
+                <p style={{
+                  color: isDark ? '#d1d5db' : '#4b5563',
+                  fontSize: '16px',
+                  fontWeight: '600'
+                }}>No upcoming events scheduled</p>
               </div>
             ) : (
               artist.events.map((event, index) => (
@@ -205,80 +235,90 @@ const ArtistProfile = ({ artist: initialArtist, isDark, setIsDark, user, onAuthO
                   onClick={() => onEventClick && onEventClick(event)}
                   style={{
                     backgroundColor: isDark ? '#1f2937' : 'white',
-                    borderRadius: '12px',
+                    borderRadius: '16px',
                     overflow: 'hidden',
-                    boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
                     cursor: 'pointer',
-                    transition: 'transform 0.2s',
+                    transition: 'all 0.2s ease',
                     display: 'flex',
-                    flexDirection: 'column'
+                    flexDirection: 'column',
+                    border: `1px solid ${isDark ? '#374151' : '#e5e7eb'}`,
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = isDark ? '0 10px 25px -5px rgba(0, 0, 0, 0.4)' : '0 10px 25px -5px rgba(0, 0, 0, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
                 >
-                  <div style={{
-                    height: 'clamp(200px, 30vw, 280px)',
-                    backgroundImage: `url(${event.image || '/placeholder-event.jpg'})`,
-                    backgroundSize: 'contain',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center',
-                    backgroundColor: '#f9fafb',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '100%'
-                  }} />
+                  <div style={{ position: 'relative' }}>
+                    <div style={{
+                      height: '180px',
+                      backgroundImage: `url(${event.image || '/placeholder-event.jpg'})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }} />
+                    <div style={{
+                      position: 'absolute',
+                      top: '12px',
+                      right: '12px',
+                      background: 'rgba(255, 255, 255, 0.95)',
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      color: '#111827',
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}>
+                      {new Date(event.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                    </div>
+                  </div>
 
                   <div style={{
-                    padding: 'clamp(12px, 3vw, 16px)',
+                    padding: '20px',
                     flex: 1,
                     display: 'flex',
                     flexDirection: 'column'
                   }}>
-                    <h3 style={{
-                      fontSize: 'clamp(14px, 3vw, 16px)',
-                      fontWeight: '600',
-                      color: isDark ? '#f9fafb' : '#111827',
-                      marginBottom: '4px'
-                    }}>{event.title}</h3>
+                    <div style={{ marginBottom: '16px' }}>
+                      <h3 style={{
+                        fontSize: '18px',
+                        fontWeight: '700',
+                        color: isDark ? '#f9fafb' : '#111827',
+                        marginBottom: '6px',
+                        lineHeight: '1.3'
+                      }}>{event.title}</h3>
 
-                    <p style={{
-                      fontSize: 'clamp(12px, 2.5vw, 14px)',
-                      color: isDark ? '#9ca3af' : '#6b7280',
-                      marginBottom: '12px'
-                    }}>{event.location}</p>
-
-                    <p style={{
-                      fontSize: '12px',
-                      color: '#6366f1',
-                      fontWeight: '500',
-                      marginBottom: '12px'
-                    }}>{new Date(event.date).toLocaleDateString()}</p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: isDark ? '#9ca3af' : '#6b7280', fontSize: '13px' }}>
+                        <MapPin size={13} />
+                        {event.location}
+                      </div>
+                    </div>
 
                     <button
                       style={{
                         width: '100%',
-                        padding: '8px 16px',
-                        background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
-                        backgroundSize: '200% 200%',
-                        animation: 'gradientMove 3s ease infinite',
-                        color: 'white',
-                        boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        borderRadius: '6px',
-                        fontSize: '12px',
+                        padding: '10px 16px',
+                        background: isDark ? '#374151' : '#f9fafb',
+                        color: isDark ? '#f9fafb' : '#1f2937',
+                        borderRadius: '10px',
+                        fontSize: '13px',
                         fontWeight: '600',
                         cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        marginTop: 'auto'
+                        transition: 'all 0.2s ease',
+                        marginTop: 'auto',
+                        border: `1px solid ${isDark ? '#4b5563' : '#e5e7eb'}`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px'
                       }}
                       onMouseEnter={(e) => {
-                        e.target.style.transform = 'translateY(-2px)';
-                        e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
+                        e.currentTarget.style.backgroundColor = isDark ? '#4b5563' : '#f3f4f6';
                       }}
                       onMouseLeave={(e) => {
-                        e.target.style.transform = 'translateY(0)';
-                        e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                        e.currentTarget.style.backgroundColor = isDark ? '#374151' : '#f9fafb';
                       }}
                     >
                       Book Tickets
@@ -290,7 +330,6 @@ const ArtistProfile = ({ artist: initialArtist, isDark, setIsDark, user, onAuthO
           </div>
         </div>
       </div>
-
       <SharedFooter isDark={isDark} onNavigate={onNavigate} />
     </div>
   );
