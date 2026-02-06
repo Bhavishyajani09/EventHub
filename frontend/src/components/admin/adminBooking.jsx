@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import adminService from '../../services/adminService';
 
 const AdminBooking = ({ isDark }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [orgFilter, setOrgFilter] = useState('All Organizers');
+  const [categoryFilter, setCategoryFilter] = useState('All Categories');
   const [statusFilter, setStatusFilter] = useState('All Status');
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,20 +42,18 @@ const AdminBooking = ({ isDark }) => {
     );
   };
 
+  const uniqueOrganizers = [...new Set(bookings.map(b => b.event?.organizer?.name).filter(Boolean))];
+  const uniqueCategories = [...new Set(bookings.map(b => b.event?.category).filter(Boolean))];
+
   const filteredBookings = bookings.filter(booking => {
-    const userName = booking.user?.name || 'Unknown User';
-    const eventName = booking.event?.title || 'Unknown Event';
-    const bookingId = booking._id.slice(-6).toUpperCase();
-    const email = booking.user?.email || '';
+    const orgName = booking.event?.organizer?.name || 'Unknown';
+    const category = booking.event?.category || 'Unknown';
 
-    const matchesSearch = userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      bookingId.includes(searchTerm.toUpperCase()) ||
-      email.toLowerCase().includes(searchTerm.toLowerCase());
-
+    const matchesOrg = orgFilter === 'All Organizers' || orgName === orgFilter;
+    const matchesCategory = categoryFilter === 'All Categories' || category === categoryFilter;
     const matchesStatus = statusFilter === 'All Status' || booking.status === statusFilter.toLowerCase();
 
-    return matchesSearch && matchesStatus;
+    return matchesOrg && matchesCategory && matchesStatus;
   });
 
   const totalBookings = bookings.length;
@@ -112,34 +111,56 @@ const AdminBooking = ({ isDark }) => {
         </div>
       </div>
 
-      {/* Search and Filter Bar */}
+      {/* Filter Bar */}
       <div className="flex items-center justify-between mb-4">
-        <div className="relative">
-          <svg className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search bookings..."
-            className={`pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64 ${isDark ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-400' : 'border-gray-200'}`}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <div className="relative">
-          <select
-            className={`appearance-none border rounded-lg px-3 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200'}`}
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option>All Status</option>
-            <option>Pending</option>
-            <option>Confirmed</option>
-            <option>Cancelled</option>
-          </select>
-          <svg className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
+        <div className="flex gap-4">
+          <div className="relative">
+            <select
+              className={`appearance-none border rounded-lg px-3 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200'}`}
+              value={orgFilter}
+              onChange={(e) => setOrgFilter(e.target.value)}
+            >
+              <option>All Organizers</option>
+              {uniqueOrganizers.map((org, index) => (
+                <option key={index} value={org}>{org}</option>
+              ))}
+            </select>
+            <svg className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+
+          <div className="relative">
+            <select
+              className={`appearance-none border rounded-lg px-3 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200'}`}
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+            >
+              <option>All Categories</option>
+              {uniqueCategories.map((cat, index) => (
+                <option key={index} value={cat}>{cat}</option>
+              ))}
+            </select>
+            <svg className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+
+          <div className="relative">
+            <select
+              className={`appearance-none border rounded-lg px-3 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200'}`}
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option>All Status</option>
+              <option>Pending</option>
+              <option>Confirmed</option>
+              <option>Cancelled</option>
+            </select>
+            <svg className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
         </div>
       </div>
 
@@ -151,7 +172,7 @@ const AdminBooking = ({ isDark }) => {
               <th className={`w-[10%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>ID</th>
               <th className={`w-[20%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>User</th>
               <th className={`w-[22%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Event</th>
-              <th className={`w-[13%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Type</th>
+              <th className={`w-[13%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Org Name</th>
               <th className={`w-[8%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Qty</th>
               <th className={`w-[12%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Amount</th>
               <th className={`w-[15%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Date</th>
@@ -171,7 +192,7 @@ const AdminBooking = ({ isDark }) => {
                       <div className={`text-xs truncate ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{booking.user?.email || 'N/A'}</div>
                     </td>
                     <td className={`w-[22%] px-4 py-3 text-sm truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking.event?.title || 'Unknown Event'}</td>
-                    <td className={`w-[13%] px-4 py-3 text-sm truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking.category || 'N/A'}</td>
+                    <td className={`w-[13%] px-4 py-3 text-sm truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking.event?.organizer?.name || 'Unknown'}</td>
                     <td className={`w-[8%] px-4 py-3 text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking.tickets || 0}</td>
                     <td className={`w-[12%] px-4 py-3 text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>₹{booking.totalAmount || booking.amount || 0}</td>
                     <td className={`w-[15%] px-4 py-3 text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{new Date(booking.createdAt).toLocaleDateString()}</td>

@@ -185,7 +185,12 @@ const getAllBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({})
       .populate('user', 'name email')
-      .populate('event', 'title date')
+      .populate({
+        path: 'event',
+        populate: {
+          path: 'organizer'
+        }
+      })
       .sort({ createdAt: -1 });
 
     res.json({
