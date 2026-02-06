@@ -6,14 +6,8 @@ import { BookingCardSkeleton } from '../common/Skeleton';
 import { Calendar, MapPin, Clock, Ticket } from 'lucide-react';
 
 const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
-  const [activeTab, setActiveTab] = useState('Events');
   const [loading, setLoading] = useState(true);
-  const [bookingsList, setBookingsList] = useState({
-    Events: [],
-    Movies: []
-  });
-
-  const tabs = ['Events', 'Movies'];
+  const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
     fetchBookings();
@@ -31,26 +25,14 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
       if (response.data.success) {
         const allBookings = response.data.bookings;
 
-        // Categorize bookings
-        const events = [];
-        const movies = [];
-
-        allBookings.forEach(booking => {
-          if (booking.event) {
-            const category = booking.event.category || 'Event';
-            // Assuming 'Movie' is the category string for movies
-            if (category === 'Movie') {
-              movies.push(booking);
-            } else {
-              events.push(booking);
-            }
-          }
+        // Sort by event date (Newest/Future first)
+        const sortedBookings = allBookings.sort((a, b) => {
+          const dateA = new Date(a.event?.date || 0);
+          const dateB = new Date(b.event?.date || 0);
+          return dateB - dateA;
         });
 
-        setBookingsList({
-          Events: events,
-          Movies: movies
-        });
+        setBookings(sortedBookings);
       }
     } catch (error) {
       console.error('Error fetching bookings:', error);
@@ -83,8 +65,6 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
       toast.error('An error occurred while cancelling the booking. Please try again.');
     }
   };
-
-  const activeBookings = bookingsList[activeTab] || [];
 
   return (
     <div style={{
@@ -209,48 +189,15 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
         margin: '0 auto',
         padding: '40px 20px'
       }}>
-        {/* Tabs */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          marginBottom: '40px'
-        }}>
-          <div style={{
-            display: 'flex',
-            backgroundColor: isDark ? '#374151' : '#f3f4f6',
-            borderRadius: '12px',
-            padding: '4px',
-            gap: '4px'
-          }}>
-            {tabs.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                style={{
-                  padding: '12px 24px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  backgroundColor: activeTab === tab ? (isDark ? '#000' : '#000') : 'transparent',
-                  color: activeTab === tab ? 'white' : (isDark ? '#9ca3af' : '#6b7280')
-                }}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-        </div>
+        {/* No Tabs anymore */}
 
         {loading ? (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
             {Array(6).fill(0).map((_, i) => <BookingCardSkeleton key={i} isDark={isDark} />)}
           </div>
-        ) : activeBookings.length > 0 ? (
+        ) : bookings.length > 0 ? (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-            {activeBookings.map((booking) => (
+            {bookings.map((booking) => (
               <div key={booking._id} style={{
                 backgroundColor: isDark ? '#1f2937' : 'white',
                 borderRadius: '16px',
@@ -485,20 +432,13 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
               maxWidth: '400px',
               lineHeight: '1.5'
             }}>
-              When you book {activeTab.toLowerCase()}, they will appear here. Start exploring to make your first booking!
+              When you book events, they will appear here. Start exploring to make your first booking!
             </p>
 
             {/* CTA Button */}
             <button
               onClick={() => {
-                // Navigate to respective section
-                if (activeTab === 'Movies') {
-                  onNavigate('movies');
-                } else if (activeTab === 'Events') {
-                  onNavigate('events');
-                } else {
-                  onNavigate('home');
-                }
+                onNavigate('home');
               }}
               style={{
                 marginTop: '32px',
@@ -522,7 +462,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                 e.target.style.transform = 'translateY(0)';
               }}
             >
-              Explore {activeTab}
+              Explore Events
             </button>
           </div>
         )}
