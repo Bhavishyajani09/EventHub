@@ -136,7 +136,7 @@ const SharedFooter = ({ isDark }) => {
                 <Mail size={16} /> support@eventhub.com
               </p>
               <p style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Phone size={16} /> +91 98765 43210
+                <Phone size={16} /> 6262780000
               </p>
               <p style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <MapPin size={16} /> Indore, Madhya Pradesh

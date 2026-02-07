@@ -69,11 +69,11 @@ const HelpCenter = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
             }}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="m15 18-6-6 6-6"/>
+              <path d="m15 18-6-6 6-6" />
             </svg>
           </button>
-          
-          <div 
+
+          <div
             onClick={() => onNavigate('home')}
             style={{
               display: 'flex',
@@ -82,9 +82,9 @@ const HelpCenter = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
               cursor: 'pointer'
             }}
           >
-            <img 
-              src="/new_icon_favicon.png" 
-              alt="EventHub Logo" 
+            <img
+              src="/new_icon_favicon.png"
+              alt="EventHub Logo"
               style={{
                 width: '60px',
                 height: '54px'
@@ -118,7 +118,7 @@ const HelpCenter = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
           Help Center
         </h1>
 
-        <div 
+        <div
           onClick={onProfileClick}
           style={{
             width: '40px',
@@ -206,55 +206,6 @@ const HelpCenter = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                 )}
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Contact Support */}
-        <div style={{
-          backgroundColor: isDark ? '#1f2937' : 'white',
-          borderRadius: '16px',
-          padding: '32px',
-          boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
-        }}>
-          <h2 style={{
-            fontSize: '24px',
-            fontWeight: '600',
-            color: isDark ? '#f9fafb' : '#111827',
-            marginBottom: '16px'
-          }}>
-            Still Need Help?
-          </h2>
-          <p style={{
-            fontSize: '16px',
-            color: isDark ? '#d1d5db' : '#6b7280',
-            marginBottom: '24px'
-          }}>
-            Can't find what you're looking for? Get in touch with our support team.
-          </p>
-
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center'
-          }}>
-            <a
-              href="mailto:support@eventhub.com"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '16px 24px',
-                backgroundColor: '#8b5cf6',
-                color: 'white',
-                textDecoration: 'none',
-                borderRadius: '12px',
-                fontSize: '16px',
-                fontWeight: '500',
-                transition: 'all 0.2s'
-              }}
-            >
-              <Mail size={20} />
-              Email Support
-            </a>
           </div>
         </div>
       </div>
