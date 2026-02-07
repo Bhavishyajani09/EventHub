@@ -92,8 +92,7 @@ const MoviesPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
     { id: '3d', label: '3D', type: 'format' }
   ];
 
-  const weeklyMovies = filteredMovies.slice(0, 4);
-  const theatreMovies = filteredMovies.slice(4);
+  const weeklyMovies = filteredMovies;
 
   const toggleFilter = (filterId) => {
     setSelectedFilters(prev =>
