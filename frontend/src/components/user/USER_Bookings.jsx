@@ -30,16 +30,8 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
       );
 
       if (response.data.success) {
-        const allBookings = response.data.bookings;
-
-        // Sort by event date (Newest/Future first)
-        const sortedBookings = allBookings.sort((a, b) => {
-          const dateA = new Date(a.event?.date || 0);
-          const dateB = new Date(b.event?.date || 0);
-          return dateB - dateA;
-        });
-
-        setBookings(sortedBookings);
+        // Bookings are already sorted by createdAt (newest first) from backend
+        setBookings(response.data.bookings);
       }
     } catch (error) {
       console.error("Error fetching bookings:", error);
@@ -116,6 +108,8 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
           [reviewModal.booking.event._id]: "reviewed",
         }));
         handleCloseReviewModal();
+        // Refresh bookings to show the new review
+        fetchBookings();
       }
     } catch (error) {
       console.error("Error submitting review:", error);
@@ -419,7 +413,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
 
                 <div
                   style={{
-                    padding: "20px",
+                    padding: "14px",
                     flex: 1,
                     display: "flex",
                     flexDirection: "column",
@@ -478,7 +472,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                     style={{
                       fontSize: "13px",
                       color: isDark ? "#9ca3af" : "#6b7280",
-                      marginBottom: "16px",
+                      marginBottom: "12px",
                       display: "flex",
                       flexDirection: "column",
                       gap: "4px",
@@ -547,26 +541,25 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                         borderTop: isDark
                           ? "1px solid #374151"
                           : "1px solid #e5e7eb",
-                        paddingTop: "16px",
+                        paddingTop: "12px",
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        marginBottom: "16px",
+                        marginBottom: "12px",
                       }}
                     >
-                      <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                         <span
                           style={{
                             fontSize: "12px",
                             color: isDark ? "#9ca3af" : "#6b7280",
-                            display: "block",
                           }}
                         >
-                          Total Paid
+                          Total Paid:
                         </span>
                         <span
                           style={{
-                            fontSize: "18px",
+                            fontSize: "16px",
                             fontWeight: "bold",
                             color: isDark ? "#f9fafb" : "#111827",
                           }}
@@ -583,19 +576,19 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                           <button
                             onClick={() => handleOpenReviewModal(booking)}
                             disabled={
-                              reviewStatus[booking.event._id] === "reviewed"
+                              booking.review || reviewStatus[booking.event._id] === "reviewed"
                             }
                             style={{
                               width: "100%",
-                              padding: "10px 16px",
+                              padding: "8px 14px",
                               backgroundColor:
-                                reviewStatus[booking.event._id] === "reviewed"
+                                booking.review || reviewStatus[booking.event._id] === "reviewed"
                                   ? isDark
                                     ? "#374151"
                                     : "#f3f4f6"
                                   : "#8b5cf6",
                               color:
-                                reviewStatus[booking.event._id] === "reviewed"
+                                booking.review || reviewStatus[booking.event._id] === "reviewed"
                                   ? isDark
                                     ? "#9ca3af"
                                     : "#6b7280"
@@ -605,7 +598,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                               fontSize: "13px",
                               fontWeight: "600",
                               cursor:
-                                reviewStatus[booking.event._id] === "reviewed"
+                                booking.review || reviewStatus[booking.event._id] === "reviewed"
                                   ? "not-allowed"
                                   : "pointer",
                               transition: "all 0.2s",
@@ -616,21 +609,21 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
                             }}
                             onMouseEnter={(e) => {
                               if (
-                                reviewStatus[booking.event._id] !== "reviewed"
+                                !booking.review && reviewStatus[booking.event._id] !== "reviewed"
                               ) {
                                 e.target.style.backgroundColor = "#7c3aed";
                               }
                             }}
                             onMouseLeave={(e) => {
                               if (
-                                reviewStatus[booking.event._id] !== "reviewed"
+                                !booking.review && reviewStatus[booking.event._id] !== "reviewed"
                               ) {
                                 e.target.style.backgroundColor = "#8b5cf6";
                               }
                             }}
                           >
                             <Star size={16} />
-                            {reviewStatus[booking.event._id] === "reviewed"
+                            {booking.review || reviewStatus[booking.event._id] === "reviewed"
                               ? "Review Submitted"
                               : "Write Review"}
                           </button>

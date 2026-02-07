@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const Booking = require('../models/Booking');
 const Event = require('../models/Event');
+const Review = require('../models/Review');
 
 // Get authenticated user's bookings
 router.get('/my-bookings', auth, async (req, res) => {
@@ -12,9 +13,28 @@ router.get('/my-bookings', auth, async (req, res) => {
       .populate('event')
       .sort({ createdAt: -1 });
 
+    // Fetch reviews for each booking
+    const bookingsWithReviews = await Promise.all(
+      bookings.map(async (booking) => {
+        const review = await Review.findOne({
+          user: userId,
+          event: booking.event._id
+        });
+
+        return {
+          ...booking.toObject(),
+          review: review ? {
+            rating: review.rating,
+            comment: review.comment,
+            createdAt: review.createdAt
+          } : null
+        };
+      })
+    );
+
     res.json({
       success: true,
-      bookings
+      bookings: bookingsWithReviews
     });
   } catch (error) {
     console.error('Get my bookings error:', error);
@@ -198,12 +218,12 @@ router.post('/cancel/:bookingId', auth, async (req, res) => {
   try {
     const { bookingId } = req.params;
     const userId = req.user.id;
-    
+
     console.log(`[Cancel Booking] Request for bookingId: ${bookingId}, User: ${userId}`);
 
     // Find booking
     const booking = await Booking.findOne({ _id: bookingId, user: userId });
-    
+
     if (!booking) {
       console.log(`[Cancel Booking] Booking not found or user unauthorized`);
       return res.status(404).json({
@@ -213,11 +233,11 @@ router.post('/cancel/:bookingId', auth, async (req, res) => {
     }
 
     if (booking.status === 'cancelled') {
-        console.log(`[Cancel Booking] Booking already cancelled`);
-        return res.status(400).json({
-            success: false,
-            message: 'Booking is already cancelled'
-        });
+      console.log(`[Cancel Booking] Booking already cancelled`);
+      return res.status(400).json({
+        success: false,
+        message: 'Booking is already cancelled'
+      });
     }
 
     // Find event
@@ -237,7 +257,7 @@ router.post('/cancel/:bookingId', auth, async (req, res) => {
     const currentDate = new Date();
     const timeDiff = eventDate.getTime() - currentDate.getTime();
     const hoursDiff = timeDiff / (1000 * 3600);
-    
+
     console.log(`[Cancel Booking] Hours diff: ${hoursDiff}`);
 
     let refundStatus = 'none';
@@ -255,21 +275,21 @@ router.post('/cancel/:bookingId', auth, async (req, res) => {
 
     // Restore event capacity/seats
     console.log(`[Cancel Booking] Restoring tickets. Type: ${booking.ticketType}, Count: ${booking.tickets}`);
-    
+
     if (event.seatTypes && event.seatTypes.length > 0) {
       // Case-insensitive matching with trim
       const bookingTicketType = (booking.ticketType || '').toLowerCase().trim();
-      
+
       const seatTypeIndex = event.seatTypes.findIndex(
         seat => seat.name && seat.name.toLowerCase().trim() === bookingTicketType
       );
-      
+
       if (seatTypeIndex !== -1) {
         const currentAvailable = event.seatTypes[seatTypeIndex].available || 0;
         const newAvailable = currentAvailable + Number(booking.tickets);
-        
+
         console.log(`[Cancel Booking] Updating seat ${event.seatTypes[seatTypeIndex].name}. Old: ${currentAvailable}, New: ${newAvailable}`);
-        
+
         event.seatTypes[seatTypeIndex].available = newAvailable;
       } else {
         console.warn(`[Cancel Booking] Seat type match failed. Booking type: '${bookingTicketType}'. Available types: ${event.seatTypes.map(s => s.name).join(', ')}`);
@@ -282,11 +302,11 @@ router.post('/cancel/:bookingId', auth, async (req, res) => {
       event.capacity = currentCapacity + Number(booking.tickets);
       console.log(`[Cancel Booking] Updating general capacity. Old: ${currentCapacity}, New: ${event.capacity}`);
     }
-    
+
     // Mark modified to ensure mongoose saves it
     event.markModified('seatTypes');
     event.markModified('capacity');
-    
+
     await event.save();
     console.log(`[Cancel Booking] Event saved successfully`);
 
