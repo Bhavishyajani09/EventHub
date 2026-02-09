@@ -28,3 +28,5 @@ services:
         value: sourabhkhadav2@gmail.com
       - key: EMAIL_PASS
         value: ghekitfcdmxsfogb
+      - key: FRONTEND_URL
+        value: https://event-hub-gold-three.vercel.app
