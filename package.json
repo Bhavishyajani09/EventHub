@@ -1,0 +1,11 @@
+{
+    "name": "eventhub-deployment-proxy",
+    "version": "1.0.0",
+    "description": "Proxy to install and run backend from root",
+    "scripts": {
+        "build": "cd backend && npm install"
+    },
+    "engines": {
+        "node": ">=18.x"
+    }
+}
