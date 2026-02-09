@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
+const sendEmail = require('../utils/email');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
 
@@ -13,17 +13,6 @@ const generateToken = (id) => {
     expiresIn: process.env.JWT_EXPIRE
   });
 };
-
-// Email transporter
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
 
 // @route   POST /auth/user/register
 // @desc    Register new user
@@ -39,9 +28,9 @@ router.post('/register', async (req, res) => {
 
     const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
     console.log('Existing user found:', existingUser);
-    
+
     if (existingUser) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'User already exists with this email or phone',
         existingUser: { email: existingUser.email, phone: existingUser.phone }
       });
@@ -54,7 +43,7 @@ router.post('/register', async (req, res) => {
       password,
       role: role || 'user'
     });
-    
+
     console.log('User created successfully:', user._id);
     console.log('Database name:', user.db.databaseName);
     console.log('Collection name:', user.collection.name);
@@ -166,12 +155,25 @@ router.post('/forgot-password', async (req, res) => {
       If you did not request this, please ignore this email.
     `;
 
+    const html = `
+      <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 5px;">
+        <h2 style="color: #333;">Password Reset Request</h2>
+        <p>You requested a password reset for your EventHub account.</p>
+        <p>Please click the link below to reset your password:</p>
+        <a href="${resetUrl}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">Reset Password</a>
+        <p>Or copy and paste this link into your browser:</p>
+        <p>${resetUrl}</p>
+        <p>This link is valid for <strong>10 minutes</strong>.</p>
+        <p>If you did not request this, please ignore this email.</p>
+      </div>
+    `;
+
     try {
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: user.email,
+      await sendEmail({
+        email: user.email,
         subject: 'Password Reset Request',
-        text: message
+        message,
+        html
       });
 
       res.json({
@@ -179,11 +181,15 @@ router.post('/forgot-password', async (req, res) => {
         message: 'Password reset email sent'
       });
     } catch (emailError) {
+      console.error('Password reset email error:', emailError);
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
       await user.save();
-      
-      res.status(500).json({ message: 'Email could not be sent' });
+
+      res.status(500).json({
+        message: 'Email could not be sent. Please check server logs.',
+        error: emailError.message
+      });
     }
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -229,7 +235,7 @@ router.post('/reset-password', auth, async (req, res) => {
 router.get('/profile', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password -resetPasswordToken -resetPasswordExpire');
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -257,7 +263,7 @@ router.get('/profile', auth, async (req, res) => {
 router.put('/profile', auth, async (req, res) => {
   try {
     const { name, phone } = req.body;
-    
+
     const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
