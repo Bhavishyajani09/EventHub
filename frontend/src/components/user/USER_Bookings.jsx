@@ -266,8 +266,9 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
             position: "absolute",
             left: "50%",
             transform: "translateX(-50%)",
-            display: window.innerWidth < 768 ? "none" : "block",
+            display: "block",
           }}
+          className="responsive-title"
         >
           Review your bookings
         </h1>
@@ -308,7 +309,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 300px), 1fr))",
               gap: "20px",
             }}
           >
@@ -322,7 +323,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 300px), 1fr))",
               gap: "20px",
             }}
           >
@@ -1063,6 +1064,16 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
           </div>
         </div>
       )}
+      <style>{`
+        .responsive-title {
+          display: none !important;
+        }
+        @media (min-width: 768px) {
+          .responsive-title {
+            display: block !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };

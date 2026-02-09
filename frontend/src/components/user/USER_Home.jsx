@@ -572,7 +572,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
             gap: '32px',
             boxShadow: '0 10px 30px rgba(124, 58, 237, 0.2)'
           }}>
-            <div style={{ flex: 1, minWidth: '320px' }}>
+            <div style={{ flex: 1, minWidth: 'min(100%, 300px)' }}>
               <h3 style={{
                 fontSize: 'clamp(24px, 5vw, 28px)',
                 fontWeight: '700',
@@ -590,15 +590,16 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
             <div style={{
               display: 'flex',
               gap: '16px',
-              minWidth: '320px',
-              alignItems: 'stretch'
+              minWidth: 'min(100%, 300px)',
+              alignItems: 'stretch',
+              flexWrap: 'wrap'
             }}>
               <input
                 type="email"
                 placeholder="Enter your email"
                 style={{
-                  flex: 1,
-                  minWidth: '220px',
+                  flex: '1 1 200px',
+                  minWidth: '200px',
                   padding: '16px 20px',
                   border: 'none',
                   borderRadius: '12px',
@@ -610,6 +611,7 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                 }}
               />
               <button style={{
+                flex: '0 1 auto',
                 padding: '16px 32px',
                 background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
                 backgroundSize: '200% 200%',
