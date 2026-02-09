@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, Frown } from 'lucide-react';
 
-const NotFound = ({ isDark = false }) => {
+const OrganizerNotFound = ({ isDark = false }) => {
   const navigate = useNavigate();
 
   return (
@@ -117,22 +117,19 @@ const NotFound = ({ isDark = false }) => {
           <p style={{
             fontSize: 'clamp(14px, 3.5vw, 18px)',
             color: isDark ? '#94a3b8' : '#64748b',
-            marginBottom: 'clamp(48px, 12vw, 72px)',
             lineHeight: '1.6',
             maxWidth: '400px',
             margin: '0 auto',
-            marginBottom: 'clamp(32px, 8vw, 48px)',
             padding: '0 10px'
           }}>
-            The page you're looking for doesn't exist. Let's get you back home!
+            The page you're looking for doesn't exist. Let's get you back to the dashboard!
           </p>
         </div> {/* End Content Group */}
 
         {/* Button at Bottom */}
         <div style={{ paddingBottom: 'clamp(20px, 5vw, 40px)' }}>
-          {/* Home Button */}
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/dashboard')}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -171,7 +168,7 @@ const NotFound = ({ isDark = false }) => {
             }}
           >
             <Home size={window.innerWidth < 640 ? 18 : 20} />
-            Go to Home
+            Go to Dashboard
           </button>
         </div> {/* End Button Wrapper */}
       </div>
@@ -228,4 +225,4 @@ const NotFound = ({ isDark = false }) => {
   );
 };
 
-export default NotFound;
+export default OrganizerNotFound;

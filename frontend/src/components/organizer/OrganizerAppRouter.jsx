@@ -10,6 +10,7 @@ import BookingsManagement from './ORG_BookingsManagement_New';
 import ReviewsRatings from './ORG_ReviewsRatings';
 import ReportsAnalytics from './ORG_ReportsAnalytics';
 import Settings from './ORG_Settings';
+import OrganizerNotFound from './ORG_NotFound';
 
 function OrganizerAppRouter() {
   const { user, logout } = useAuth();
@@ -48,7 +49,7 @@ function OrganizerAppRouter() {
         <Route path="/reviews" element={<ReviewsRatings />} />
         <Route path="/reports" element={<ReportsAnalytics />} />
         <Route path="/settings" element={<Settings />} />
-        <Route path="*" element={<Dashboard />} />
+        <Route path="*" element={<OrganizerNotFound isDark={isDark} />} />
       </Routes>
     </OrganizerLayout>
   );
