@@ -23,7 +23,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
       if (!token) return;
 
       const response = await axios.get(
-        "http://localhost:5000/api/bookings/my-bookings",
+        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/bookings/my-bookings`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -46,7 +46,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
       if (!token) return null;
 
       const response = await axios.get(
-        `http://localhost:5000/api/reviews/can-review/${eventId}`,
+        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/reviews/can-review/${eventId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -90,7 +90,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
     try {
       const token = sessionStorage.getItem("token");
       const response = await axios.post(
-        "http://localhost:5000/api/reviews",
+        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/reviews`,
         {
           eventId: reviewModal.booking.event._id,
           rating: reviewData.rating,

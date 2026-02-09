@@ -45,7 +45,7 @@ export default function Settings({ isDark }) {
       formData.append('image', file);
 
       // 1. Upload to Cloudinary via Backend
-      const uploadRes = await fetch('http://localhost:5000/api/upload/image', {
+      const uploadRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/upload/image`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('token')}`
@@ -65,7 +65,7 @@ export default function Settings({ isDark }) {
       setProfile(prev => ({ ...prev, photo: imageUrl }));
 
       // 2. Update Profile in DB
-      const updateRes = await fetch('http://localhost:5000/api/organizer/profile', {
+      const updateRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/organizer/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ export default function Settings({ isDark }) {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/organizer/profile', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/organizer/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -304,7 +304,7 @@ function PasswordForm({ isDark }) {
     setLoading(true);
     try {
       // Using the same update profile endpoint because we modified the controller to handle password
-      const response = await fetch('http://localhost:5000/api/organizer/profile', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/organizer/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

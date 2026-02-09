@@ -10,7 +10,7 @@ const Organizers = ({ isDark }) => {
   const fetchOrganizers = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/admin/organizers', {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/organizers`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -48,7 +48,7 @@ const Organizers = ({ isDark }) => {
     console.log('Attempting to toggle block status for organizer:', id);
     try {
       const token = sessionStorage.getItem('token');
-      const response = await axios.put(`http://localhost:5000/api/admin/organizers/${id}/block`, {}, {
+      const response = await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/organizers/${id}/block`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       console.log('Organizer Block/Unblock response:', response.data);

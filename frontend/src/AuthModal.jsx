@@ -145,7 +145,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
           setMessage({ text: response.message || 'Registration failed', type: 'error' });
         }
       } else if (currentScreen === 'forgot') {
-        const response = await axios.post('http://localhost:5000/api/auth/forgot-password', { email: formData.email });
+        const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/forgot-password`, { email: formData.email });
         if (response.data.success) {
           setMessage({ text: response.data.message, type: 'success' });
           setTimeout(() => {

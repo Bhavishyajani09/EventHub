@@ -110,7 +110,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
       };
 
       const response = await axios.post(
-        'http://localhost:5000/api/bookings/create',
+        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/bookings/create`,
         bookingData,
         {
           headers: {

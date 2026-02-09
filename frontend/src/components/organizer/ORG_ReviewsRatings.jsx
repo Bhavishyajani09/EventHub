@@ -26,7 +26,7 @@ export default function ReviewsRatings({ isDark }) {
         return;
       }
 
-      const response = await axios.get('http://localhost:5000/api/reviews/organizer/my-reviews', {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/reviews/organizer/my-reviews`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

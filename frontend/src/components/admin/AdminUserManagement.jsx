@@ -10,7 +10,7 @@ const AdminUserManagement = ({ isDark }) => {
   const fetchUsers = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/admin/users', {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -48,7 +48,7 @@ const AdminUserManagement = ({ isDark }) => {
     console.log('Attempting to toggle block status for user:', userId);
     try {
       const token = sessionStorage.getItem('token');
-      const response = await axios.put(`http://localhost:5000/api/admin/users/${userId}/block`, {}, {
+      const response = await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/users/${userId}/block`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       console.log('Block/Unblock response:', response.data);
