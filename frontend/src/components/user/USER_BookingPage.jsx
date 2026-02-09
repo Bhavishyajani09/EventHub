@@ -4,6 +4,7 @@ import SharedNavbar from '../../SharedNavbar';
 import SharedFooter from '../../SharedFooter';
 import USER_PaymentModal from './USER_PaymentModal';
 import toast from 'react-hot-toast';
+import { API_URL } from '../../config';
 
 const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBack }) => {
   const [selectedSeatType, setSelectedSeatType] = useState(null);
@@ -110,7 +111,7 @@ const BookingPage = ({ item, isDark, setIsDark, user, onAuthOpen, onProfileClick
       };
 
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/bookings/create`,
+        `${API_URL}/bookings/create`,
         bookingData,
         {
           headers: {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../../config';
 
 const AdminUserManagement = ({ isDark }) => {
   const [users, setUsers] = useState([]);
@@ -10,7 +11,7 @@ const AdminUserManagement = ({ isDark }) => {
   const fetchUsers = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/users`, {
+      const response = await axios.get(`${API_URL}/admin/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -48,7 +49,7 @@ const AdminUserManagement = ({ isDark }) => {
     console.log('Attempting to toggle block status for user:', userId);
     try {
       const token = sessionStorage.getItem('token');
-      const response = await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/users/${userId}/block`, {}, {
+      const response = await axios.put(`${API_URL}/admin/users/${userId}/block`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       console.log('Block/Unblock response:', response.data);

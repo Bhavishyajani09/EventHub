@@ -4,6 +4,7 @@ import { useAuth } from './context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import authService from './services/authService';
+import { API_URL } from './config';
 
 const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
   const [currentScreen, setCurrentScreen] = useState('login');
@@ -145,7 +146,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, isDark }) => {
           setMessage({ text: response.message || 'Registration failed', type: 'error' });
         }
       } else if (currentScreen === 'forgot') {
-        const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/forgot-password`, { email: formData.email });
+        const response = await axios.post(`${API_URL}/auth/forgot-password`, { email: formData.email });
         if (response.data.success) {
           setMessage({ text: response.data.message, type: 'success' });
           setTimeout(() => {

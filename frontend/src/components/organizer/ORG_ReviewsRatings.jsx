@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Star } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { API_URL } from "../../config";
 
 export default function ReviewsRatings({ isDark }) {
   const [loading, setLoading] = useState(true);
@@ -26,7 +27,7 @@ export default function ReviewsRatings({ isDark }) {
         return;
       }
 
-      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/reviews/organizer/my-reviews`, {
+      const response = await axios.get(`${API_URL}/reviews/organizer/my-reviews`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

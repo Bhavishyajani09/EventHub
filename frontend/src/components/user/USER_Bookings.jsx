@@ -4,6 +4,7 @@ import eventService from "../../services/eventService";
 import toast from "react-hot-toast";
 import { BookingCardSkeleton } from "../common/Skeleton";
 import { Calendar, MapPin, Clock, Ticket, Star, X } from "lucide-react";
+import { API_URL } from "../../config";
 
 const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
   const [loading, setLoading] = useState(true);
@@ -23,7 +24,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
       if (!token) return;
 
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/bookings/my-bookings`,
+        `${API_URL}/bookings/my-bookings`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -46,7 +47,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
       if (!token) return null;
 
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/reviews/can-review/${eventId}`,
+        `${API_URL}/reviews/can-review/${eventId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -90,7 +91,7 @@ const Bookings = ({ onBack, user, isDark, onProfileClick, onNavigate }) => {
     try {
       const token = sessionStorage.getItem("token");
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/reviews`,
+        `${API_URL}/reviews`,
         {
           eventId: reviewModal.booking.event._id,
           rating: reviewData.rating,

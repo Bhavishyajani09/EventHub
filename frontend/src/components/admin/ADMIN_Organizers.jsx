@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../../config';
 
 const Organizers = ({ isDark }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -10,7 +11,7 @@ const Organizers = ({ isDark }) => {
   const fetchOrganizers = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/organizers`, {
+      const response = await axios.get(`${API_URL}/admin/organizers`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -48,7 +49,7 @@ const Organizers = ({ isDark }) => {
     console.log('Attempting to toggle block status for organizer:', id);
     try {
       const token = sessionStorage.getItem('token');
-      const response = await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/organizers/${id}/block`, {}, {
+      const response = await axios.put(`${API_URL}/admin/organizers/${id}/block`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       console.log('Organizer Block/Unblock response:', response.data);
