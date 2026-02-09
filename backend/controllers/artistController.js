@@ -15,15 +15,13 @@ const getArtists = async (req, res) => {
                 isPublished: true,
                 approvalStatus: 'approved'
             },
-            select: '_id' // We only need to check if events exist
+            select: 'title date location image category' // Get basic event info
         });
 
-        // Filter out artists who have no valid events
-        const activeArtists = artists.filter(artist => artist.events && artist.events.length > 0);
-
+        // Return all artists (even those without upcoming events)
         res.json({
             success: true,
-            artists: activeArtists
+            artists: artists
         });
     } catch (error) {
         console.error('Get artists error:', error);
