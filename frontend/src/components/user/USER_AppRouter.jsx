@@ -18,6 +18,8 @@ import HelpCenter from './USER_HelpCenter';
 import TermsAndConditions from './TermsAndConditions';
 import PrivacyPolicy from './USER_PrivacyPolicy';
 import ContactSupport from './USER_ContactSupport';
+import NotFound from './USER_NotFound';
+
 
 import Register from '../../Register';
 import ForgotPassword from '../ForgotPassword';
@@ -311,8 +313,8 @@ function AppRouter() {
           />
         } />
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* Fallback - 404 Page */}
+        <Route path="*" element={<NotFound {...pageProps} />} />
       </Routes>
 
       <AuthModal
