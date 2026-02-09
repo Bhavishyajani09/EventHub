@@ -51,14 +51,14 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
       <div style={{
         maxWidth: '1400px',
         margin: '0 auto',
-        padding: '0 clamp(16px, 4vw, 32px)'
+        padding: '0 clamp(12px, 3vw, 32px)'
       }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           height: '70px',
-          gap: '20px'
+          gap: 'clamp(8px, 2vw, 20px)'
         }}>
           {/* Left Section - Logo & Brand */}
           <div
@@ -66,11 +66,11 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
+              gap: 'clamp(8px, 2vw, 12px)',
               minWidth: 'fit-content',
               cursor: 'pointer',
               transition: 'transform 0.2s ease',
-              padding: '8px'
+              padding: 'clamp(4px, 1vw, 8px)'
             }}
             onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
             onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
@@ -79,20 +79,20 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
               src="/new_icon_favicon.png"
               alt="EventHub Logo"
               style={{
-                width: '50px',
-                height: '50px',
+                width: 'clamp(40px, 10vw, 50px)',
+                height: 'clamp(40px, 10vw, 50px)',
                 borderRadius: '8px'
               }}
             />
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span style={{
-                fontSize: '22px',
+                fontSize: 'clamp(18px, 4.5vw, 22px)',
                 fontWeight: '700',
                 color: isDark ? '#f9fafb' : '#111827',
                 lineHeight: '1.2'
               }}>EventHub</span>
               <span style={{
-                fontSize: '10px',
+                fontSize: 'clamp(8px, 2vw, 10px)',
                 color: isDark ? '#9ca3af' : '#6b7280',
                 textTransform: 'uppercase',
                 letterSpacing: '0.1em',
@@ -178,7 +178,7 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
+            gap: 'clamp(6px, 1.5vw, 12px)',
             minWidth: 'fit-content'
           }}>
             {/* Search Input */}
@@ -186,7 +186,7 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
               <div style={{
                 position: 'relative',
                 display: 'flex',
-                minWidth: searchOnly ? '250px' : '280px',
+                minWidth: searchOnly ? 'clamp(150px, 40vw, 250px)' : 'clamp(180px, 45vw, 280px)',
                 maxWidth: '350px'
               }}>
                 <input
@@ -334,7 +334,7 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
                           width: '100%',
                           height: '100%',
                           objectFit: 'cover',
-                          borderRadius: '10px'
+                          borderRadius: '50%'
                         }}
                       />
                     ) : (
@@ -507,88 +507,89 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
       <style>{`
         @media (max-width: 1024px) {
           nav > div > div {
-            gap: 16px !important;
+            gap: 12px !important;
           }
-          nav > div > div > div:nth-child(3) > div {
+          nav > div > div > div:nth-child(2) {
             gap: 4px !important;
             padding: 2px !important;
           }
-          nav > div > div > div:nth-child(3) > div > button {
+          nav > div > div > div:nth-child(2) > button {
             padding: 8px 12px !important;
             font-size: 12px !important;
           }
         }
         
         @media (max-width: 768px) {
+          /* Keep horizontal layout on mobile */
           nav > div > div {
-            height: auto !important;
-            flex-direction: column !important;
-            padding: 12px 0 !important;
-            gap: 12px !important;
+            height: 70px !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            gap: 8px !important;
           }
           
+          /* Logo section - left side */
           nav > div > div > div:first-child {
             order: 1;
-            width: 100% !important;
-            justify-content: center !important;
+            flex-shrink: 1;
           }
           
+          /* Navigation tabs - hide on very small screens */
           nav > div > div > div:nth-child(2) {
-            order: 3;
-            max-width: 100% !important;
+            order: 2;
+            display: none !important;
           }
           
+          /* Page title - center if present */
           nav > div > div > div:nth-child(3) {
             order: 2;
-            width: 100% !important;
-            justify-content: center !important;
+            flex: 0 1 auto;
+            max-width: 40% !important;
           }
           
+          /* Right section - always on right */
           nav > div > div > div:last-child {
-            order: 4;
-            width: 100% !important;
-            justify-content: center !important;
-            flex-wrap: wrap !important;
+            order: 3;
+            flex-shrink: 0;
+            margin-left: auto;
           }
           
+          /* Search input - smaller on mobile */
           nav > div > div > div:last-child > div:first-child {
-            min-width: 200px !important;
-            max-width: 280px !important;
-            flex: 1 !important;
+            min-width: 120px !important;
+            max-width: 150px !important;
           }
         }
         
         @media (max-width: 480px) {
           nav > div {
-            padding: 0 16px !important;
+            padding: 0 12px !important;
           }
           
-          nav > div > div > div:first-child > div:last-child {
+          /* Hide EVENT PLATFORM text on very small screens */
+          nav > div > div > div:first-child > div:last-child > span:last-child {
             display: none !important;
           }
           
+          /* Make logo smaller */
           nav > div > div > div:first-child > img {
-            width: 40px !important;
-            height: 40px !important;
+            width: 36px !important;
+            height: 36px !important;
           }
           
-          nav > div > div > div:nth-child(3) > div {
-            gap: 2px !important;
-            padding: 2px !important;
+          /* Make brand text smaller */
+          nav > div > div > div:first-child > div > span:first-child {
+            font-size: 16px !important;
           }
           
-          nav > div > div > div:nth-child(3) > div > button {
-            padding: 6px 8px !important;
-            font-size: 11px !important;
-          }
-          
-          nav > div > div > div:last-child {
-            gap: 8px !important;
-          }
-          
+          /* Hide search on very small screens, keep profile visible */
           nav > div > div > div:last-child > div:first-child {
-            min-width: 150px !important;
-            max-width: 200px !important;
+            display: none !important;
+          }
+          
+          /* Hide theme toggle on very small screens */
+          nav > div > div > div:last-child > button:first-of-type {
+            display: none !important;
           }
         }
       `}</style>

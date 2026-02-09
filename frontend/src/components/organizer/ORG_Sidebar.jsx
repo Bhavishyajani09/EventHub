@@ -73,18 +73,23 @@ export default function Sidebar({ isDark }) {
 
   return (
     <>
-      {/* Mobile Menu Button */}
+      {/* Mobile Menu Button - Only visible on mobile */}
       <button
-        className="lg:hidden fixed top-20 left-4 z-50 p-2 bg-indigo-600 text-white rounded-md shadow-lg"
+        className="lg:hidden fixed left-4 top-20 z-[9999] w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95"
         onClick={() => setMobileOpen(!mobileOpen)}
+        aria-label={mobileOpen ? "Close menu" : "Open menu"}
       >
-        {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+        {mobileOpen ? (
+          <X size={20} className="text-gray-600" />
+        ) : (
+          <ChevronRight size={20} className="text-gray-600" />
+        )}
       </button>
 
       {/* Mobile Overlay */}
       {mobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-60 z-[9998]"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -92,7 +97,7 @@ export default function Sidebar({ isDark }) {
       {/* Sidebar */}
       <aside
         className={`
-          border-r transition-all duration-300 z-40 group
+          border-r transition-all duration-300 z-[9999] group
           ${collapsed ? "w-16" : "w-64"} 
           ${mobileOpen ? "fixed top-0 left-0 h-screen" : "lg:sticky lg:top-[70px] lg:h-[calc(100vh-70px)] lg:block hidden"}
           ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}

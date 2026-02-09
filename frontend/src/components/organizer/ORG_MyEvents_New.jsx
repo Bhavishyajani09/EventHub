@@ -91,22 +91,22 @@ const MyEvents = ({ isDark }) => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className={`text-2xl font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>My Events</h1>
+          <h1 className={`text-xl sm:text-2xl font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>My Events</h1>
           <p className={`mt-1 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Manage your events</p>
         </div>
         <button
           onClick={() => navigate('/create-event')}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2"
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center justify-center gap-2 w-full sm:w-auto"
         >
           <Plus size={20} />
-          Create Event
+          <span className="text-sm sm:text-base">Create Event</span>
         </button>
       </div>
 
       {/* Filter Tabs */}
-      <div className={`flex space-x-1 p-1 rounded-lg w-fit ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
+      <div className={`flex flex-wrap gap-2 p-1 rounded-lg w-full sm:w-fit ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
         {[
           { key: 'all', label: 'All Events' },
           { key: 'pending', label: 'Pending' },
