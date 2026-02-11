@@ -47,7 +47,6 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
       top: 0,
       zIndex: 1000,
       backdropFilter: 'blur(10px)',
-      overflowX: 'hidden',
       maxWidth: '100%'
     }}>
       <div style={{
