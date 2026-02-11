@@ -313,6 +313,15 @@ function AppRouter() {
           />
         } />
 
+        {/* Redirects for Admin/Organizer paths to prevent 404 flash on logout */}
+        <Route path="/dashboard" element={<Navigate to="/" replace />} />
+        <Route path="/organizers" element={<Navigate to="/" replace />} />
+        <Route path="/users" element={<Navigate to="/" replace />} />
+        <Route path="/create-event" element={<Navigate to="/" replace />} />
+        <Route path="/edit-event/:id" element={<Navigate to="/" replace />} />
+        <Route path="/reviews" element={<Navigate to="/" replace />} />
+        <Route path="/reports" element={<Navigate to="/" replace />} />
+
         {/* Fallback - 404 Page */}
         <Route path="*" element={<NotFound {...pageProps} />} />
       </Routes>
