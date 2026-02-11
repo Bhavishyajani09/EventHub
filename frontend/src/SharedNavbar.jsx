@@ -46,31 +46,34 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
       position: 'sticky',
       top: 0,
       zIndex: 1000,
-      backdropFilter: 'blur(10px)'
+      backdropFilter: 'blur(10px)',
+      overflowX: 'hidden',
+      maxWidth: '100%'
     }}>
       <div style={{
         maxWidth: '1400px',
         margin: '0 auto',
-        padding: '0 clamp(16px, 4vw, 32px)'
+        padding: '0 clamp(12px, 3vw, 32px)'
       }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           height: '70px',
-          gap: '20px'
+          gap: 'clamp(8px, 2vw, 20px)'
         }}>
           {/* Left Section - Logo & Brand */}
           <div
+            className="logo-section"
             onClick={() => onNavigate('home')}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
+              gap: 'clamp(8px, 2vw, 12px)',
               minWidth: 'fit-content',
               cursor: 'pointer',
               transition: 'transform 0.2s ease',
-              padding: '8px'
+              padding: 'clamp(4px, 1vw, 8px)'
             }}
             onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
             onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
@@ -79,20 +82,20 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
               src="/new_icon_favicon.png"
               alt="EventHub Logo"
               style={{
-                width: '50px',
-                height: '50px',
+                width: 'clamp(40px, 10vw, 50px)',
+                height: 'clamp(40px, 10vw, 50px)',
                 borderRadius: '8px'
               }}
             />
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span style={{
-                fontSize: '22px',
+                fontSize: 'clamp(18px, 4.5vw, 22px)',
                 fontWeight: '700',
                 color: isDark ? '#f9fafb' : '#111827',
                 lineHeight: '1.2'
               }}>EventHub</span>
               <span style={{
-                fontSize: '10px',
+                fontSize: 'clamp(8px, 2vw, 10px)',
                 color: isDark ? '#9ca3af' : '#6b7280',
                 textTransform: 'uppercase',
                 letterSpacing: '0.1em',
@@ -103,11 +106,13 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
 
           {/* Page Title for Special Pages */}
           {pageTitle && (
-            <div style={{
-              flex: 1,
-              textAlign: 'center',
-              maxWidth: '400px'
-            }}>
+            <div
+              className="page-title-section"
+              style={{
+                flex: 1,
+                textAlign: 'center',
+                maxWidth: '400px'
+              }}>
               <h1 style={{
                 fontSize: '18px',
                 fontWeight: '600',
@@ -122,14 +127,16 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
 
           {/* Center Section - Navigation */}
           {!hideNavigation && !searchOnly && (
-            <div style={{
-              display: 'flex',
-              gap: '8px',
-              alignItems: 'center',
-              backgroundColor: isDark ? '#374151' : '#f8fafc',
-              borderRadius: '12px',
-              padding: '4px'
-            }}>
+            <div
+              className="nav-links-container"
+              style={{
+                display: 'flex',
+                gap: '8px',
+                alignItems: 'center',
+                backgroundColor: isDark ? '#374151' : '#f8fafc',
+                borderRadius: '12px',
+                padding: '4px'
+              }}>
               {[
                 { name: 'For you', key: 'home', path: '/' },
                 { name: 'Movies', key: 'movies', path: '/movies' },
@@ -175,18 +182,20 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
           )}
 
           {/* Right Section - Search & Profile */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            minWidth: 'fit-content'
-          }}>
+          <div
+            className="right-section"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'clamp(6px, 1.5vw, 12px)',
+              minWidth: 'fit-content'
+            }}>
             {/* Search Input */}
             {(!hideNavigation || searchOnly) && (
               <div style={{
                 position: 'relative',
                 display: 'flex',
-                minWidth: searchOnly ? '250px' : '280px',
+                minWidth: searchOnly ? 'clamp(150px, 40vw, 250px)' : 'clamp(180px, 45vw, 280px)',
                 maxWidth: '350px'
               }}>
                 <input
@@ -334,7 +343,7 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
                           width: '100%',
                           height: '100%',
                           objectFit: 'cover',
-                          borderRadius: '10px'
+                          borderRadius: '50%'
                         }}
                       />
                     ) : (
@@ -507,13 +516,13 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
       <style>{`
         @media (max-width: 1024px) {
           nav > div > div {
-            gap: 16px !important;
+            gap: 12px !important;
           }
-          nav > div > div > div:nth-child(3) > div {
+          nav > div > div > div:nth-child(2) {
             gap: 4px !important;
             padding: 2px !important;
           }
-          nav > div > div > div:nth-child(3) > div > button {
+          nav > div > div > div:nth-child(2) > button {
             padding: 8px 12px !important;
             font-size: 12px !important;
           }
@@ -522,73 +531,87 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
         @media (max-width: 768px) {
           nav > div > div {
             height: auto !important;
-            flex-direction: column !important;
+            min-height: 70px;
+            flex-wrap: wrap !important;
             padding: 12px 0 !important;
+            justify-content: space-between !important;
             gap: 12px !important;
           }
           
-          nav > div > div > div:first-child {
+          .logo-section {
             order: 1;
-            width: 100% !important;
-            justify-content: center !important;
+            flex: 0 1 auto;
           }
           
-          nav > div > div > div:nth-child(2) {
-            order: 3;
-            max-width: 100% !important;
-          }
-          
-          nav > div > div > div:nth-child(3) {
+          .page-title-section {
             order: 2;
-            width: 100% !important;
-            justify-content: center !important;
+            flex: 1;
+            text-align: center;
           }
           
-          nav > div > div > div:last-child {
-            order: 4;
+          .nav-links-container {
+            order: 4; /* Move to the very bottom */
+            display: flex !important;
             width: 100% !important;
             justify-content: center !important;
-            flex-wrap: wrap !important;
+            background-color: ${isDark ? '#374151' : '#f1f5f9'} !important;
+            margin-top: 8px;
+            padding: 4px !important;
+            border-radius: 12px;
+          }
+
+          .nav-links-container button {
+            flex: 1;
+            padding: 8px 4px !important;
+            text-align: center;
+            border-width: 1px !important;
           }
           
-          nav > div > div > div:last-child > div:first-child {
-            min-width: 200px !important;
-            max-width: 280px !important;
-            flex: 1 !important;
+          .right-section {
+            order: 3;
+            flex-shrink: 0;
+            margin-left: auto !important;
+          }
+          
+          .right-section > div:first-child {
+            min-width: 100px !important;
+            max-width: 130px !important;
           }
         }
         
         @media (max-width: 480px) {
           nav > div {
-            padding: 0 16px !important;
+            padding: 0 12px !important;
           }
-          
-          nav > div > div > div:first-child > div:last-child {
-            display: none !important;
-          }
-          
-          nav > div > div > div:first-child > img {
-            width: 40px !important;
-            height: 40px !important;
-          }
-          
-          nav > div > div > div:nth-child(3) > div {
-            gap: 2px !important;
-            padding: 2px !important;
-          }
-          
-          nav > div > div > div:nth-child(3) > div > button {
-            padding: 6px 8px !important;
-            font-size: 11px !important;
-          }
-          
-          nav > div > div > div:last-child {
+
+          nav > div > div {
             gap: 8px !important;
           }
           
-          nav > div > div > div:last-child > div:first-child {
-            min-width: 150px !important;
-            max-width: 200px !important;
+          .logo-section img {
+            width: 32px !important;
+            height: 32px !important;
+          }
+          
+          .logo-section div span:first-child {
+            font-size: 15px !important;
+          }
+
+          .logo-section div span:last-child {
+            display: none !important;
+          }
+
+          .nav-links-container button {
+            font-size: 11px !important;
+            padding: 6px 2px !important;
+          }
+          
+          .right-section > div:first-child {
+            display: none !important;
+          }
+          
+          .right-section > button:first-of-type {
+            display: none !important;
           }
         }
       `}</style>

@@ -8,6 +8,7 @@ import Settings from './ADMIN_Settings';
 import AdminUserManagement from './AdminUserManagement';
 import AdminEvents from './AdminEvents';
 import AdminBooking from './adminBooking';
+import AdminNotFound from './ADMIN_NotFound';
 
 function AdminAppRouter() {
   const { user, logout } = useAuth();
@@ -29,7 +30,7 @@ function AdminAppRouter() {
         <Route path="/users" element={<AdminUserManagement />} />
         <Route path="/events" element={<AdminEvents />} />
         <Route path="/bookings" element={<AdminBooking />} />
-        <Route path="*" element={<Dashboard />} />
+        <Route path="*" element={<AdminNotFound />} />
       </Routes>
     </AdminLayout>
   );

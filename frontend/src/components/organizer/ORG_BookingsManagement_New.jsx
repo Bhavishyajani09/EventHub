@@ -79,12 +79,12 @@ const BookingsManagement = ({ isDark }) => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className={`text-2xl font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>Bookings Management</h1>
+        <h1 className={`text-xl sm:text-2xl font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>Bookings Management</h1>
         <p className={`mt-1 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Track and manage event bookings</p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         <div className={`p-6 rounded-lg shadow-md ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="flex items-center justify-between">
             <div>
@@ -131,7 +131,7 @@ const BookingsManagement = ({ isDark }) => {
       </div>
 
       {/* Filter */}
-      <div className={`flex space-x-1 p-1 rounded-lg w-fit ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
+      <div className={`flex flex-wrap gap-2 p-1 rounded-lg w-full sm:w-fit ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
         {[
           { key: 'all', label: 'All Bookings' },
           { key: 'confirmed', label: 'Confirmed' },

@@ -77,7 +77,7 @@ const Dashboard = ({ isDark, onNavigate }) => {
   }
 
   return (
-    <div className="space-y-8 p-6 animate-fadeIn">
+    <div className="space-y-6 sm:space-y-8 animate-fadeIn">
       {/* Header Container */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>

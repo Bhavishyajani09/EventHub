@@ -88,10 +88,9 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       background: isDark ? 'linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)',
       minHeight: '100vh',
-      width: '100vw',
+      width: '100%',
       margin: 0,
-      padding: 0,
-      overflowX: 'hidden'
+      padding: 0
     }}>
       {/* Navbar */}
       <SharedNavbar
@@ -187,21 +186,23 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                 lineHeight: '1.6'
               }}>Join thousands discovering incredible events, movies, and experiences in your city</p>
 
-              <div style={{
-                display: 'flex',
-                maxWidth: '700px',
-                margin: '0 auto',
-                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                borderRadius: '100px',
-                padding: '8px',
-                boxShadow: '0 20px 50px rgba(0, 0, 0, 0.15)',
-                gap: '8px',
-                alignItems: 'center',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.4)',
-                transform: 'translateZ(0)', // Force GPU acceleration
-                transition: 'all 0.3s ease'
-              }}
+              <div
+                className="hero-search-container"
+                style={{
+                  display: 'flex',
+                  maxWidth: '700px',
+                  margin: '0 auto',
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  borderRadius: '100px',
+                  padding: '8px',
+                  boxShadow: '0 20px 50px rgba(0, 0, 0, 0.15)',
+                  gap: '8px',
+                  alignItems: 'center',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(255, 255, 255, 0.4)',
+                  transform: 'translateZ(0)', // Force GPU acceleration
+                  transition: 'all 0.3s ease'
+                }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-2px)';
                   e.currentTarget.style.boxShadow = '0 25px 60px rgba(0, 0, 0, 0.2)';
@@ -211,12 +212,14 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
                   e.currentTarget.style.boxShadow = '0 20px 50px rgba(0, 0, 0, 0.15)';
                 }}
               >
-                <div style={{
-                  paddingLeft: '24px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  color: '#6366f1'
-                }}>
+                <div
+                  className="hero-search-icon"
+                  style={{
+                    paddingLeft: '24px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    color: '#6366f1'
+                  }}>
                   <Search size={22} />
                 </div>
 
@@ -648,18 +651,22 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
       {/* Global CSS Reset */}
       <style>{`
         * {
-          box-sizing: border-box;
+          box-sizing: border-box !important;
           margin: 0;
           padding: 0;
-        }
-        body {
-          margin: 0;
-          padding: 0;
-          overflow-x: hidden;
         }
         html, body {
-          width: 100%;
-          height: 100%;
+          width: 100% !important;
+          max-width: 100% !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          overflow-x: hidden !important;
+          position: relative !important;
+        }
+        #root {
+          width: 100% !important;
+          max-width: 100% !important;
+          overflow-x: hidden !important;
         }
         
         @keyframes gradientMove {
@@ -671,6 +678,54 @@ const Home = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate,
           }
           100% {
             background-position: 0% 50%;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .hero-search-container {
+            max-width: 95% !important;
+            padding: 6px !important;
+          }
+          
+          .hero-search-icon {
+            padding-left: 16px !important;
+          }
+
+          .hero-search-container input {
+            font-size: 15px !important;
+            padding: 10px 4px !important;
+          }
+
+          .hero-search-container button {
+            padding: 10px 20px !important;
+            font-size: 14px !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-search-container {
+            padding: 4px !important;
+            gap: 4px !important;
+          }
+
+          .hero-search-icon {
+            padding-left: 12px !important;
+          }
+          
+          .hero-search-icon svg {
+            width: 18px !important;
+            height: 18px !important;
+          }
+
+          .hero-search-container input {
+            font-size: 13px !important;
+            padding: 8px 4px !important;
+          }
+
+          .hero-search-container button {
+            padding: 8px 16px !important;
+            font-size: 12px !important;
+            border-radius: 50px !important;
           }
         }
       `}</style>
