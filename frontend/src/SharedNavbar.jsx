@@ -46,7 +46,9 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
       position: 'sticky',
       top: 0,
       zIndex: 1000,
-      backdropFilter: 'blur(10px)'
+      backdropFilter: 'blur(10px)',
+      overflowX: 'hidden',
+      maxWidth: '100%'
     }}>
       <div style={{
         maxWidth: '1400px',
@@ -62,6 +64,7 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
         }}>
           {/* Left Section - Logo & Brand */}
           <div
+            className="logo-section"
             onClick={() => onNavigate('home')}
             style={{
               display: 'flex',
@@ -103,11 +106,13 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
 
           {/* Page Title for Special Pages */}
           {pageTitle && (
-            <div style={{
-              flex: 1,
-              textAlign: 'center',
-              maxWidth: '400px'
-            }}>
+            <div
+              className="page-title-section"
+              style={{
+                flex: 1,
+                textAlign: 'center',
+                maxWidth: '400px'
+              }}>
               <h1 style={{
                 fontSize: '18px',
                 fontWeight: '600',
@@ -122,14 +127,16 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
 
           {/* Center Section - Navigation */}
           {!hideNavigation && !searchOnly && (
-            <div style={{
-              display: 'flex',
-              gap: '8px',
-              alignItems: 'center',
-              backgroundColor: isDark ? '#374151' : '#f8fafc',
-              borderRadius: '12px',
-              padding: '4px'
-            }}>
+            <div
+              className="nav-links-container"
+              style={{
+                display: 'flex',
+                gap: '8px',
+                alignItems: 'center',
+                backgroundColor: isDark ? '#374151' : '#f8fafc',
+                borderRadius: '12px',
+                padding: '4px'
+              }}>
               {[
                 { name: 'For you', key: 'home', path: '/' },
                 { name: 'Movies', key: 'movies', path: '/movies' },
@@ -175,12 +182,14 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
           )}
 
           {/* Right Section - Search & Profile */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'clamp(6px, 1.5vw, 12px)',
-            minWidth: 'fit-content'
-          }}>
+          <div
+            className="right-section"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'clamp(6px, 1.5vw, 12px)',
+              minWidth: 'fit-content'
+            }}>
             {/* Search Input */}
             {(!hideNavigation || searchOnly) && (
               <div style={{
@@ -520,44 +529,53 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
         }
         
         @media (max-width: 768px) {
-          /* Keep horizontal layout on mobile */
           nav > div > div {
-            height: 70px !important;
-            flex-direction: row !important;
+            height: auto !important;
+            min-height: 70px;
+            flex-wrap: wrap !important;
+            padding: 12px 0 !important;
             justify-content: space-between !important;
-            gap: 8px !important;
+            gap: 12px !important;
           }
           
-          /* Logo section - left side */
-          nav > div > div > div:first-child {
+          .logo-section {
             order: 1;
-            flex-shrink: 1;
-          }
-          
-          /* Navigation tabs - hide on very small screens */
-          nav > div > div > div:nth-child(2) {
-            order: 2;
-            display: none !important;
-          }
-          
-          /* Page title - center if present */
-          nav > div > div > div:nth-child(3) {
-            order: 2;
             flex: 0 1 auto;
-            max-width: 40% !important;
           }
           
-          /* Right section - always on right */
-          nav > div > div > div:last-child {
+          .page-title-section {
+            order: 2;
+            flex: 1;
+            text-align: center;
+          }
+          
+          .nav-links-container {
+            order: 4; /* Move to the very bottom */
+            display: flex !important;
+            width: 100% !important;
+            justify-content: center !important;
+            background-color: ${isDark ? '#374151' : '#f1f5f9'} !important;
+            margin-top: 8px;
+            padding: 4px !important;
+            border-radius: 12px;
+          }
+
+          .nav-links-container button {
+            flex: 1;
+            padding: 8px 4px !important;
+            text-align: center;
+            border-width: 1px !important;
+          }
+          
+          .right-section {
             order: 3;
             flex-shrink: 0;
-            margin-left: auto;
+            margin-left: auto !important;
           }
           
-          /* Search input - smaller on mobile */
-          nav > div > div > div:last-child > div:first-child {
-            min-width: 120px !important;
-            max-width: 150px !important;
+          .right-section > div:first-child {
+            min-width: 100px !important;
+            max-width: 130px !important;
           }
         }
         
@@ -565,30 +583,34 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
           nav > div {
             padding: 0 12px !important;
           }
+
+          nav > div > div {
+            gap: 8px !important;
+          }
           
-          /* Hide EVENT PLATFORM text on very small screens */
-          nav > div > div > div:first-child > div:last-child > span:last-child {
+          .logo-section img {
+            width: 32px !important;
+            height: 32px !important;
+          }
+          
+          .logo-section div span:first-child {
+            font-size: 15px !important;
+          }
+
+          .logo-section div span:last-child {
+            display: none !important;
+          }
+
+          .nav-links-container button {
+            font-size: 11px !important;
+            padding: 6px 2px !important;
+          }
+          
+          .right-section > div:first-child {
             display: none !important;
           }
           
-          /* Make logo smaller */
-          nav > div > div > div:first-child > img {
-            width: 36px !important;
-            height: 36px !important;
-          }
-          
-          /* Make brand text smaller */
-          nav > div > div > div:first-child > div > span:first-child {
-            font-size: 16px !important;
-          }
-          
-          /* Hide search on very small screens, keep profile visible */
-          nav > div > div > div:last-child > div:first-child {
-            display: none !important;
-          }
-          
-          /* Hide theme toggle on very small screens */
-          nav > div > div > div:last-child > button:first-of-type {
+          .right-section > button:first-of-type {
             display: none !important;
           }
         }
