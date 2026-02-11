@@ -592,7 +592,7 @@ const CreateEvent = ({ isDark }) => {
       {/* Crop Modal */}
       {isCropping && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4">
-          <div className="bg-white rounded-lg w-full max-w-2xl h-[600px] flex flex-col overflow-hidden">
+          <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
             <div className="flex justify-between items-center p-4 border-b">
               <h3 className="text-lg font-semibold">Crop Image</h3>
               <button

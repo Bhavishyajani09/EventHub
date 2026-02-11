@@ -81,42 +81,42 @@ const AdminBooking = ({ isDark }) => {
   }
 
   return (
-    <div className={`flex-1 p-4 h-[calc(100vh-64px)] overflow-hidden ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`flex-1 p-4 sm:p-6 lg:p-8 min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
 
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl relative mb-6" role="alert">
           <strong className="font-bold">Error: </strong>
           <span className="block sm:inline">{error}</span>
         </div>
       )}
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-4 gap-4 mb-4">
-        <div className={`p-3 rounded-lg shadow-sm ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
-          <div className="text-xs text-gray-500 mb-1">Total</div>
-          <div className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{totalBookings}</div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className={`p-4 rounded-xl shadow-sm border transition-all ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Total Bookings</div>
+          <div className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{totalBookings}</div>
         </div>
-        <div className={`p-3 rounded-lg shadow-sm ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
-          <div className="text-xs text-gray-500 mb-1">Confirmed</div>
-          <div className="text-lg font-bold text-green-600">{confirmedBookings}</div>
+        <div className={`p-4 rounded-xl shadow-sm border transition-all ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+          <div className="text-xs font-semibold text-green-500 uppercase tracking-wider mb-2">Confirmed</div>
+          <div className="text-2xl font-bold text-green-600">{confirmedBookings}</div>
         </div>
-        <div className={`p-3 rounded-lg shadow-sm ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
-          <div className="text-xs text-gray-500 mb-1">Pending</div>
-          <div className="text-lg font-bold text-yellow-600">{pendingBookings}</div>
+        <div className={`p-4 rounded-xl shadow-sm border transition-all ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+          <div className="text-xs font-semibold text-yellow-500 uppercase tracking-wider mb-2">Pending</div>
+          <div className="text-2xl font-bold text-yellow-600">{pendingBookings}</div>
         </div>
-        <div className={`p-3 rounded-lg shadow-sm ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
-          <div className="text-xs text-gray-500 mb-1">Cancelled</div>
-          <div className="text-lg font-bold text-red-600">{cancelledBookings}</div>
+        <div className={`p-4 rounded-xl shadow-sm border transition-all ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+          <div className="text-xs font-semibold text-red-500 uppercase tracking-wider mb-2">Cancelled</div>
+          <div className="text-2xl font-bold text-red-600">{cancelledBookings}</div>
         </div>
       </div>
 
       {/* Filter Bar */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex gap-4">
-          <div className="relative">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-6 gap-4">
+        <div className="flex flex-wrap gap-3">
+          <div className="relative min-w-[160px] flex-1 sm:flex-none">
             <select
-              className={`appearance-none border rounded-lg px-3 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200'}`}
+              className={`appearance-none w-full border rounded-lg px-4 py-2.5 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200'}`}
               value={orgFilter}
               onChange={(e) => setOrgFilter(e.target.value)}
             >
@@ -130,9 +130,9 @@ const AdminBooking = ({ isDark }) => {
             </svg>
           </div>
 
-          <div className="relative">
+          <div className="relative min-w-[160px] flex-1 sm:flex-none">
             <select
-              className={`appearance-none border rounded-lg px-3 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200'}`}
+              className={`appearance-none w-full border rounded-lg px-4 py-2.5 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200'}`}
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
             >
@@ -146,9 +146,9 @@ const AdminBooking = ({ isDark }) => {
             </svg>
           </div>
 
-          <div className="relative">
+          <div className="relative min-w-[140px] flex-1 sm:flex-none">
             <select
-              className={`appearance-none border rounded-lg px-3 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200'}`}
+              className={`appearance-none w-full border rounded-lg px-4 py-2.5 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200'}`}
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
@@ -164,45 +164,51 @@ const AdminBooking = ({ isDark }) => {
         </div>
       </div>
 
-      {/* Bookings Table */}
-      <div className={`rounded-lg shadow-sm h-[calc(100vh-280px)] ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
-        <table className="w-full table-fixed">
-          <thead className={`border-b ${isDark ? 'bg-gray-700/50 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
-            <tr>
-              <th className={`w-[10%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>ID</th>
-              <th className={`w-[20%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>User</th>
-              <th className={`w-[22%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Event</th>
-              <th className={`w-[13%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Org Name</th>
-              <th className={`w-[8%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Qty</th>
-              <th className={`w-[12%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Amount</th>
-              <th className={`w-[15%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Date</th>
-              <th className={`w-[10%] px-4 py-3 text-left text-xs font-medium uppercase ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Status</th>
-            </tr>
-          </thead>
-        </table>
-        <div className="overflow-y-auto h-[calc(100%-48px)]">
-          <table className="w-full table-fixed">
+      {/* Bookings Table container */}
+      <div className={`rounded-xl shadow-sm border overflow-hidden ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[1000px]">
+            <thead className={`border-b ${isDark ? 'bg-gray-700/50 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+              <tr>
+                <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Booking ID</th>
+                <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Customer</th>
+                <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Event Details</th>
+                <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Organizer</th>
+                <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Qty</th>
+                <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Amount</th>
+                <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Booking Date</th>
+                <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>Status</th>
+              </tr>
+            </thead>
             <tbody className={`divide-y ${isDark ? 'divide-gray-700 bg-gray-800' : 'divide-gray-200 bg-white'}`}>
               {filteredBookings.length > 0 ? (
                 filteredBookings.map((booking) => (
-                  <tr key={booking._id} className={`hover:bg-gray-50 ${isDark ? 'hover:bg-gray-700/50' : 'hover:bg-gray-50'}`}>
-                    <td className={`w-[10%] px-4 py-3 text-sm font-medium truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking._id.slice(-6).toUpperCase()}</td>
-                    <td className="w-[20%] px-4 py-3">
-                      <div className={`text-sm font-medium truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking.user?.name || 'Unknown'}</div>
-                      <div className={`text-xs truncate ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{booking.user?.email || 'N/A'}</div>
+                  <tr key={booking._id} className={`transition-colors ${isDark ? 'hover:bg-gray-700/50' : 'hover:bg-gray-50'}`}>
+                    <td className={`px-6 py-4 text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking._id.slice(-6).toUpperCase()}</td>
+                    <td className="px-6 py-4">
+                      <div className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking.user?.name || 'Unknown'}</div>
+                      <div className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{booking.user?.email || 'N/A'}</div>
                     </td>
-                    <td className={`w-[22%] px-4 py-3 text-sm truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking.event?.title || 'Unknown Event'}</td>
-                    <td className={`w-[13%] px-4 py-3 text-sm truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking.event?.organizer?.name || 'Unknown'}</td>
-                    <td className={`w-[8%] px-4 py-3 text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking.tickets || 0}</td>
-                    <td className={`w-[12%] px-4 py-3 text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>₹{booking.totalAmount || booking.amount || 0}</td>
-                    <td className={`w-[15%] px-4 py-3 text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{new Date(booking.createdAt).toLocaleDateString()}</td>
-                    <td className="w-[10%] px-4 py-3">{getStatusBadge(booking.status)}</td>
+                    <td className="px-6 py-4">
+                      <div className={`text-sm font-medium ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>{booking.event?.title || 'Unknown Event'}</div>
+                      <div className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{booking.event?.category || 'General'}</div>
+                    </td>
+                    <td className={`px-6 py-4 text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{booking.event?.organizer?.name || 'Unknown'}</td>
+                    <td className={`px-6 py-4 text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{booking.tickets || 0}</td>
+                    <td className={`px-6 py-4 text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>₹{booking.totalAmount || booking.amount || 0}</td>
+                    <td className={`px-6 py-4 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{new Date(booking.createdAt).toLocaleDateString()}</td>
+                    <td className="px-6 py-4">{getStatusBadge(booking.status)}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" className={`px-4 py-8 text-center text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                    No bookings found matching your filters.
+                  <td colSpan="8" className={`px-6 py-12 text-center text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <div className="flex flex-col items-center gap-2">
+                      <svg className="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                      </svg>
+                      <span>No bookings found matching your filters.</span>
+                    </div>
                   </td>
                 </tr>
               )}

@@ -175,8 +175,8 @@ const BookingsManagement = ({ isDark }) => {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className={`min-w-full divide-y ${isDark ? 'divide-gray-700' : 'divide-gray-200'}`}>
+          <div className="overflow-x-auto scrollbar-hide">
+            <table className={`min-w-[900px] w-full divide-y ${isDark ? 'divide-gray-700' : 'divide-gray-200'}`}>
               <thead className={isDark ? 'bg-gray-700' : 'bg-gray-50'}>
                 <tr>
                   <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>

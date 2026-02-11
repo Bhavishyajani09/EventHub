@@ -225,9 +225,9 @@ const ORG_edit = ({ isDark }) => {
           >
             <ArrowLeft size={20} />
           </button>
-          <div>
-            <h1 className="text-3xl font-bold">Edit Event</h1>
-            <p className="text-gray-500">Update your event details</p>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            <h1 className="text-2xl sm:text-3xl font-bold">Edit Event</h1>
+            <p className="text-gray-500 text-sm">Update your event details</p>
           </div>
         </div>
       </div>
@@ -484,7 +484,7 @@ const ORG_edit = ({ isDark }) => {
       {
         isCropping && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4">
-            <div className="bg-white rounded-lg w-full max-w-2xl h-[600px] flex flex-col overflow-hidden">
+            <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
               <div className="flex justify-between items-center p-4 border-b">
                 <h3 className="text-lg font-semibold">Crop Image</h3>
                 <button

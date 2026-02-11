@@ -147,9 +147,9 @@ const Dashboard = ({ isDark, onNavigate }) => {
               <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
-          <div className="flex-1 overflow-x-auto">
+          <div className="flex-1 overflow-x-auto scrollbar-hide">
             {recentBookings.length > 0 ? (
-              <table className="w-full text-left">
+              <table className="w-full text-left min-w-[600px]">
                 <thead className={isDark ? 'bg-gray-900/50' : 'bg-gray-50'}>
                   <tr>
                     <th className={`px-5 py-3 text-xs font-medium uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Customer</th>

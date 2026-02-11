@@ -15,14 +15,16 @@ const SharedFooter = ({ isDark }) => {
         maxWidth: '1400px',
         margin: '0 auto'
       }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: 'clamp(24px, 5vw, 40px)',
-          marginBottom: '32px'
-        }}>
+        <div
+          className="footer-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: 'clamp(24px, 5vw, 40px)',
+            marginBottom: '32px'
+          }}>
           {/* Company Info */}
-          <div>
+          <div className="footer-section">
             <div style={{ marginBottom: '16px' }}>
               <span style={{
                 fontSize: '24px',
@@ -45,7 +47,7 @@ const SharedFooter = ({ isDark }) => {
           </div>
 
           {/* Quick Links */}
-          <div>
+          <div className="footer-section">
             <h4 style={{
               fontSize: '16px',
               fontWeight: '600',
@@ -58,7 +60,7 @@ const SharedFooter = ({ isDark }) => {
               margin: 0
             }}>
               {['Events', 'Movies'].map((link, index) => (
-                <li key={index} style={{ marginBottom: '8px' }}>
+                <li key={index} style={{ marginBottom: '12px' }}>
                   <a href="#" onClick={(e) => {
                     e.preventDefault();
                     if (link === 'Movies') {
@@ -70,10 +72,11 @@ const SharedFooter = ({ isDark }) => {
                     color: '#d1d5db',
                     textDecoration: 'none',
                     fontSize: '14px',
-                    transition: 'color 0.2s',
-                    cursor: 'pointer'
+                    transition: 'all 0.2s ease',
+                    cursor: 'pointer',
+                    display: 'block'
                   }}
-                    onMouseEnter={(e) => e.target.style.color = 'white'}
+                    onMouseEnter={(e) => e.target.style.color = '#8b5cf6'}
                     onMouseLeave={(e) => e.target.style.color = '#d1d5db'}
                   >{link}</a>
                 </li>
@@ -82,7 +85,7 @@ const SharedFooter = ({ isDark }) => {
           </div>
 
           {/* Categories */}
-          <div>
+          <div className="footer-section">
             <h4 style={{
               fontSize: '16px',
               fontWeight: '600',
@@ -96,15 +99,12 @@ const SharedFooter = ({ isDark }) => {
             }}>
               {[
                 { name: 'Music Events', value: 'MUSIC' },
-                { name: 'Tech Summits', value: 'TECH' }, // Keeping Tech as placeholder if real data not known, but wait. User page said MUSIC, COMEDY, SPORTS, ART, SEASONAL.
-                // Re-reading user events page: MUSIC, COMEDY, SPORTS, ART, SEASONAL EVENT.
-                // Let's use those.
                 { name: 'Comedy Shows', value: 'COMEDY' },
                 { name: 'Sports', value: 'SPORTS' },
                 { name: 'Art Exhibitions', value: 'ART' },
                 { name: 'Seasonal Events', value: 'SEASONAL EVENT' }
-              ].filter(c => c.value !== 'TECH').map((category, index) => (
-                <li key={index} style={{ marginBottom: '8px' }}>
+              ].map((category, index) => (
+                <li key={index} style={{ marginBottom: '12px' }}>
                   <a href="#" onClick={(e) => {
                     e.preventDefault();
                     navigate('/events', { state: { category: category.value } });
@@ -112,10 +112,11 @@ const SharedFooter = ({ isDark }) => {
                     color: '#d1d5db',
                     textDecoration: 'none',
                     fontSize: '14px',
-                    transition: 'color 0.2s',
-                    cursor: 'pointer'
+                    transition: 'all 0.2s ease',
+                    cursor: 'pointer',
+                    display: 'block'
                   }}
-                    onMouseEnter={(e) => e.target.style.color = 'white'}
+                    onMouseEnter={(e) => e.target.style.color = '#8b5cf6'}
                     onMouseLeave={(e) => e.target.style.color = '#d1d5db'}
                   >{category.name}</a>
                 </li>
@@ -124,21 +125,21 @@ const SharedFooter = ({ isDark }) => {
           </div>
 
           {/* Contact Info */}
-          <div>
+          <div className="footer-section">
             <h4 style={{
               fontSize: '16px',
               fontWeight: '600',
               marginBottom: '16px',
               color: 'white'
             }}>Contact</h4>
-            <div style={{ color: '#d1d5db', fontSize: '14px', lineHeight: '1.6' }}>
-              <p style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Mail size={16} /> support@eventhub.com
+            <div style={{ color: '#d1d5db', fontSize: '14px', lineHeight: '1.8' }}>
+              <p style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Mail size={16} /> <a href="mailto:support@eventhub.com" style={{ color: 'inherit', textDecoration: 'none' }}>support@eventhub.com</a>
               </p>
-              <p style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <p style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <Phone size={16} /> 6262780000
               </p>
-              <p style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <p style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <MapPin size={16} /> Indore, Madhya Pradesh
               </p>
             </div>
@@ -146,18 +147,20 @@ const SharedFooter = ({ isDark }) => {
         </div>
 
         {/* Bottom Bar */}
-        <div style={{
-          borderTop: '1px solid #374151',
-          paddingTop: '24px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '16px'
-        }}>
+        <div
+          className="footer-bottom"
+          style={{
+            borderTop: '1px solid #374151',
+            paddingTop: '32px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '20px'
+          }}>
           <p style={{
             color: '#9ca3af',
-            fontSize: '14px',
+            fontSize: '13px',
             margin: 0
           }}>© 2026 EventHub. All rights reserved.</p>
           <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
@@ -165,7 +168,7 @@ const SharedFooter = ({ isDark }) => {
               <a key={index} href="#" style={{
                 color: '#9ca3af',
                 textDecoration: 'none',
-                fontSize: '14px',
+                fontSize: '13px',
                 transition: 'color 0.2s'
               }}
                 onMouseEnter={(e) => e.target.style.color = '#d1d5db'}
@@ -175,6 +178,44 @@ const SharedFooter = ({ isDark }) => {
           </div>
         </div>
       </div>
+
+      {/* Mobile Component Styles */}
+      <style>{`
+        @media (max-width: 480px) {
+          .footer-grid {
+            grid-template-columns: 1fr !important;
+            text-align: center !important;
+            gap: 40px !important;
+          }
+ 
+          .footer-section {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+          }
+ 
+          .footer-section ul {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+          }
+ 
+          .footer-section p {
+            justify-content: center !important;
+          }
+ 
+          .footer-bottom {
+            flex-direction: column !important;
+            text-align: center !important;
+            gap: 16px !important;
+          }
+ 
+          .footer-bottom div {
+            justify-content: center !important;
+            width: 100% !important;
+          }
+        }
+      `}</style>
     </footer>
   );
 };

@@ -157,7 +157,7 @@ export default function ReviewsRatings({ isDark }) {
             <div className="space-y-6 max-h-[480px] overflow-y-auto pr-2">
               {reviews.map((review) => (
                 <div key={review._id} className={`border-b pb-6 last:border-b-0 ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
-                  <div className="flex gap-4">
+                  <div className="flex flex-col sm:flex-row gap-4">
 
                     {/* Avatar */}
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${isDark ? 'bg-indigo-900/50 text-indigo-400' : 'bg-indigo-100 text-indigo-600'}`}>
