@@ -112,8 +112,8 @@ const AdminLayout = ({ children, user, onLogout }) => {
             })}
           </nav>
 
-          {/* Logout in Sidebar for mobile */}
-          <div className="p-4 border-t border-gray-100 lg:hidden">
+          {/* Logout in Sidebar */}
+          <div className="p-4 border-t border-gray-100">
             <button
               onClick={onLogout}
               className="w-full flex items-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
