@@ -28,13 +28,19 @@ const ORG_edit = ({ isDark }) => {
     date: '',
     time: '',
     location: '',
-    capacity: '',
-    price: '',
+    capacity: 0,
+    price: 0,
     category: '',
     image: null,
     isPublished: false,
     hasArtist: false,
     artistName: ''
+  });
+
+  const [seatTypes, setSeatTypes] = useState({
+    general: { price: '', quantity: '' },
+    vip: { price: '', quantity: '' },
+    premium: { price: '', quantity: '' }
   });
 
   const categories = [
@@ -56,14 +62,34 @@ const ORG_edit = ({ isDark }) => {
         const eventDateStr = eventDate ? eventDate.toISOString().split('T')[0] : '';
         const eventTimeStr = eventDate ? eventDate.toTimeString().split(' ')[0].substring(0, 5) : '';
 
+        const seatTypesObj = {
+          general: { price: '', quantity: '' },
+          vip: { price: '', quantity: '' },
+          premium: { price: '', quantity: '' }
+        };
+
+        if (event.seatTypes && Array.isArray(event.seatTypes)) {
+          event.seatTypes.forEach(seat => {
+            const name = seat.name.toLowerCase();
+            if (seatTypesObj[name]) {
+              seatTypesObj[name] = {
+                price: seat.price.toString(),
+                quantity: seat.quantity.toString()
+              };
+            }
+          });
+        }
+
+        setSeatTypes(seatTypesObj);
+
         setFormData({
           title: event.title || '',
           description: event.description || '',
           date: eventDateStr,
           time: eventTimeStr,
           location: event.location || '',
-          capacity: event.capacity || '',
-          price: event.price || '',
+          capacity: event.capacity || 0,
+          price: event.price || 0,
           category: event.category || '',
           image: null,
           isPublished: event.isPublished || false,
@@ -129,6 +155,44 @@ const ORG_edit = ({ isDark }) => {
     }));
   };
 
+  const updateSeatType = (type, field, value) => {
+    if (value !== '' && parseFloat(value) < 0) return;
+
+    setSeatTypes(prev => {
+      const updated = {
+        ...prev,
+        [type]: { ...prev[type], [field]: value }
+      };
+
+      if (field === 'quantity') {
+        const totalCapacity =
+          (parseInt(updated.general.quantity) || 0) +
+          (parseInt(updated.vip.quantity) || 0) +
+          (parseInt(updated.premium.quantity) || 0);
+
+        setFormData(prevForm => ({
+          ...prevForm,
+          capacity: totalCapacity
+        }));
+      }
+
+      if (field === 'price') {
+        const prices = [
+          parseFloat(updated.general.price) || 0,
+          parseFloat(updated.vip.price) || 0,
+          parseFloat(updated.premium.price) || 0
+        ].filter(p => p > 0);
+        const lowestPrice = prices.length > 0 ? Math.min(...prices) : 0;
+        setFormData(prevForm => ({
+          ...prevForm,
+          price: lowestPrice
+        }));
+      }
+
+      return updated;
+    });
+  };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -147,6 +211,8 @@ const ORG_edit = ({ isDark }) => {
 
   const showCroppedImage = async () => {
     try {
+      if (!croppedAreaPixels || !tempImage) return;
+
       const croppedImageBlob = await getCroppedImg(
         tempImage,
         croppedAreaPixels
@@ -191,6 +257,24 @@ const ORG_edit = ({ isDark }) => {
           updateData.append(key, formData[key]);
         }
       });
+
+      // Add seat types
+      const seatTypesArray = [
+        { name: 'General', price: seatTypes.general.price, quantity: seatTypes.general.quantity },
+        { name: 'VIP', price: seatTypes.vip.price, quantity: seatTypes.vip.quantity },
+        { name: 'Premium', price: seatTypes.premium.price, quantity: seatTypes.premium.quantity }
+      ].filter(seat => seat.price && seat.quantity);
+
+      updateData.append('seatTypes', JSON.stringify(seatTypesArray));
+
+      // Add category flags for consistency
+      if (formData.category === 'Movie') {
+        updateData.append('isMovie', 'true');
+      } else if (formData.category === 'Music') {
+        updateData.append('isConcert', 'true');
+      } else if (formData.category === 'Sports') {
+        updateData.append('isSports', 'true');
+      }
 
       const response = await organizerService.updateEvent(id, updateData);
 
@@ -417,36 +501,88 @@ const ORG_edit = ({ isDark }) => {
               />
             </div>
 
+            {/* Publish Toggle */}
+            <div className="flex items-center gap-3 py-2 mt-4">
+              <input
+                type="checkbox"
+                id="isPublished"
+                name="isPublished"
+                checked={formData.isPublished}
+                onChange={handleInputChange}
+                className="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+              />
+              <label htmlFor="isPublished" className="text-sm font-medium text-gray-700 cursor-pointer">
+                Publish event? (Requires admin approval to show on home page)
+              </label>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Users className="inline w-4 h-4 mr-1" />
-                Capacity
+                Total Capacity (Auto-calculated)
               </label>
               <input
                 type="number"
                 name="capacity"
                 value={formData.capacity}
-                onChange={handleInputChange}
-                min="1"
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                readOnly
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600"
+              />
+            </div>
+
+            <div className="mt-0">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Base Price (₹ - Auto-lowest)
+              </label>
+              <input
+                type="number"
+                name="price"
+                value={formData.price}
+                readOnly
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600"
               />
             </div>
           </div>
 
-          {/* Price */}
-          <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Price (₹)
+          {/* Seat Types */}
+          <div className="mt-8 border-t pt-6">
+            <label className="block text-sm font-medium text-gray-700 mb-4">
+              Seat Types & Pricing
             </label>
-            <input
-              type="number"
-              name="price"
-              value={formData.price}
-              onChange={handleInputChange}
-              min="0"
-              step="0.01"
-              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {['general', 'vip', 'premium'].map((type) => (
+                <div key={type} className="border border-gray-200 rounded-lg p-4">
+                  <h3 className="font-medium text-gray-800 mb-3 capitalize">{type}</h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Price (₹)</label>
+                      <input
+                        type="number"
+                        value={seatTypes[type].price}
+                        onChange={(e) => updateSeatType(type, 'price', e.target.value)}
+                        min="0"
+                        step="0.01"
+                        className="w-full px-2 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500"
+                        placeholder="0.00"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Quantity</label>
+                      <input
+                        type="number"
+                        value={seatTypes[type].quantity}
+                        onChange={(e) => updateSeatType(type, 'quantity', e.target.value)}
+                        min="0"
+                        className="w-full px-2 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500"
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -499,7 +635,7 @@ const ORG_edit = ({ isDark }) => {
                 </button>
               </div>
 
-              <div className="relative flex-1 bg-gray-900">
+              <div className="relative w-full h-[400px] bg-gray-900">
                 <Cropper
                   image={tempImage}
                   crop={crop}
@@ -523,8 +659,8 @@ const ORG_edit = ({ isDark }) => {
                     max={3}
                     step={0.1}
                     aria-labelledby="Zoom"
-                    onChange={(e) => setZoom(e.target.value)}
-                    className="w-full"
+                    onChange={(e) => setZoom(parseFloat(e.target.value))}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                   />
                 </div>
                 <div className="flex justify-end gap-3">

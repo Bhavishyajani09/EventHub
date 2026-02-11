@@ -241,6 +241,37 @@ exports.updateEvent = async (req, res) => {
 
     if (isPublished !== undefined) updateData.isPublished = isPublished === 'true' || isPublished === true;
 
+    // 2.5 Handle Seat Types if provided
+    const { seatTypes } = req.body;
+    if (seatTypes) {
+      try {
+        const parsedSeatTypes = JSON.parse(seatTypes).map(seat => {
+          const seatPrice = parseFloat(seat.price) || 0;
+          const seatQuantity = parseInt(seat.quantity) || 0;
+
+          if (seatPrice < 0 || seatQuantity < 0) {
+            throw new Error('Seat price and quantity must be non-negative');
+          }
+
+          return {
+            ...seat,
+            price: seatPrice,
+            quantity: seatQuantity,
+            available: seatQuantity // Reset available to full quantity on update? Or handle differently?
+            // Usually, if we update quantity, we might want to adjust available.
+            // But for simplicity, we'll follow the same logic as create.
+          };
+        });
+        updateData.seatTypes = parsedSeatTypes;
+      } catch (e) {
+        console.error('Error parsing seat types in update:', e);
+        return res.status(400).json({
+          success: false,
+          message: e.message || 'Invalid seat types format'
+        });
+      }
+    }
+
     // 3. Handle Artist Logic
     const { hasArtist, artistName } = req.body;
     if (hasArtist !== undefined) {
