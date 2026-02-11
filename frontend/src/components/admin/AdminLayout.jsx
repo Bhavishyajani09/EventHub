@@ -45,7 +45,7 @@ const AdminLayout = ({ children, user, onLogout }) => {
         onProfileClick={() => navigate('/settings')}
         onLogout={onLogout}
       />
-      <div className="flex pt-[70px]" style={{ minHeight: 'calc(100vh - 70px)' }}>
+      <div className="flex" style={{ minHeight: 'calc(100vh - 70px)' }}>
         {/* Mobile Menu Button - Styled like Organizer Sidebar */}
         <button
           className="lg:hidden fixed left-4 top-20 z-[9999] w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95"

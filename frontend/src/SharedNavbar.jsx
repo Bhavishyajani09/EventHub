@@ -43,11 +43,12 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
       backgroundColor: isDark ? '#1f2937' : 'white',
       boxShadow: isDark ? '0 2px 10px rgba(0, 0, 0, 0.3)' : '0 2px 10px rgba(0, 0, 0, 0.1)',
       borderBottom: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
-      position: 'fixed',
+      position: 'sticky',
       top: 0,
-      left: 0,
       zIndex: 1000,
-      backdropFilter: 'blur(10px)'
+      backdropFilter: 'blur(10px)',
+      overflowX: 'hidden',
+      maxWidth: '100%'
     }}>
       <div style={{
         maxWidth: '1400px',
@@ -524,6 +525,93 @@ const Navbar = ({ isDark, setIsDark, user: propUser, onAuthOpen, onProfileClick,
           nav > div > div > div:nth-child(2) > button {
             padding: 8px 12px !important;
             font-size: 12px !important;
+          }
+        }
+        
+        @media (max-width: 768px) {
+          nav > div > div {
+            height: auto !important;
+            min-height: 70px;
+            flex-wrap: wrap !important;
+            padding: 12px 0 !important;
+            justify-content: space-between !important;
+            gap: 12px !important;
+          }
+          
+          .logo-section {
+            order: 1;
+            flex: 0 1 auto;
+          }
+          
+          .page-title-section {
+            order: 2;
+            flex: 1;
+            text-align: center;
+          }
+          
+          .nav-links-container {
+            order: 4; /* Move to the very bottom */
+            display: flex !important;
+            width: 100% !important;
+            justify-content: center !important;
+            background-color: ${isDark ? '#374151' : '#f1f5f9'} !important;
+            margin-top: 8px;
+            padding: 4px !important;
+            border-radius: 12px;
+          }
+
+          .nav-links-container button {
+            flex: 1;
+            padding: 8px 4px !important;
+            text-align: center;
+            border-width: 1px !important;
+          }
+          
+          .right-section {
+            order: 3;
+            flex-shrink: 0;
+            margin-left: auto !important;
+          }
+          
+          .right-section > div:first-child {
+            min-width: 100px !important;
+            max-width: 130px !important;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          nav > div {
+            padding: 0 12px !important;
+          }
+
+          nav > div > div {
+            gap: 8px !important;
+          }
+          
+          .logo-section img {
+            width: 32px !important;
+            height: 32px !important;
+          }
+          
+          .logo-section div span:first-child {
+            font-size: 15px !important;
+          }
+
+          .logo-section div span:last-child {
+            display: none !important;
+          }
+
+          .nav-links-container button {
+            font-size: 11px !important;
+            padding: 6px 2px !important;
+          }
+          
+          .right-section > div:first-child {
+            display: none !important;
+          }
+          
+          .right-section > button:first-of-type {
+            display: none !important;
           }
         }
       `}</style>

@@ -23,7 +23,7 @@ const OrganizerLayout = ({ children, user, onLogout }) => {
         onProfileClick={() => navigate('/settings')}
         onLogout={onLogout}
       />
-      <div className="flex pt-[70px]">
+      <div className="flex">
         <Sidebar onLogout={onLogout} />
         <div className="flex-1 p-3 sm:p-4 md:p-6">
           {children}
