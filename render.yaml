@@ -29,4 +29,4 @@ services:
       - key: EMAIL_PASS
         value: ghekitfcdmxsfogb
       - key: FRONTEND_URL
-        value: https://eventhub-phi-mauve.vercel.app/
+        value: https://eventhub-lovat.vercel.app/
