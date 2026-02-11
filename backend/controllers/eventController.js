@@ -96,31 +96,37 @@ exports.createEvent = async (req, res) => {
     if (seatTypes) {
       try {
         parsedSeatTypes = JSON.parse(seatTypes).map(seat => {
-          const price = parseFloat(seat.price) || 0;
-          const quantity = parseInt(seat.quantity) || 0;
+          const seatPrice = parseFloat(seat.price) || 0;
+          const seatQuantity = parseInt(seat.quantity) || 0;
 
-          if (price < 0 || quantity < 0) {
+          if (seatPrice < 0 || seatQuantity < 0) {
             throw new Error('Seat price and quantity must be non-negative');
           }
 
           return {
             ...seat,
-            price,
-            quantity,
-            available: quantity
+            price: seatPrice,
+            quantity: seatQuantity,
+            available: seatQuantity
           };
         });
       } catch (e) {
         console.error('Error parsing seat types:', e);
-        if (e.message === 'Seat price and quantity must be non-negative') throw e;
+        return res.status(400).json({
+          success: false,
+          message: e.message || 'Invalid seat types format'
+        });
       }
     }
 
     // Validate capacity and price
-    if (parseFloat(price) < 0 || parseInt(capacity) < 0) {
+    const numPrice = parseFloat(price);
+    const numCapacity = parseInt(capacity);
+
+    if (isNaN(numPrice) || numPrice < 0 || isNaN(numCapacity) || numCapacity <= 0) {
       return res.status(400).json({
         success: false,
-        message: 'Price and capacity must be non-negative'
+        message: numCapacity <= 0 ? 'Event must have at least 1 total capacity (add seat quantities)' : 'Price and capacity must be valid non-negative numbers'
       });
     }
 

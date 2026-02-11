@@ -94,6 +94,8 @@ const CreateEvent = ({ isDark }) => {
 
   const showCroppedImage = async () => {
     try {
+      if (!croppedAreaPixels || !tempImage) return;
+
       const croppedImageBlob = await getCroppedImg(
         tempImage,
         croppedAreaPixels
@@ -430,6 +432,21 @@ const CreateEvent = ({ isDark }) => {
           />
         </div>
 
+        {/* Publish Option */}
+        <div className="flex items-center gap-3 py-2">
+          <input
+            type="checkbox"
+            id="isPublished"
+            name="isPublished"
+            checked={formData.isPublished}
+            onChange={handleInputChange}
+            className="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+          />
+          <label htmlFor="isPublished" className="text-sm font-medium text-gray-700 cursor-pointer">
+            Publish event immediately? (Requires admin approval to show on home page)
+          </label>
+        </div>
+
         {/* Capacity */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -607,7 +624,7 @@ const CreateEvent = ({ isDark }) => {
               </button>
             </div>
 
-            <div className="relative flex-1 bg-gray-900">
+            <div className="relative w-full h-[400px] bg-gray-900">
               <Cropper
                 image={tempImage}
                 crop={crop}
@@ -631,8 +648,8 @@ const CreateEvent = ({ isDark }) => {
                   max={3}
                   step={0.1}
                   aria-labelledby="Zoom"
-                  onChange={(e) => setZoom(e.target.value)}
-                  className="w-full"
+                  onChange={(e) => setZoom(parseFloat(e.target.value))}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                 />
               </div>
               <div className="flex justify-end gap-3">
