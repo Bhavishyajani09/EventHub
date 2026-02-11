@@ -63,10 +63,11 @@ import {
   ChevronLeft,
   ChevronRight,
   Menu,
-  X
+  X,
+  LogOut
 } from "lucide-react";
 
-export default function Sidebar({ isDark }) {
+export default function Sidebar({ isDark, onLogout }) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -204,6 +205,20 @@ export default function Sidebar({ isDark }) {
             isDark={isDark}
           />
         </nav>
+
+        {/* Logout Button */}
+        <div className={`p-4 border-t ${isDark ? 'border-gray-700' : 'border-gray-100'}`}>
+          <button
+            onClick={onLogout}
+            className={`
+              w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-red-600 
+              ${isDark ? 'hover:bg-red-900/20' : 'hover:bg-red-50'}
+            `}
+          >
+            <LogOut size={18} />
+            {!collapsed && <span className="font-medium">Logout</span>}
+          </button>
+        </div>
       </aside>
     </>
   );
