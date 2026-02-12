@@ -151,9 +151,16 @@ exports.createEvent = async (req, res) => {
     }
 
     // 4. Create Event
-    const eventDate = new Date(`${date}T${time}`);
-    const now = new Date();
+    let eventDate;
+    if (date && date.includes('T')) {
+      // If full ISO string is provided from frontend
+      eventDate = new Date(date);
+    } else {
+      // Fallback to separate date and time
+      eventDate = new Date(`${date}T${time || '00:00:00'}`);
+    }
 
+    const now = new Date();
     if (eventDate < now) {
       return res.status(400).json({
         success: false,
@@ -303,7 +310,10 @@ exports.updateEvent = async (req, res) => {
     // 4. Handle Date/Time
     if (date) {
       let eventDate;
-      if (time) {
+      if (date.includes('T')) {
+        // Use full ISO string if provided
+        eventDate = new Date(date);
+      } else if (time) {
         eventDate = new Date(`${date}T${time}`);
       } else {
         const existingEvent = await Event.findById(req.params.id);

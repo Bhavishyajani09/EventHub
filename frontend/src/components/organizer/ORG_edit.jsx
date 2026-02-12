@@ -258,6 +258,14 @@ const ORG_edit = ({ isDark }) => {
         }
       });
 
+      // Combine date and time into a single ISO string for accurate timezone handling
+      if (formData.date && formData.time) {
+        const localDate = new Date(`${formData.date}T${formData.time}`);
+        updateData.set('date', localDate.toISOString());
+      } else if (formData.date) {
+        updateData.set('date', formData.date);
+      }
+
       // Add seat types
       const seatTypesArray = [
         { name: 'General', price: seatTypes.general.price, quantity: seatTypes.general.quantity },

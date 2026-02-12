@@ -174,8 +174,18 @@ const CreateEvent = ({ isDark }) => {
 
       // Add form fields
       Object.keys(formData).forEach(key => {
-        eventFormData.append(key, formData[key]);
+        if (key !== 'date') {
+          eventFormData.append(key, formData[key]);
+        }
       });
+
+      // Combine date and time into a single ISO string for accurate timezone handling
+      if (formData.date && formData.time) {
+        const localDate = new Date(`${formData.date}T${formData.time}`);
+        eventFormData.set('date', localDate.toISOString());
+      } else if (formData.date) {
+        eventFormData.set('date', formData.date);
+      }
 
       // Add category flags for frontend filtering
       if (formData.category === 'Movie') {
