@@ -109,6 +109,7 @@ const EventsPage = ({ isDark, setIsDark, user, onAuthOpen, onProfileClick, onNav
       type: 'event',
       venue: event.location,
       seatTypes: event.seatTypes,
+      description: event.description,
       _id: event._id
     }));
 
