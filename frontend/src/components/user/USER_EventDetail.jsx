@@ -190,9 +190,10 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
               }}>About the Event</h3>
               <p style={{
                 color: isDark ? '#d1d5db' : '#4b5563',
-                lineHeight: '1.6'
+                lineHeight: '1.6',
+                whiteSpace: 'pre-wrap'
               }}>
-                {event.type === 'event' ? (
+                {event.description || (event.type === 'event' ? (
                   `Experience an unforgettable ${(event.category || 'entertainment').toLowerCase()} event with ${event.title}. 
                   Join us for an amazing live performance that will create lasting memories. 
                   Don't miss this incredible opportunity to witness world-class entertainment.`
@@ -200,7 +201,7 @@ const EventDetail = ({ event, isDark, setIsDark, user, onAuthOpen, onProfileClic
                   `Watch ${event.title} in the best cinemas. This ${(event.category || 'movie').toLowerCase()} 
                   promises to deliver an exceptional viewing experience with stunning visuals 
                   and captivating storytelling that will keep you engaged throughout.`
-                )}
+                ))}
               </p>
             </div>
           </div>

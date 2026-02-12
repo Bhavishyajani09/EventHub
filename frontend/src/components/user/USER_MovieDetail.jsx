@@ -5,7 +5,7 @@ import SharedFooter from '../../SharedFooter';
 
 const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClick, onNavigate, onBack, onBookTickets }) => {
   const [isTermsOpen, setIsTermsOpen] = React.useState(false);
-  
+
   if (!movie) {
     return (
       <div style={{
@@ -21,7 +21,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
           color: isDark ? '#f9fafb' : '#111827'
         }}>
           <h2>Movie not found</h2>
-          <button 
+          <button
             onClick={() => onNavigate('movies')}
             style={{
               padding: '12px 24px',
@@ -52,7 +52,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
       position: 'relative'
     }}>
       {/* Navbar */}
-      <SharedNavbar 
+      <SharedNavbar
         isDark={isDark}
         setIsDark={setIsDark}
         user={user}
@@ -73,7 +73,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
         overflowX: 'hidden'
       }}>
         {/* Back Button */}
-        <button 
+        <button
           onClick={onBack}
           style={{
             background: '#f3f4f6',
@@ -149,11 +149,12 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
               }}>About the Movie</h3>
               <p style={{
                 color: isDark ? '#d1d5db' : '#4b5563',
-                lineHeight: '1.6'
+                lineHeight: '1.6',
+                whiteSpace: 'pre-wrap'
               }}>
-                Experience the ultimate cinematic journey with {movie.title}. This {(movie.genre || 'movie').toLowerCase()} masterpiece 
+                {movie.description || `Experience the ultimate cinematic journey with ${movie.title}. This ${(movie.genre || 'movie').toLowerCase()} masterpiece 
                 brings together stellar performances, breathtaking visuals, and an unforgettable storyline that will 
-                keep you on the edge of your seat.
+                keep you on the edge of your seat.`}
               </p>
             </div>
           </div>
@@ -233,31 +234,31 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
                 }}>₹599</span>
               </div>
 
-              <button 
+              <button
                 onClick={() => onBookTickets && onBookTickets(movie)}
                 style={{
-                width: '100%',
-                padding: '12px',
-                background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
-                backgroundSize: '200% 200%',
-                animation: 'gradientMove 3s ease infinite',
-                color: 'white',
-                boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '8px',
-                fontSize: '16px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
-              }}
+                  width: '100%',
+                  padding: '12px',
+                  background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 25%, #4f46e5 50%, #7c3aed 75%, #8b5cf6 100%)',
+                  backgroundSize: '200% 200%',
+                  animation: 'gradientMove 3s ease infinite',
+                  color: 'white',
+                  boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.6)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                }}
               >
                 BOOK TICKETS
               </button>
@@ -279,7 +280,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
             color: isDark ? '#f9fafb' : '#111827',
             marginBottom: '20px'
           }}>Event Guide</h3>
-          
+
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -304,7 +305,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
                 }}>Hindi, Hinglish</p>
               </div>
             </div>
-            
+
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -324,7 +325,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
                 }}>3 Hours and 15 Minutes</p>
               </div>
             </div>
-            
+
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -361,7 +362,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
             color: isDark ? '#f9fafb' : '#111827',
             marginBottom: '16px'
           }}>Venue</h3>
-          
+
           <div>
             <h4 style={{
               fontSize: '16px',
@@ -384,7 +385,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
           boxShadow: isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
           overflow: 'hidden'
         }}>
-          <div 
+          <div
             onClick={() => setIsTermsOpen(!isTermsOpen)}
             style={{
               display: 'flex',
@@ -398,7 +399,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
               fontWeight: '600',
               color: isDark ? '#f9fafb' : '#111827'
             }}>Terms & Conditions</h3>
-            <ChevronDown 
+            <ChevronDown
               size={18}
               style={{
                 color: isDark ? '#9ca3af' : '#6b7280',
@@ -407,7 +408,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
               }}
             />
           </div>
-          
+
           <div style={{
             maxHeight: isTermsOpen ? '500px' : '0',
             overflow: 'hidden',
@@ -454,7 +455,7 @@ const MovieDetail = ({ movie, isDark, setIsDark, user, onAuthOpen, onProfileClic
 
       {/* Footer */}
       <SharedFooter isDark={isDark} onNavigate={onNavigate} />
-      
+
       {/* Global CSS Reset */}
       <style>{`
         * {
