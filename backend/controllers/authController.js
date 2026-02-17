@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const sendEmail = require('../utils/email');
+const { sendEmail } = require('../utils/emailService');
 const bcrypt = require('bcryptjs');
 
 /**
@@ -10,12 +10,14 @@ const bcrypt = require('bcryptjs');
 exports.forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
+        console.log('Forgot password request for:', email);
 
         if (!email) {
             return res.status(400).json({ success: false, message: 'Please provide an email' });
         }
 
         const user = await User.findOne({ email });
+        console.log('User found:', user ? 'Yes' : 'No');
 
         if (!user) {
             return res.status(404).json({
@@ -26,15 +28,16 @@ exports.forgotPassword = async (req, res) => {
 
         // Generate 6-digit OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        console.log('Generated OTP:', otp);
 
         // Set OTP and Expiry (10 minutes)
         user.resetOtp = otp;
         user.resetOtpExpire = Date.now() + 10 * 60 * 1000;
 
         await user.save();
+        console.log('User saved with OTP');
 
-        // Send Email
-        const message = `Your password reset OTP is: ${otp}. It is valid for 10 minutes.`;
+        // Email HTML template
         const html = `
       <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 5px;">
         <h2 style="color: #333;">Password Reset Request</h2>
@@ -46,35 +49,29 @@ exports.forgotPassword = async (req, res) => {
       </div>
     `;
 
-        try {
-            await sendEmail({
-                email: user.email,
-                subject: 'Password Reset OTP',
-                message,
-                html,
-            });
-
-            res.status(200).json({
-                success: true,
-                message: 'OTP has been sent to your email.'
-            });
-        } catch (error) {
+        // Send Email (non-blocking)
+        sendEmail({
+            to: user.email,
+            subject: 'Password Reset OTP',
+            html,
+        }).catch(error => {
             console.error('Email Sending Error:', error.message);
-
-            // Still log to console for development convenience
             console.log('--- OTP (Fallback) ---');
             console.log(`Email: ${user.email}`);
             console.log(`OTP: ${otp}`);
             console.log('----------------------');
+        });
 
-            res.status(500).json({
-                success: false,
-                message: 'Error sending email. Please try again later or check server logs.'
-            });
-        }
+        console.log('Email sent (non-blocking)');
+
+        // Respond immediately
+        res.status(200).json({
+            success: true,
+            message: 'OTP has been sent to your email.'
+        });
     } catch (error) {
         console.error('Forgot Password Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error' });
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
 };
 

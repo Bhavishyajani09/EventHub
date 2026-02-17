@@ -15,9 +15,4 @@ const transporter = nodemailer.createTransport({
   rateLimit: 5
 });
 
-transporter.verify((error) => {
-  if (error) console.error('Email config error:', error);
-  else console.log('Email server ready');
-});
-
 module.exports = transporter;

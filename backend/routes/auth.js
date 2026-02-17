@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const sendEmail = require('../utils/email');
+const { sendEmail } = require('../utils/emailService');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
 
@@ -170,9 +170,8 @@ router.post('/forgot-password', async (req, res) => {
 
     try {
       await sendEmail({
-        email: user.email,
+        to: user.email,
         subject: 'Password Reset Request',
-        message,
         html
       });
 
