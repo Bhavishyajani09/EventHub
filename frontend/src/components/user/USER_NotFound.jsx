@@ -117,7 +117,6 @@ const NotFound = ({ isDark = false }) => {
           <p style={{
             fontSize: 'clamp(14px, 3.5vw, 18px)',
             color: isDark ? '#94a3b8' : '#64748b',
-            marginBottom: 'clamp(48px, 12vw, 72px)',
             lineHeight: '1.6',
             maxWidth: '400px',
             margin: '0 auto',
