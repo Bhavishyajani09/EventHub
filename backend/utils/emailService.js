@@ -2,15 +2,25 @@ const transporter = require('../config/nodemailer');
 
 const sendEmail = async ({ to, subject, html }) => {
   try {
+    console.log('Attempting to send email to:', to);
+    console.log('From:', process.env.EMAIL_USER);
+    
     const info = await transporter.sendMail({
       from: `"EventHub" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html
     });
+    
+    console.log('Email sent successfully! Message ID:', info.messageId);
+    console.log('Response:', info.response);
+    
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('Email error:', error);
+    console.error('❌ Email sending failed!');
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.message);
+    console.error('Full error:', error);
     return { success: false, error: error.message };
   }
 };

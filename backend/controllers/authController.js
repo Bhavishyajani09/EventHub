@@ -49,22 +49,28 @@ exports.forgotPassword = async (req, res) => {
       </div>
     `;
 
-        // Send Email (non-blocking)
-        sendEmail({
+        // Send Email
+        const emailResult = await sendEmail({
             to: user.email,
             subject: 'Password Reset OTP',
             html,
-        }).catch(error => {
-            console.error('Email Sending Error:', error.message);
+        });
+
+        if (!emailResult.success) {
+            console.error('Email Sending Error:', emailResult.error);
             console.log('--- OTP (Fallback) ---');
             console.log(`Email: ${user.email}`);
             console.log(`OTP: ${otp}`);
             console.log('----------------------');
-        });
+            
+            return res.status(500).json({
+                success: false,
+                message: 'Failed to send email. Please check your email configuration or try again later.'
+            });
+        }
 
-        console.log('Email sent (non-blocking)');
+        console.log('Email sent successfully');
 
-        // Respond immediately
         res.status(200).json({
             success: true,
             message: 'OTP has been sent to your email.'
