@@ -1,5 +1,11 @@
 const nodemailer = require('nodemailer');
 
+console.log('Email Config Check:');
+console.log('EMAIL_USER:', process.env.EMAIL_USER ? 'Set ✓' : 'Missing ✗');
+console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? 'Set ✓' : 'Missing ✗');
+console.log('EMAIL_HOST:', process.env.EMAIL_HOST || 'smtp.gmail.com');
+console.log('EMAIL_PORT:', process.env.EMAIL_PORT || 587);
+
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST || 'smtp.gmail.com',
   port: process.env.EMAIL_PORT || 587,
