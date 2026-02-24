@@ -4,6 +4,8 @@ const sendEmail = async ({ to, subject, html }) => {
   try {
     console.log('Attempting to send email to:', to);
     console.log('From:', process.env.EMAIL_USER);
+    console.log('SMTP Host:', process.env.EMAIL_HOST || 'smtp.gmail.com');
+    console.log('SMTP Port:', process.env.EMAIL_PORT || 587);
     
     const info = await transporter.sendMail({
       from: `"EventHub" <${process.env.EMAIL_USER}>`,
@@ -20,7 +22,8 @@ const sendEmail = async ({ to, subject, html }) => {
     console.error('❌ Email sending failed!');
     console.error('Error code:', error.code);
     console.error('Error message:', error.message);
-    console.error('Full error:', error);
+    console.error('Error command:', error.command);
+    console.error('Full error:', JSON.stringify(error, null, 2));
     return { success: false, error: error.message };
   }
 };
